@@ -1,3 +1,4 @@
+import { launchManagedBrowser } from "../browser/launch.js";
 // Onion-skin motion screenshot: seek the LIVE timeline at N equal-time steps and
 // project the REAL element at each step, so an agent can SELF-VERIFY motion (the
 // rendered result — every channel: position, rotation, scale, opacity, colour),
@@ -402,7 +403,7 @@ async function openCompositionPage(
   const requestedGpuMode = resolveLocalBrowserGpuMode();
   const resolvedGpuMode = await resolveCaptureBrowserGpuMode(requestedGpuMode, executablePath);
   const requiresWebGpu = compositionRequiresWebGpu(html);
-  const browser = await puppeteer.default.launch({
+  const browser = await launchManagedBrowser(puppeteer.default, {
     headless: true,
     executablePath,
     args: buildChromeArgs(

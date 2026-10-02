@@ -1,3 +1,4 @@
+import { launchManagedBrowser } from "../browser/launch.js";
 import { failCommand, setCommandExitCode } from "../utils/commandResult.js";
 import { defineCommand } from "citty";
 import { existsSync, readFileSync } from "node:fs";
@@ -225,7 +226,7 @@ async function runLayoutAudit(
       browser.executablePath,
     );
     const requiresWebGpu = compositionRequiresWebGpu(html);
-    chromeBrowser = await puppeteer.default.launch({
+    chromeBrowser = await launchManagedBrowser(puppeteer.default, {
       headless: true,
       executablePath: browser.executablePath,
       args: buildChromeArgs(

@@ -1,3 +1,4 @@
+import { launchManagedBrowser } from "../browser/launch.js";
 import { spawn } from "node:child_process";
 import type { Browser, Page } from "puppeteer-core";
 import { c } from "../ui/colors.js";
@@ -180,7 +181,7 @@ export async function openSettledCompositionPage(
   const requiresWebGpu = compositionRequiresWebGpu(html);
   const launch = async (executablePath: string): Promise<Browser> => {
     const resolvedGpuMode = await resolveCaptureBrowserGpuMode(requestedGpuMode, executablePath);
-    return puppeteer.default.launch({
+    return launchManagedBrowser(puppeteer.default, {
       headless: true,
       executablePath,
       args: buildChromeArgs(
