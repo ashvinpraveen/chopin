@@ -4,7 +4,6 @@ import {
   type BrowserGpuMode,
   type ResolvedBrowserGpuMode,
 } from "./gpuPolicy.js";
-import { setHostHandlesSigint } from "@hyperframes/engine";
 import { requestCliExit } from "../utils/commandResult.js";
 
 const browsers = new Set<Browser>();
@@ -29,7 +28,6 @@ function stopForSignal(signal: "SIGINT" | "SIGTERM"): void {
 function ownSignals(): void {
   if (listening) return;
   listening = true;
-  setHostHandlesSigint(true);
   process.on("SIGINT", () => stopForSignal("SIGINT"));
   process.on("SIGTERM", () => stopForSignal("SIGTERM"));
 }

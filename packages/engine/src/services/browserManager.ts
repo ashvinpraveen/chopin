@@ -33,15 +33,12 @@ let _puppeteer: PuppeteerNode | undefined;
 
 let hostHandlesSigint = false;
 
-/** Set while the host owns SIGINT and SIGTERM; Puppeteer's own handlers would exit before any cleanup ran. */
+/** Set while the host cancels renders on Ctrl+C; Puppeteer's own handler would exit before any cleanup ran. */
 export function setHostHandlesSigint(owned: boolean): void {
   hostHandlesSigint = owned;
 }
 
-export const sigintLaunchOptions = () => ({
-  handleSIGINT: !hostHandlesSigint,
-  handleSIGTERM: !hostHandlesSigint,
-});
+export const sigintLaunchOptions = () => ({ handleSIGINT: !hostHandlesSigint });
 
 interface WebGlProbeInfo {
   hasWebGL: boolean;
