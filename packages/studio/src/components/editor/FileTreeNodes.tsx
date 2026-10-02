@@ -18,11 +18,20 @@ import {
   type InlineInputState,
   DIM,
 } from "./FileTreeIcons";
+import {
+  MENU_DIVIDER,
+  MENU_PANEL,
+  MENU_ROW,
+  MENU_ROW_DANGER,
+  MENU_ROW_ENABLED,
+} from "../ui/menuStyle";
 
 export type { ContextMenuState, InlineInputState };
 export { buildTree, sortChildren, isActiveInSubtree } from "./FileTreeIcons";
 
 const SZ_ICON = 14;
+const ROW = `${MENU_ROW} ${MENU_ROW_ENABLED} flex items-center gap-2 active:bg-neutral-700`;
+const DANGER_ROW = `${MENU_ROW} ${MENU_ROW_DANGER} flex items-center gap-2 active:bg-danger/25`;
 
 // ── Context Menu Component ──
 
@@ -101,14 +110,14 @@ export function ContextMenu({
       ref={menuRef}
       role="menu"
       onKeyDown={handleMenuKeyDown}
-      className="fixed z-50 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg overflow-hidden min-w-[160px]"
+      className={`${MENU_PANEL} fixed z-50 min-w-[160px]`}
       style={{ left: adjustedX, top: adjustedY }}
     >
       {state.targetIsFolder && (
         <>
           <button
             role="menuitem"
-            className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 focus-visible:bg-neutral-800 active:bg-neutral-700 outline-hidden cursor-pointer text-left"
+            className={ROW}
             onClick={() => {
               onNewFile(state.targetPath);
               onClose();
@@ -119,7 +128,7 @@ export function ContextMenu({
           </button>
           <button
             role="menuitem"
-            className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 focus-visible:bg-neutral-800 active:bg-neutral-700 outline-hidden cursor-pointer text-left"
+            className={ROW}
             onClick={() => {
               onNewFolder(state.targetPath);
               onClose();
@@ -128,14 +137,14 @@ export function ContextMenu({
             <FolderSimplePlus size={12} weight="duotone" className="text-neutral-500" />
             New Folder
           </button>
-          <div className="border-t border-neutral-700" />
+          <div className={MENU_DIVIDER} />
         </>
       )}
       {!state.targetIsFolder && (
         <>
           <button
             role="menuitem"
-            className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 focus-visible:bg-neutral-800 active:bg-neutral-700 outline-hidden cursor-pointer text-left"
+            className={ROW}
             onClick={() => {
               onNewFile(parentPath);
               onClose();
@@ -144,12 +153,12 @@ export function ContextMenu({
             <FilePlus size={12} weight="duotone" className="text-neutral-500" />
             New File
           </button>
-          <div className="border-t border-neutral-700" />
+          <div className={MENU_DIVIDER} />
         </>
       )}
       <button
         role="menuitem"
-        className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 focus-visible:bg-neutral-800 active:bg-neutral-700 outline-hidden cursor-pointer text-left"
+        className={ROW}
         onClick={() => {
           onRename(state.targetPath);
           onClose();
@@ -161,7 +170,7 @@ export function ContextMenu({
       {!state.targetIsFolder && (
         <button
           role="menuitem"
-          className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 focus-visible:bg-neutral-800 active:bg-neutral-700 outline-hidden cursor-pointer text-left"
+          className={ROW}
           onClick={() => {
             onDuplicate(state.targetPath);
             onClose();
@@ -171,10 +180,10 @@ export function ContextMenu({
           Duplicate
         </button>
       )}
-      <div className="border-t border-neutral-700" />
+      <div className={MENU_DIVIDER} />
       <button
         role="menuitem"
-        className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-danger-ink hover:bg-danger/25 focus-visible:bg-danger/25 active:bg-danger/25 outline-hidden cursor-pointer text-left"
+        className={DANGER_ROW}
         onClick={() => {
           onDelete(state.targetPath);
           onClose();

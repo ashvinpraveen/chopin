@@ -15,6 +15,7 @@ import {
   type ClipToolChoice,
 } from "./clipToolAttrs";
 import { useClipToolState } from "./useClipToolState";
+import { MENU_DIVIDER, MENU_PANEL, MENU_ROW, MENU_ROW_DISABLED, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
 
 export type ClipMenuToolGroup = "time" | "sound" | "picture";
 
@@ -25,10 +26,8 @@ interface ClipMenuToolItemsProps {
   onClose: () => void;
 }
 
-const ROW_CLASS =
-  "w-full flex items-center justify-between px-3 py-1.5 text-xs text-left outline-none focus-visible:bg-neutral-800 text-neutral-300 hover:bg-neutral-800 cursor-pointer";
-const DISABLED_ROW_CLASS =
-  "w-full flex items-center justify-between px-3 py-1.5 text-xs text-left outline-none text-neutral-600 cursor-not-allowed";
+const ROW_CLASS = `${MENU_ROW} flex items-center justify-between ${MENU_ROW_ENABLED}`;
+const DISABLED_ROW_CLASS = `${MENU_ROW} flex items-center justify-between ${MENU_ROW_DISABLED}`;
 const SUBMENU_WIDTH = 170;
 const HOVER_PREVIEW_DELAY_MS = 80;
 
@@ -184,7 +183,7 @@ function ChoiceSubmenu({
           ref={submenuRef}
           role="menu"
           aria-label={label}
-          className="absolute top-0 z-10 overflow-hidden bg-neutral-900 border border-neutral-700 rounded-md shadow-lg"
+          className={`${MENU_PANEL} absolute top-0 z-10`}
           style={{ width: SUBMENU_WIDTH, ...(flipLeft ? { right: "100%" } : { left: "100%" }) }}
           onKeyDown={onSubmenuKeyDown}
         >
@@ -193,7 +192,7 @@ function ChoiceSubmenu({
             <div key={section.heading ?? index}>
               {section.heading && (
                 <>
-                  <div className="border-t border-neutral-700/60" />
+                  <div className={MENU_DIVIDER} />
                   <div className="px-3 py-1 text-[9px] uppercase tracking-wide text-neutral-500">
                     {section.heading}
                   </div>

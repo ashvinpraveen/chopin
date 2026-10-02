@@ -7,11 +7,11 @@ import { useLinkedClipPreferences } from "../../utils/linkedClipPreferences";
 import { usePlayerStore, type TimelineElement } from "../store/playerStore";
 import { clipSyncState, type ClipSyncState } from "./clipSync";
 import { useMenuKeyboardNav } from "./menuKeyboardNav";
+import { MENU_PANEL, MENU_ROW, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
 
 const stop = (e: SyntheticEvent) => e.stopPropagation();
 
-const MENU_ROW =
-  "block w-full px-3 py-1.5 text-left text-xs text-neutral-300 outline-hidden hover:bg-neutral-800 focus-visible:bg-neutral-800 disabled:opacity-40";
+const ROW = `${MENU_ROW} ${MENU_ROW_ENABLED} block disabled:opacity-40`;
 
 function SyncMenu({
   x,
@@ -39,13 +39,13 @@ function SyncMenu({
       ref={menuRef}
       role="menu"
       aria-label="Out of sync"
-      className="fixed z-200 min-w-[170px] rounded-sm border border-neutral-700 bg-neutral-900 overflow-hidden shadow-lg"
+      className={`${MENU_PANEL} fixed z-200 min-w-[170px]`}
       style={{ left, top }}
     >
       <button
         type="button"
         role="menuitem"
-        className={MENU_ROW}
+        className={ROW}
         disabled={!onLinkEdit || moveStart === null}
         title={moveStart === null ? "Would move the clip before 0:00" : undefined}
         onClick={() => {
@@ -59,7 +59,7 @@ function SyncMenu({
       <button
         type="button"
         role="menuitem"
-        className={MENU_ROW}
+        className={ROW}
         disabled={!onLinkEdit || slipMediaStart === null}
         title={slipMediaStart === null ? "Would slip before the start of the file" : undefined}
         onClick={() => {

@@ -8,10 +8,11 @@ import type { TimelineClipMenuItem } from "./TimelineTypes";
 import { ClipMenuToolItems } from "./clipMenuToolItems";
 import { ClipMenuAudioItems } from "./clipMenuAudioItems";
 import { ClipMenuLinkItems } from "./clipMenuLinkItems";
+import { MENU_GROUP, MENU_PANEL_OPEN, MENU_ROW, MENU_ROW_DISABLED, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
 
 const MENU_MARGIN = 8;
 // Empty groups collapse; every non-empty group before the always-present Delete group ends in a divider.
-const GROUP_CLASS = "empty:hidden border-b border-neutral-700/60";
+const GROUP_CLASS = MENU_GROUP;
 
 function useMeasuredHeight(ref: RefObject<HTMLDivElement | null>, anchorKey: string): number {
   const [height, setHeight] = useState(0);
@@ -44,11 +45,7 @@ interface ClipContextMenuProps {
 
 // Same enabled/disabled menu-item pattern as the sibling TrackGapContextMenu.
 const itemClass = (enabled: boolean) =>
-  `w-full flex items-center justify-between px-3 py-1.5 text-xs text-left outline-none${
-    enabled
-      ? " focus-visible:bg-neutral-800 text-neutral-300 hover:bg-neutral-800 cursor-pointer"
-      : " text-neutral-600 cursor-not-allowed"
-  }`;
+  `${MENU_ROW} flex items-center justify-between ${enabled ? MENU_ROW_ENABLED : MENU_ROW_DISABLED}`;
 
 /** The host's items, above Studio's. A pick closes the menu; focus the item moves stays where it went. */
 function HostItems({
@@ -134,7 +131,7 @@ export const ClipContextMenu = memo(function ClipContextMenu({
       ref={menuRef}
       role="menu"
       aria-label="Clip actions"
-      className="fixed z-200 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg min-w-[180px]"
+      className={`${MENU_PANEL_OPEN} fixed z-200 min-w-[180px]`}
       style={{ left: adjustedX, top: adjustedY }}
     >
       {hostItems.length > 0 && (

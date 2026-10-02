@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { filename } from "./assetHelpers";
+import { MENU_PANEL, MENU_ROW, MENU_ROW_ENABLED } from "../ui/menuStyle";
 
 /** Reject names that would escape the asset directory or break paths. */
 function isValidAssetName(name: string): boolean {
@@ -95,7 +96,7 @@ export function ContextMenu({
   }, [renameDraft, asset, onRename, onClose]);
 
   const itemCls =
-    "w-full text-left px-3 py-1.5 text-neutral-300 hover:bg-neutral-800 focus-visible:bg-neutral-800 outline-hidden active:bg-neutral-700/70 transition-colors";
+    `${MENU_ROW} ${MENU_ROW_ENABLED} active:bg-neutral-700/70 transition-colors`;
 
   return (
     <div
@@ -110,7 +111,7 @@ export function ContextMenu({
         ref={menuRef}
         role="menu"
         aria-label={`Actions for ${filename(asset)}`}
-        className="absolute bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl overflow-hidden min-w-[160px] text-xs"
+        className={`${MENU_PANEL} absolute min-w-[160px] text-xs`}
         style={{ left: pos.x, top: pos.y }}
         onClick={(e) => e.stopPropagation()}
       >

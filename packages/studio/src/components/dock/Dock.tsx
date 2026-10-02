@@ -31,6 +31,7 @@ import {
   type PanelId,
 } from "./panelRegistry";
 import "./dock.css";
+import { MENU_DIVIDER, MENU_PANEL, MENU_ROW, MENU_ROW_ENABLED } from "../ui/menuStyle";
 
 const PERSIST_DEBOUNCE_MS = 250;
 
@@ -290,7 +291,7 @@ function WindowMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-8 z-50 w-44 rounded-md border border-neutral-800 bg-neutral-900 overflow-hidden shadow-lg"
+          className={`${MENU_PANEL} absolute right-0 top-8 z-50 w-44`}
         >
           {panels.map((id) => (
             <button
@@ -299,13 +300,13 @@ function WindowMenu() {
               role="menuitemcheckbox"
               aria-checked={openPanels.has(id)}
               onClick={() => togglePanel(id)}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[11px] text-neutral-300 hover:bg-neutral-800"
+              className={`${MENU_ROW} ${MENU_ROW_ENABLED} flex items-center gap-2`}
             >
               <span className="w-3 text-accent-ink">{openPanels.has(id) ? "✓" : ""}</span>
               {PANEL_DEFINITIONS[id].title}
             </button>
           ))}
-          <div className="border-t border-neutral-800" />
+          <div className={MENU_DIVIDER} />
           <button
             type="button"
             role="menuitem"
@@ -313,7 +314,7 @@ function WindowMenu() {
               resetLayout();
               setOpen(false);
             }}
-            className="w-full px-3 py-1.5 text-left text-[11px] text-neutral-300 hover:bg-neutral-800"
+            className={`${MENU_ROW} ${MENU_ROW_ENABLED}`}
           >
             Reset layout
           </button>
