@@ -101,7 +101,7 @@ export function ContextMenu({
       ref={menuRef}
       role="menu"
       onKeyDown={handleMenuKeyDown}
-      className="fixed z-50 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg py-1 min-w-[160px]"
+      className="fixed z-50 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg overflow-hidden min-w-[160px]"
       style={{ left: adjustedX, top: adjustedY }}
     >
       {state.targetIsFolder && (
@@ -128,7 +128,7 @@ export function ContextMenu({
             <FolderSimplePlus size={12} weight="duotone" className="text-neutral-500" />
             New Folder
           </button>
-          <div className="border-t border-neutral-700 my-1" />
+          <div className="border-t border-neutral-700" />
         </>
       )}
       {!state.targetIsFolder && (
@@ -144,7 +144,7 @@ export function ContextMenu({
             <FilePlus size={12} weight="duotone" className="text-neutral-500" />
             New File
           </button>
-          <div className="border-t border-neutral-700 my-1" />
+          <div className="border-t border-neutral-700" />
         </>
       )}
       <button
@@ -171,7 +171,7 @@ export function ContextMenu({
           Duplicate
         </button>
       )}
-      <div className="border-t border-neutral-700 my-1" />
+      <div className="border-t border-neutral-700" />
       <button
         role="menuitem"
         className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-danger-ink hover:bg-danger/25 focus-visible:bg-danger/25 active:bg-danger/25 outline-hidden cursor-pointer text-left"

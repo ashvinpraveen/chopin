@@ -184,7 +184,7 @@ function ChoiceSubmenu({
           ref={submenuRef}
           role="menu"
           aria-label={label}
-          className="absolute top-0 z-10 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg py-1"
+          className="absolute top-0 z-10 overflow-hidden bg-neutral-900 border border-neutral-700 rounded-md shadow-lg"
           style={{ width: SUBMENU_WIDTH, ...(flipLeft ? { right: "100%" } : { left: "100%" }) }}
           onKeyDown={onSubmenuKeyDown}
         >
@@ -193,7 +193,7 @@ function ChoiceSubmenu({
             <div key={section.heading ?? index}>
               {section.heading && (
                 <>
-                  <div className="my-1 border-t border-neutral-700/60" />
+                  <div className="border-t border-neutral-700/60" />
                   <div className="px-3 py-1 text-[9px] uppercase tracking-wide text-neutral-500">
                     {section.heading}
                   </div>

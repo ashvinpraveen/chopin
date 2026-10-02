@@ -11,7 +11,7 @@ import { ClipMenuLinkItems } from "./clipMenuLinkItems";
 
 const MENU_MARGIN = 8;
 // Empty groups collapse; every non-empty group before the always-present Delete group ends in a divider.
-const GROUP_CLASS = "empty:hidden mb-1 pb-1 border-b border-neutral-700/60";
+const GROUP_CLASS = "empty:hidden border-b border-neutral-700/60";
 
 function useMeasuredHeight(ref: RefObject<HTMLDivElement | null>, anchorKey: string): number {
   const [height, setHeight] = useState(0);
@@ -134,7 +134,7 @@ export const ClipContextMenu = memo(function ClipContextMenu({
       ref={menuRef}
       role="menu"
       aria-label="Clip actions"
-      className="fixed z-200 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg py-1 min-w-[180px]"
+      className="fixed z-200 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg min-w-[180px]"
       style={{ left: adjustedX, top: adjustedY }}
     >
       {hostItems.length > 0 && (

@@ -186,3 +186,14 @@ describe("ClipContextMenu focus on close", () => {
     unmount();
   });
 });
+
+describe("ClipContextMenu row fill", () => {
+  it("leaves no padding or margin between its rows and the panel edge or a divider", () => {
+    renderMenu([{ id: "ask", label: "Ask", onSelect: vi.fn() }]);
+    const menu = document.body.querySelector<HTMLElement>("[role=menu]")!;
+    const spacing = /(^| )(p|py|pt|pb|m|my|mt|mb)-\d/;
+    expect(menu.className).not.toMatch(spacing);
+    for (const group of menu.querySelectorAll<HTMLElement>("[role=group]"))
+      expect(group.className).not.toMatch(spacing);
+  });
+});

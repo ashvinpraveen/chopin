@@ -39,7 +39,7 @@ function SyncMenu({
       ref={menuRef}
       role="menu"
       aria-label="Out of sync"
-      className="fixed z-200 min-w-[170px] rounded-sm border border-neutral-700 bg-neutral-900 py-1 shadow-lg"
+      className="fixed z-200 min-w-[170px] rounded-sm border border-neutral-700 bg-neutral-900 overflow-hidden shadow-lg"
       style={{ left, top }}
     >
       <button

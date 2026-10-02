@@ -17,7 +17,7 @@ function SyncIndicatorMenu({ x, y, onClose }: { x: number; y: number; onClose: (
       ref={menuRef}
       role="menu"
       aria-label="Linked clips"
-      className="fixed z-200 min-w-[200px] rounded-sm border border-neutral-700 bg-neutral-900 py-1 shadow-lg"
+      className="fixed z-200 min-w-[200px] rounded-sm border border-neutral-700 bg-neutral-900 overflow-hidden shadow-lg"
       style={{ left: x, top: y }}
     >
       <button

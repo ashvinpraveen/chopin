@@ -290,7 +290,7 @@ function WindowMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-8 z-50 w-44 rounded-md border border-neutral-800 bg-neutral-900 py-1 shadow-lg"
+          className="absolute right-0 top-8 z-50 w-44 rounded-md border border-neutral-800 bg-neutral-900 overflow-hidden shadow-lg"
         >
           {panels.map((id) => (
             <button
@@ -305,7 +305,7 @@ function WindowMenu() {
               {PANEL_DEFINITIONS[id].title}
             </button>
           ))}
-          <div className="my-1 border-t border-neutral-800" />
+          <div className="border-t border-neutral-800" />
           <button
             type="button"
             role="menuitem"

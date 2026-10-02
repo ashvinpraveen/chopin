@@ -110,7 +110,7 @@ export function ContextMenu({
         ref={menuRef}
         role="menu"
         aria-label={`Actions for ${filename(asset)}`}
-        className="absolute bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl py-1 min-w-[160px] text-xs"
+        className="absolute bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl overflow-hidden min-w-[160px] text-xs"
         style={{ left: pos.x, top: pos.y }}
         onClick={(e) => e.stopPropagation()}
       >

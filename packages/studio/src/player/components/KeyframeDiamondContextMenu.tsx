@@ -96,7 +96,7 @@ export function KeyframeDiamondContextMenu({
       ref={menuRef}
       role="menu"
       aria-label="Keyframe actions"
-      className="fixed z-200 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg py-1 min-w-[180px] overflow-y-auto"
+      className="fixed z-200 bg-neutral-900 border border-neutral-700 rounded-md shadow-lg min-w-[180px] overflow-y-auto"
       style={{ left: adjustedX, top: adjustedY, maxHeight: `calc(100vh - ${adjustedY + 8}px)` }}
     >
       {onMoveToPlayhead && (
@@ -165,9 +165,9 @@ export function KeyframeDiamondContextMenu({
 
       {/* Deleting every keyframe sat adjacent to the single delete and styled
           identically. Separate and mark it so the two cannot be misread. */}
-      <div className="my-1 border-t border-neutral-700/60" role="separator" />
+      <div className="border-t border-neutral-700/60" role="separator" />
 
-      <div className="my-1 border-t border-neutral-700/60" role="separator" />
+      <div className="border-t border-neutral-700/60" role="separator" />
 
       <button
         type="button"
