@@ -23,10 +23,12 @@ function browserPids(profileDir: string): number[] {
     .map(Number);
 }
 
-function startFixture(profileDir: string, readyPath: string): ChildProcess {
-  const child = spawn(process.execPath, ["--import", "tsx", fixturePath, profileDir, readyPath], {
-    stdio: "ignore",
-  });
+function startFixture(profileDir: string, readyPath: string, mode = "launch"): ChildProcess {
+  const child = spawn(
+    process.execPath,
+    ["--import", "tsx", fixturePath, profileDir, readyPath, mode],
+    { stdio: "ignore" },
+  );
   children.add(child);
   return child;
 }
@@ -67,4 +69,18 @@ describe.skipIf(process.platform !== "linux")("managed browser shutdown", () => 
     },
     60_000,
   );
+
+  it("SIGTERM during the GPU probe asks the CLI to exit instead of being swallowed", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "hf-launch-"));
+    const readyPath = join(dir, "ready");
+    const child = startFixture(join(dir, "profile"), readyPath, "probe");
+    const done = exited(child);
+    await waitForTestCondition(
+      () => existsSync(readyPath) && readFileSync(readyPath, "utf8") === "probing",
+      30_000,
+    );
+    child.kill("SIGTERM");
+    await done;
+    expect(readFileSync(`${readyPath}.exit`, "utf8")).toBe("143");
+  }, 60_000);
 });

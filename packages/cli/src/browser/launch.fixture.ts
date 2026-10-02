@@ -2,7 +2,7 @@
 import { writeFileSync } from "node:fs";
 import { registerRootExitRequester } from "../utils/commandResult.js";
 import { ensureBrowser } from "./manager.js";
-import { launchManagedBrowser } from "./launch.js";
+import { launchManagedBrowser, resolveManagedGpuMode } from "./launch.js";
 
 const [profileDir, readyPath] = process.argv.slice(2);
 if (!profileDir || !readyPath) throw new Error("Missing fixture arguments");
@@ -14,6 +14,10 @@ registerRootExitRequester((exitCode) => {
 });
 const { executablePath } = await ensureBrowser();
 const puppeteer = await import("puppeteer-core");
+if (process.argv[4] === "probe") {
+  writeFileSync(readyPath, "probing");
+  await resolveManagedGpuMode("auto", executablePath);
+}
 writeFileSync(readyPath, "launching");
 const browser = await launchManagedBrowser(puppeteer.default, {
   headless: true,

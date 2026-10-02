@@ -1,4 +1,10 @@
 import type { Browser, LaunchOptions, PuppeteerNode } from "puppeteer-core";
+import {
+  resolveCaptureBrowserGpuMode,
+  type BrowserGpuMode,
+  type ResolvedBrowserGpuMode,
+} from "./gpuPolicy.js";
+import { setHostHandlesSigint } from "@hyperframes/engine";
 import { requestCliExit } from "../utils/commandResult.js";
 
 const browsers = new Set<Browser>();
@@ -20,17 +26,30 @@ function stopForSignal(signal: "SIGINT" | "SIGTERM"): void {
   );
 }
 
+function ownSignals(): void {
+  if (listening) return;
+  listening = true;
+  setHostHandlesSigint(true);
+  process.on("SIGINT", () => stopForSignal("SIGINT"));
+  process.on("SIGTERM", () => stopForSignal("SIGTERM"));
+}
+
+/** The GPU probe launches its own Chrome, so the signal owner must exist before it runs. */
+export async function resolveManagedGpuMode(
+  requestedMode: BrowserGpuMode,
+  chromePath?: string,
+): Promise<ResolvedBrowserGpuMode> {
+  ownSignals();
+  return resolveCaptureBrowserGpuMode(requestedMode, chromePath);
+}
+
 /** One owner for every CLI browser, including a launch cancelled before its connection is ready. */
 export async function launchManagedBrowser(
   puppeteer: PuppeteerNode,
   options: LaunchOptions,
 ): Promise<Browser> {
   if (shutdown) throw new Error("The CLI is stopping; no browser can start.");
-  if (!listening) {
-    listening = true;
-    process.on("SIGINT", () => stopForSignal("SIGINT"));
-    process.on("SIGTERM", () => stopForSignal("SIGTERM"));
-  }
+  ownSignals();
   const abort = new AbortController();
   const signal = options.signal ? AbortSignal.any([options.signal, abort.signal]) : abort.signal;
   const launch = puppeteer.launch({
