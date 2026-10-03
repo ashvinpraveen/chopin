@@ -218,7 +218,6 @@ export function TimelineGapMenuOverlay() {
 export function TimelineOverlays() {
   return (
     <>
-      <TimelineShortcutHintOverlay />
       <TimelineEditPopoverOverlay />
       <TimelineKeyframeMenuOverlay />
       <TimelineClipMenuOverlay />

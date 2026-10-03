@@ -1,9 +1,10 @@
 import { memo, useContext, type MouseEvent } from "react";
+import { ArrowUp, CircleNotch } from "@phosphor-icons/react";
 import { Camera } from "../icons/SystemIcons";
 import { useStudioShellContext } from "../contexts/StudioContext";
 import { usePanelLayoutContext } from "../contexts/PanelLayoutContext";
 import { trackStudioEvent } from "../utils/studioTelemetry";
-import { Button, cn, Tooltip } from "./ui";
+import { cn, Tooltip } from "./ui";
 import { Dock } from "./dock/Dock";
 import { InspectorIcon } from "./icons/InspectorIcon";
 import { ChopinLogo } from "./ui/ChopinLogo";
@@ -154,9 +155,11 @@ export const StudioHeader = memo(function StudioHeader({
           }
           side="bottom"
         >
-          <Button
-            variant="primary"
+          <button
+            type="button"
             data-testid="header-export"
+            aria-label={isRendering ? "Rendering" : "Export"}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-[color:light-dark(#1c1c1c,#ffffff)] transition-colors hover:bg-text-0/10 disabled:cursor-default disabled:opacity-60"
             disabled={isRendering}
             onClick={() => {
               if (isRendering) return;
@@ -171,8 +174,12 @@ export const StudioHeader = memo(function StudioHeader({
               onExport?.();
             }}
           >
-            {isRendering ? "Rendering…" : "Export"}
-          </Button>
+            {isRendering ? (
+              <CircleNotch size={16} weight="bold" className="animate-spin" />
+            ) : (
+              <ArrowUp size={16} weight="bold" />
+            )}
+          </button>
         </Tooltip>
       </div>
     </div>

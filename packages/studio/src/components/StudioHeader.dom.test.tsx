@@ -7,7 +7,6 @@
 import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { buttonSizes, buttonVariants } from "./ui";
 import { isTypingTarget } from "../utils/typingTarget";
 import { shouldIgnorePlaybackShortcutTarget } from "../player/lib/playbackShortcuts";
 
@@ -99,23 +98,14 @@ function query(host: HTMLElement, selector: string): HTMLElement {
 }
 
 /** Every class the recipe asks for, on the element the header rendered. */
-function expectRecipe(el: HTMLElement, ...recipes: string[]): void {
-  const applied = new Set(el.className.split(/\s+/));
-  for (const recipe of recipes) {
-    for (const token of recipe.split(/\s+/)) {
-      expect(applied, `${token} missing from: ${el.className}`).toContain(token);
-    }
-  }
-}
-
-it("renders Export as the shared primary Button at the medium size", () => {
+it("renders Export as an icon-only upward arrow with no accent fill", () => {
   const host = mount();
+  const exportButton = query(host, '[data-testid="header-export"]');
 
-  expectRecipe(
-    query(host, '[data-testid="header-export"]'),
-    buttonVariants.primary,
-    buttonSizes.md,
-  );
+  expect(exportButton.getAttribute("aria-label")).toBe("Export");
+  expect(exportButton.textContent).toBe("");
+  expect(exportButton.querySelector("svg")).not.toBeNull();
+  expect(exportButton.className).not.toContain("bg-studio-accent");
 });
 
 it("no longer renders Undo or Redo in the header", () => {
