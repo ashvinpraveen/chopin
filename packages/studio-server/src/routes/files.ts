@@ -19,7 +19,6 @@ import {
   readdirSync,
   type Dirent,
 } from "node:fs";
-import { createHash } from "node:crypto";
 import { resolve, dirname, join } from "node:path";
 import type { StudioApiAdapter } from "../types.js";
 import { isAudioFile } from "../helpers/mime.js";
@@ -2707,10 +2706,8 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
     }
 
     const originalContent = readFileSync(ctx.absPath, "utf-8");
-    // A member nested inside one already removed simply no longer matches, which
-    // is a normal outcome here rather than a failure. The response says whether
-    // the file changed, not how many of the targets landed — so a caller can
-    // tell a no-op from a write, but not a partial pass from a complete one.
+    // The response says whether the file changed, not how many of the targets landed, so a
+    // caller can tell a no-op from a write, but not a partial pass from a complete one.
     return writeIfChanged(
       c,
       ctx.project.dir,
@@ -3345,7 +3342,7 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
     // The parse is a pure function of the file, so a client that revalidates on every read
     // (Studio does, after any write) gets a 304 for every file that did not change.
     const html = readFileSync(res.absPath, "utf-8");
-    const etag = `"gsap-animations:${createHash("sha1").update(html).digest("hex").slice(0, 16)}"`;
+    const etag = fileContentVersion(html);
     const headers = { ETag: etag, "Cache-Control": "no-cache" };
     if (c.req.header("If-None-Match") === etag) return new Response(null, { status: 304, headers });
 

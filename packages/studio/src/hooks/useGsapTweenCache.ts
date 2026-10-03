@@ -317,7 +317,7 @@ export function usePopulateKeyframeCacheForFile(
     loadedRef.current = { dataKey, files: covered };
     // Everything the previous scan cached for a file this one no longer covers
     // (the composition just switched away from) has no owner left to clear it.
-    pruneKeyframeCacheToFiles([...covered]);
+    if (!sameData) pruneKeyframeCacheToFiles(files);
     if (stale.length === 0) return;
     runtimeScanDoneRef.current = "";
     const doc = iframeRef?.current?.contentDocument;

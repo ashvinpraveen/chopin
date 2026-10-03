@@ -144,10 +144,7 @@ export function useTimelineDeleteOps({
               if (!removeResponse.ok) {
                 throw new Error(`Failed to delete ${sameFile.length} clips from ${targetPath}`);
               }
-              const removeData = (await removeResponse.json()) as {
-                changed?: boolean;
-                content?: string;
-              };
+              const removeData = (await removeResponse.json()) as { content?: string };
               const removedContent =
                 typeof removeData.content === "string" ? removeData.content : originalContent;
               // Shrink to the furthest remaining clip end, read from the post-removal source:

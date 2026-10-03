@@ -53,14 +53,22 @@ function closureOf(read: SourceReader, compPath: string): Set<string> {
 // composition) ever thumbnailed, never evicted; LRU them if a server ever holds thousands.
 const inputSignatures = new Map<string, { projectSignature: string; inputSignature: string }>();
 
-/** The root's head last seen per project, to tell a head edit from a body-only root write. */
-const rootHeads = new Map<string, string>();
+interface RootMemo {
+  /** Hash of the whole root file this memo answers for. */
+  root: string;
+  head: string;
+  /** What `compositionsAffectedBy` told every subscriber for that root content. */
+  affected: string[] | null;
+}
 
-function rootHeadHash(projectDir: string): string {
-  const source = projectReader(projectDir)(ROOT_COMPOSITION) ?? "";
-  const hash = createHash("sha1").update(rootHeadContent(source)).digest("hex");
-  rootHeads.set(projectDir, hash);
-  return hash;
+/** Per project, the last root content announced to watchers; thumbnail requests only seed it. */
+const rootMemos = new Map<string, RootMemo>();
+
+const sha1 = (text: string) => createHash("sha1").update(text).digest("hex");
+
+function rootHashes(read: SourceReader) {
+  const source = read(ROOT_COMPOSITION) ?? "";
+  return { root: sha1(source), head: sha1(rootHeadContent(source)) };
 }
 
 // What a thumbnail of `compPath` renders from: the project minus the compositions the root
@@ -80,13 +88,14 @@ export function compositionInputSignature(
   const excluded = new Set(
     [...closureOf(read, ROOT_COMPOSITION)].filter((path) => !inputs.has(path)),
   );
+  let inputSignature: string;
   if (comp === ROOT_COMPOSITION) {
-    const inputSignature = createProjectSignature(projectDir, excluded);
-    inputSignatures.set(key, { projectSignature, inputSignature });
-    return inputSignature;
+    inputSignature = createProjectSignature(projectDir, excluded);
+  } else {
+    const hashes = rootHashes(read);
+    if (!rootMemos.has(projectDir)) rootMemos.set(projectDir, { ...hashes, affected: null });
+    inputSignature = `${createProjectSignature(projectDir, excluded.add(ROOT_COMPOSITION))}:${hashes.head}`;
   }
-  excluded.add(ROOT_COMPOSITION);
-  const inputSignature = `${createProjectSignature(projectDir, excluded)}:${rootHeadHash(projectDir)}`;
   inputSignatures.set(key, { projectSignature, inputSignature });
   return inputSignature;
 }
@@ -95,17 +104,20 @@ export function compositionInputSignature(
  * Compositions whose rendered frames a write at `changedPath` can change, or `null` for all
  * of them: assets, a root head edit, and any file the root does not mount reach every
  * composition. A root write that leaves the head as it was changes only the root's own frames.
+ * Every subscriber asking about the same root content gets the same answer.
  */
 export function compositionsAffectedBy(projectDir: string, changedPath: string): string[] | null {
   const changed = changedPath.replace(/\\/g, "/");
   const read = projectReader(projectDir);
-  const mounted = closureOf(read, ROOT_COMPOSITION);
   if (changed === ROOT_COMPOSITION) {
-    const previous = rootHeads.get(projectDir);
-    return previous !== undefined && previous === rootHeadHash(projectDir)
-      ? [ROOT_COMPOSITION]
-      : null;
+    const now = rootHashes(read);
+    const memo = rootMemos.get(projectDir);
+    if (memo?.root === now.root) return memo.affected;
+    const affected = memo?.head === now.head ? [ROOT_COMPOSITION] : null;
+    rootMemos.set(projectDir, { ...now, affected });
+    return affected;
   }
+  const mounted = closureOf(read, ROOT_COMPOSITION);
   if (!mounted.has(changed)) return null;
   return [...mounted].filter((path) => closureOf(read, path).has(changed));
 }

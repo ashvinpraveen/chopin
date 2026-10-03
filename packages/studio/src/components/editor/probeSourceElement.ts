@@ -8,10 +8,7 @@ interface PendingProbe {
 }
 
 /** Probes asked for in the same tick, one batch per project file. */
-const pending = new Map<
-  string,
-  { projectId: string; sourceFile: string; probes: PendingProbe[] }
->();
+const pending = new Map<string, PendingProbe[]>();
 
 async function sendBatch(projectId: string, sourceFile: string, probes: PendingProbe[]) {
   // Any failure reads as "exists": a probe that cannot answer must not strip capabilities.
@@ -33,7 +30,7 @@ async function sendBatch(projectId: string, sourceFile: string, probes: PendingP
       if (Array.isArray(data?.exists)) exists = data.exists;
     }
   } catch {
-    // Falls through to the all-exist answer below.
+    // Network failure reads as "exists" too.
   }
   probes.forEach((probe, index) => probe.resolve(exists[index] !== false));
 }
@@ -49,16 +46,16 @@ export function probeSourceElement(
 ): Promise<boolean> {
   return new Promise((resolve) => {
     const key = `${projectId}\0${sourceFile}`;
-    let batch = pending.get(key);
-    if (!batch) {
-      batch = { projectId, sourceFile, probes: [] };
+    let probes = pending.get(key);
+    if (!probes) {
+      const batch: PendingProbe[] = [];
+      probes = batch;
       pending.set(key, batch);
-      const flushing = batch;
       setTimeout(() => {
         pending.delete(key);
-        void sendBatch(flushing.projectId, flushing.sourceFile, flushing.probes);
+        void sendBatch(projectId, sourceFile, batch);
       }, 0);
     }
-    batch.probes.push({ target, resolve });
+    probes.push({ target, resolve });
   });
 }

@@ -85,6 +85,15 @@ describe("a root write", () => {
     expect(compositionsAffectedBy(dir, "index.html")).toEqual(["index.html"]);
   });
 
+  it("tells every subscriber of one head edit the same thing, even after a thumbnail request", () => {
+    const dir = project(files("<style>a{}</style>", "x"));
+    compositionInputSignature(dir, "compositions/a.html", "s1");
+    rewrite(dir, "<style>b{}</style>", "x");
+    expect(compositionsAffectedBy(dir, "index.html")).toBeNull();
+    compositionInputSignature(dir, "compositions/a.html", "s2");
+    expect(compositionsAffectedBy(dir, "index.html")).toBeNull();
+  });
+
   it("leaves a scene's input signature alone for a body edit, not for a head edit", () => {
     const dir = project(files("<style>a{}</style>", "x"));
     const before = compositionInputSignature(dir, "compositions/a.html", "s1");
