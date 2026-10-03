@@ -1,4 +1,4 @@
-// Studio's own app opens on the toggle's saved choice, else light. Light is `data-theme="paper"`
+// Studio's own app opens on the toggle's saved choice, else dark. Light is `data-theme="paper"`
 // on the document element, the hook theme.css keys on; dark is no attribute. index.html applies
 // `savedStudioTheme` before the first paint; studioTheme.test.tsx holds the two together.
 import { useSyncExternalStore } from "react";
@@ -9,7 +9,7 @@ import {
 } from "./studioUiPreferences";
 
 export function savedStudioTheme(): StudioTheme {
-  return readStudioUiPreferences().theme ?? "light";
+  return readStudioUiPreferences().theme ?? "dark";
 }
 
 export function shownStudioTheme(): StudioTheme {

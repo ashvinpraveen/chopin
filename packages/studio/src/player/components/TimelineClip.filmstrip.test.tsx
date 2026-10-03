@@ -132,22 +132,22 @@ describe("Filmstrip clips", () => {
     },
   );
 
-  it("lets audio keep its full-height content and pill radius", () => {
+  it("lets audio keep its full-height content and its radius", () => {
     const host = render("audio");
     const clip = host.querySelector(".timeline-clip");
     const picture = host.querySelector(".timeline-clip__content");
     expect(clip?.classList.contains("is-audio")).toBe(true);
     expect(picture?.classList.contains("inset-0")).toBe(true);
-    expect(css).toMatch(/--timeline-clip-audio-radius:\s*21px;/);
+    expect(css).toMatch(/--timeline-clip-audio-radius:\s*3px;/);
     expect(clip instanceof HTMLElement && clip.style.borderRadius).toBe(
       "var(--timeline-clip-audio-radius)",
     );
   });
 
-  it("exports a single 1px selection ring around a 12px visual clip", () => {
+  it("exports a single 1px selection ring around a visual clip", () => {
     const clip = render("video").querySelector(".timeline-clip");
     expect(clip?.classList.contains("is-selected")).toBe(true);
-    expect(css).toMatch(/--timeline-clip-radius:\s*12px;/);
+    expect(css).toMatch(/--timeline-clip-radius:\s*3px;/);
     expect(css).toMatch(
       /\.timeline-clip\.is-selected,\s*\.timeline-clip\[data-active\]\.is-selected\s*\{[^}]*outline:\s*1px solid var\(--timeline-clip-selection\);[^}]*outline-offset:\s*0;/,
     );

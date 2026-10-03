@@ -56,18 +56,11 @@ export function createShaderLoader(): ShaderLoaderElements {
   markFrame.draggable = false;
   markFrame.innerHTML = [
     '<svg width="78" height="78" viewBox="0 0 100 100" fill="none" aria-hidden="true" draggable="false">',
-    '<path d="M10.1851 57.8021L33.1145 73.8313C36.2202 75.9978 41.5173 73.5433 42.4816 69.4984L51.7611 30.4271C52.7253 26.3822 48.5802 23.9277 44.4602 26.0942L13.917 42.1235C6.96677 45.7676 4.97564 54.1579 10.1851 57.8021Z" fill="url(#hfp-shader-loader-grad-left)"/>',
-    '<path d="M87.5129 57.5141L56.9696 73.5433C52.8371 75.7098 48.7046 73.2553 49.6688 69.2104L58.9483 30.1391C59.9125 26.0942 65.2097 23.6397 68.3154 25.8062L91.2447 41.8354C96.4668 45.4796 94.4631 53.8699 87.5129 57.5141Z" fill="url(#hfp-shader-loader-grad-right)"/>',
-    "<defs>",
-    '<linearGradient id="hfp-shader-loader-grad-left" x1="48.5676" y1="25" x2="44.7804" y2="71.9384" gradientUnits="userSpaceOnUse">',
-    '<stop stop-color="#06E3FA"/>',
-    '<stop offset="1" stop-color="#4FDB5E"/>',
-    "</linearGradient>",
-    '<linearGradient id="hfp-shader-loader-grad-right" x1="54.8282" y1="73.8392" x2="72.0989" y2="32.8932" gradientUnits="userSpaceOnUse">',
-    '<stop stop-color="#06E3FA"/>',
-    '<stop offset="1" stop-color="#4FDB5E"/>',
-    "</linearGradient>",
-    "</defs>",
+    '<defs><linearGradient id="hfp-shader-loader-grad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse"><stop stop-color="rgb(242 153 74)"/><stop offset="1" stop-color="rgb(242 201 76)"/></linearGradient></defs>',
+    '<rect x="8" y="8" width="84" height="84" rx="18" fill="url(#hfp-shader-loader-grad)"/>',
+    '<rect x="27" y="43" width="11" height="30" rx="5.5" fill="rgb(24 24 24)"/>',
+    '<rect x="44.5" y="27" width="11" height="46" rx="5.5" fill="rgb(24 24 24)"/>',
+    '<rect x="62" y="50" width="11" height="23" rx="5.5" fill="rgb(24 24 24)"/>',
     "</svg>",
   ].join("");
 

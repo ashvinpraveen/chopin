@@ -9,7 +9,7 @@
 .hf-dock {
   --dv-group-view-background-color: var(--panel-card-bg);
   --dv-tabs-and-actions-container-background-color: var(--panel-strip-bg);
-  --dv-tabs-and-actions-container-height: 36px;
+  --dv-tabs-and-actions-container-height: 26px;
   --dv-icon-hover-background-color: var(--color-hover);
   --dv-tabs-container-scrollbar-color: var(--color-text-muted);
   /* The fill paints the shown tab, so every tab state is transparent. */
@@ -29,8 +29,8 @@
   --dv-active-sash-color: var(--color-panel-accent);
   --dv-drag-over-background-color: color-mix(in srgb, var(--color-panel-accent) 12%, transparent);
   --dv-drag-over-border-color: var(--color-panel-accent);
-  --dv-tab-font-size: 12.5px;
-  --dv-tabs-and-actions-container-font-size: 12.5px;
+  --dv-tab-font-size: 11.5px;
+  --dv-tabs-and-actions-container-font-size: 11.5px;
   background-color: var(--panel-shell-bg);
 }
 
@@ -43,24 +43,24 @@
   background-color: var(--panel-shell-bg);
 }
 
-/* Cards on the shell: 3px around each group's view makes a 6px gutter. The card owns the only border. */
+/* Flush panels: 1px around each group's view leaves a thin shell-coloured divider, as in an NLE. */
 .hf-dock .dv-view:has(> .dv-groupview) {
   box-sizing: border-box;
-  padding: 3px;
+  padding: 1px;
 }
 
 .hf-dock .dv-groupview {
-  border: 1px solid var(--panel-card-border);
-  border-radius: 10px;
+  border: 0;
+  border-radius: 0;
 }
 
 .hf-dock .dv-tabs-and-actions-container {
   align-items: flex-end;
-  padding: 6px 0 0 4px;
+  padding: 0;
 }
 
 .hf-dock .dv-scrollable {
-  height: 30px;
+  height: 26px;
   min-width: 0;
 }
 
@@ -97,9 +97,9 @@
   z-index: 1;
   display: flex;
   align-items: center;
-  height: 30px;
-  padding: 0 6px;
-  border-radius: 6px 6px 0 0;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 0;
   white-space: nowrap;
 }
 
@@ -125,8 +125,8 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 30px;
-  border-radius: 6px 6px 0 0;
+  height: 26px;
+  border-radius: 0;
   background-color: var(--panel-card-bg);
   pointer-events: none;
 }

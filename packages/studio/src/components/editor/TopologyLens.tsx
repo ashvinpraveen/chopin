@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from "react";
 import { studioEditLifecycle } from "../../webmcp/writeCoordinator";
-import { HyperframesMark } from "../ui/HyperframesMark";
+import { ChopinMark } from "../ui/ChopinMark";
 import { measureTopologyLensGeometry, type TopologyLensGeometry } from "./topologyLensGeometry";
 import { reduceTopologyLens, type TopologyLensState } from "./topologyLensState";
 
@@ -158,7 +158,7 @@ export function TopologyLens({ iframeRef, activeCompositionPath }: TopologyLensP
               style={rectStyle(geometry.field.rect)}
             >
               {state.phase === "sealing" && (
-                <HyperframesMark
+                <ChopinMark
                   data-topology-seal={state.receiptStage}
                   className="hf-topology-seal absolute right-2 top-2 h-7 w-11 overflow-visible"
                   viewBox="0 18 100 64"

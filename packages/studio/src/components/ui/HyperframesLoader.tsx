@@ -1,4 +1,4 @@
-import { HyperframesMark } from "./HyperframesMark";
+import { ChopinMark } from "./ChopinMark";
 
 export interface HyperframesLoaderProps {
   /** Status text shown below the mark. */
@@ -33,7 +33,7 @@ export function HyperframesLoader({
         style={{ width: markFrameSize, height: markFrameSize }}
         draggable={false}
       >
-        <HyperframesMark className="hf-loader-mark" width={size} height={size} />
+        <ChopinMark className="hf-loader-mark" width={size} height={size} />
       </div>
       <div className="hf-loader-title">{title}</div>
       {detail && <div className="hf-loader-detail">{detail}</div>}

@@ -10,14 +10,14 @@
    * keeps a dark scheme in both. Text clears 4.5:1 and icons 3:1 on every surface below. */
 
   /* Surfaces: the app shell first, menus and popovers last. */
-  --color-bg-0: light-dark(oklch(0.955 0.005 70), oklch(0.235 0.007 70));
+  --color-bg-0: light-dark(oklch(0.955 0.005 70), oklch(0.205 0.002 260));
   --color-bg-1: var(--color-bg-0);
   --color-bg-2: var(--color-surface);
-  --color-input: light-dark(oklch(1 0 70), oklch(0.25 0.007 70));
-  --color-surface: light-dark(oklch(0.987 0.005 70), oklch(0.265 0.007 70));
+  --color-input: light-dark(oklch(1 0 70), oklch(0.225 0.002 260));
+  --color-surface: light-dark(oklch(0.987 0.005 70), oklch(0.255 0.002 260));
   --color-surface-alt: var(--color-surface);
   /* Menus, popovers and tooltips. */
-  --color-raised: light-dark(oklch(1 0 70), oklch(0.295 0.007 70));
+  --color-raised: light-dark(oklch(1 0 70), oklch(0.305 0.002 260));
 
   /* States, washes of the brightest text so they work on any surface. `on` is a toggle that is on. */
   --color-hover: light-dark(
@@ -50,26 +50,26 @@
   --color-border-input: var(--color-border-strong);
 
   /* Text: primary, secondary, muted (4.5:1), and off (3:1, disabled controls only). */
-  --color-text-0: light-dark(oklch(0.205 0.003 70), oklch(0.965 0.004 70));
+  --color-text-0: light-dark(oklch(0.205 0.003 70), oklch(0.92 0.002 260));
   --color-text-1: var(--color-text-0);
   --color-text-body: var(--color-text-0);
-  --color-text-2: light-dark(oklch(0.403 0.003 70), oklch(0.908 0.004 70));
+  --color-text-2: light-dark(oklch(0.403 0.003 70), oklch(0.84 0.002 260));
   --color-text-3: var(--color-text-2);
-  --color-text-muted: light-dark(oklch(0.503 0.003 70), oklch(0.777 0.004 70));
+  --color-text-muted: light-dark(oklch(0.503 0.003 70), oklch(0.72 0.002 260));
   --color-text-4: var(--color-text-muted);
   --color-text-5: var(--color-text-muted);
-  --color-text-off: light-dark(oklch(0.597 0.003 70), oklch(0.67 0.004 70));
+  --color-text-off: light-dark(oklch(0.597 0.003 70), oklch(0.62 0.002 260));
 
   /* Roles. Selection and playhead are reserved and differ from the accent so a
    * selected clip, the playhead and an accented control stay tellable apart.
    * `accent-ink` is accent text on a surface; `on-accent` is text on an accent fill. */
-  --color-accent: light-dark(oklch(0.536 0.114 164), oklch(0.82 0.159 164));
-  --color-accent-hover: light-dark(oklch(0.486 0.103 164), oklch(0.87 0.159 164));
-  --color-on-accent: light-dark(oklch(1 0 0), oklch(0.2 0.043 164));
-  --color-accent-ink: light-dark(oklch(0.45 0.096 164), oklch(0.827 0.159 164));
+  --color-accent: light-dark(oklch(0.56 0.15 50), oklch(0.74 0.15 55));
+  --color-accent-hover: light-dark(oklch(0.5 0.14 50), oklch(0.8 0.15 55));
+  --color-on-accent: light-dark(oklch(1 0 0), oklch(0.2 0.04 55));
+  --color-accent-ink: light-dark(oklch(0.46 0.13 50), oklch(0.78 0.14 55));
   --color-ring: var(--color-accent-ink);
   --color-selection: light-dark(oklch(0.5 0.13 240), #4ba3d2);
-  --color-playhead: var(--color-text-0);
+  --color-playhead: light-dark(oklch(0.55 0.22 27), oklch(0.66 0.22 27));
   --color-danger: oklch(0.56 0.19 25);
   --color-danger-ink: light-dark(oklch(0.45 0.17 25), oklch(0.791 0.12 25));
   --color-warning-ink: light-dark(oklch(0.5 0.12 70), oklch(82.8% 0.189 84.429));
@@ -87,18 +87,18 @@
   --color-code-comment: light-dark(oklch(0.48 0.009 279), oklch(0.806 0.03 262));
   --color-code-string: light-dark(oklch(0.468 0.142 143), oklch(0.793 0.11 133));
 
-  /* The two stops of the HeyGen brand gradient, worn by the header logo. Fixed brand values
+  /* The two stops of the Chopin brand gradient, worn by the header logo. Fixed brand values
    * rather than roles, so they are not reachable as a background or text colour by mistake. */
-  --color-brand-gradient-from: #06e3fa;
-  --color-brand-gradient-to: #4fdb5e;
+  --color-brand-gradient-from: rgb(242 153 74);
+  --color-brand-gradient-to: rgb(242 201 76);
 
   /* The timeline's own surfaces and inks, named so a host can theme the timeline alone. */
   --timeline-shell-bg: var(--color-surface);
   --timeline-shell-border: var(--color-border);
   --timeline-ruler-border: color-mix(in oklab, var(--color-text-0) 16%, transparent);
-  --timeline-row-bg: light-dark(oklch(0.997 0.002 70), oklch(0.275 0.007 70));
+  --timeline-row-bg: light-dark(oklch(0.997 0.002 70), oklch(0.265 0.002 260));
   --timeline-row-border: color-mix(in oklab, var(--color-text-0) 6%, transparent);
-  --timeline-gutter-bg: light-dark(oklch(0.967 0.005 70), oklch(0.253 0.007 70));
+  --timeline-gutter-bg: light-dark(oklch(0.967 0.005 70), oklch(0.235 0.002 260));
   --timeline-gutter-border: color-mix(in oklab, var(--color-text-0) 10%, transparent);
   --timeline-text-primary: var(--color-text-0);
   --timeline-text-secondary: var(--color-text-2);
@@ -107,27 +107,27 @@
   --timeline-tick-minor: color-mix(in oklab, var(--color-text-0) 6%, transparent);
   --timeline-clip-bg: light-dark(
     color-mix(in oklab, var(--color-text-0) 12%, transparent),
-    color-mix(in oklab, var(--color-text-0) 13%, transparent)
+    oklch(0.4 0.06 245)
   );
-  --timeline-clip-label-active: light-dark(#0b3d2c, rgba(232, 255, 247, 0.95));
+  --timeline-clip-label-active: light-dark(#0b3d2c, rgba(240, 245, 252, 0.95));
   --timeline-clip-label-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
   /* Audio clips are a solid fill that carries white ink in both themes. */
-  --timeline-clip-audio-bg: oklch(0.45 0.12 300);
-  --timeline-clip-audio-border: oklch(0.37 0.12 300);
-  --timeline-clip-audio-bg-hover: oklch(0.49 0.12 300);
-  --timeline-clip-audio-bg-dragging: oklch(0.42 0.12 300 / 0.96);
+  --timeline-clip-audio-bg: oklch(0.42 0.08 160);
+  --timeline-clip-audio-border: oklch(0.34 0.07 160);
+  --timeline-clip-audio-bg-hover: oklch(0.46 0.08 160);
+  --timeline-clip-audio-bg-dragging: oklch(0.4 0.08 160 / 0.96);
   --timeline-clip-audio-muted-bg: rgb(72, 74, 78);
   --timeline-clip-selection: light-dark(#0f766e, rgba(255, 255, 255, 0.85));
   --timeline-clip-selection-highlight: rgb(255 255 255 / 0.55);
-  --timeline-clip-radius: 12px;
+  --timeline-clip-radius: 3px;
   --timeline-clip-band-height: 15px;
   --timeline-clip-band-bg: rgb(12 12 14);
   --timeline-clip-hover-duration: 60ms;
-  --timeline-clip-audio-radius: 21px;
+  --timeline-clip-audio-radius: 3px;
   --timeline-clip-highlight: rgb(255 255 255 / 0.08);
   --timeline-clip-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
   --timeline-clip-chip-bg: rgba(15, 22, 18, 0.73);
-  --timeline-clip-chip-audio-bg: rgba(25, 16, 38, 0.7);
+  --timeline-clip-chip-audio-bg: rgba(12, 28, 20, 0.7);
   --timeline-clip-chip-text: #ffffff;
   --timeline-shortcut-bg: color-mix(in oklab, var(--color-raised) 94%, transparent);
   /* Composition and text clips draw their frame as it is, like video filmstrips; a host may dim them. */
@@ -149,9 +149,9 @@
   /* A text clip's strip behind its live words: dark for light text, light for dark text. */
   --timeline-text-clip-dark-bg: #1c2028;
   --timeline-text-clip-light-bg: #e9e6df;
-  --timeline-waveform-bar-rgb: 245, 237, 255;
+  --timeline-waveform-bar-rgb: 225, 245, 232;
   --timeline-waveform-muted-rgb: 236, 238, 242;
-  --timeline-waveform-baseline-rgb: 226, 216, 238;
+  --timeline-waveform-baseline-rgb: 200, 225, 210;
   --timeline-waveform-error: repeating-linear-gradient(
     90deg,
     rgba(245, 237, 255, 0.35) 0 2px,
@@ -161,12 +161,12 @@
   --timeline-clip-bg-active: color-mix(in oklab, var(--color-accent) 20%, transparent);
   --timeline-clip-bg-hover: light-dark(
     color-mix(in oklab, var(--color-text-0) 26%, transparent),
-    color-mix(in oklab, var(--color-text-0) 16%, transparent)
+    oklch(0.45 0.07 245)
   );
   --timeline-clip-bg-dragging: color-mix(in oklab, var(--color-raised) 96%, transparent);
   --timeline-clip-border: light-dark(
     color-mix(in oklab, var(--color-text-0) 40%, transparent),
-    color-mix(in oklab, var(--color-text-0) 30%, transparent)
+    oklch(0.52 0.07 245)
   );
   --timeline-clip-border-hover: color-mix(in oklab, var(--color-accent) 75%, transparent);
   --timeline-clip-border-active: light-dark(
@@ -224,7 +224,7 @@
     color-mix(in oklab, var(--color-text-0) 16%, transparent),
     rgba(0, 0, 0, 0.4)
   );
-  --timeline-playhead-glow: color-mix(in oklab, var(--color-accent) 14%, transparent);
+  --timeline-playhead-glow: color-mix(in oklab, var(--color-playhead) 14%, transparent);
   --timeline-playhead-shadow: light-dark(
     color-mix(in oklab, var(--color-text-0) 20%, transparent),
     rgba(0, 0, 0, 0.55)
@@ -238,9 +238,9 @@
 
   /* -------------------------------------------------------------- geometry */
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.1875rem;
+  --radius-lg: 0.25rem;
 
   /* The one radius every push-button wears, named by its role so a button does
    * not have to know which step of the scale it sits on. */
@@ -248,9 +248,9 @@
 
   /* Control heights: 24, 28 and 32 px. `--spacing-*` gives `h-ctl`, `min-h-ctl`
    * and friends. */
-  --spacing-ctl-sm: 24px;
-  --spacing-ctl: 28px;
-  --spacing-ctl-lg: 32px;
+  --spacing-ctl-sm: 22px;
+  --spacing-ctl: 24px;
+  --spacing-ctl-lg: 28px;
 
   /* ------------------------------------------------------------------ type */
 
@@ -285,7 +285,7 @@
   /* The primary button reads as a raised key rather than a floating panel: a tight
    * contact shadow, a soft ambient one, and an inner top highlight. */
   --shadow-btn-primary:
-    0 1px 2px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.35), inset 0 1px 0 rgb(255 255 255 / 0.65);
+    0 1px 2px rgb(0 0 0 / 0.5);
 
   /* ---------------------------------------------------------------- motion */
 

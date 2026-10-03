@@ -161,7 +161,7 @@ export const PLAYER_STYLES = /* css */ `
     width: 100%;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #06e3fa, #4fdb5e);
+    background: linear-gradient(90deg, rgb(242 153 74), rgb(242 201 76));
     transform: scaleX(0);
     transform-origin: left center;
     transition: transform 160ms ease;

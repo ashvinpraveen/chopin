@@ -564,7 +564,7 @@
   transform: scaleX(0);
   transform-origin: left center;
   border-radius: inherit;
-  background: linear-gradient(90deg, #06e3fa, #4fdb5e);
+  background: linear-gradient(90deg, var(--color-brand-gradient-from), var(--color-brand-gradient-to));
   transition: transform 160ms ease;
 }
 

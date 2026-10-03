@@ -6,7 +6,7 @@ import { trackStudioEvent } from "../utils/studioTelemetry";
 import { Button, buttonBase, buttonSizes, buttonVariants, cn, Tooltip } from "./ui";
 import { Dock } from "./dock/Dock";
 import { InspectorIcon } from "./icons/InspectorIcon";
-import { HyperframesLogo } from "./ui/HyperframesLogo";
+import { ChopinLogo } from "./ui/ChopinLogo";
 import { ShowThemeToggle, ThemeToggle } from "./ThemeToggle";
 
 interface StudioHeaderProps {
@@ -52,15 +52,14 @@ export const StudioHeader = memo(function StudioHeader({
   const ffmpegMissing = renderQueue.ffmpegMissing;
 
   return (
-    <div className="flex items-center justify-between h-10 px-3 bg-surface border-b border-border-strong shrink-0">
+    <div className="relative flex items-center justify-between h-8 px-2 bg-bg-0 border-b border-border-strong shrink-0">
       {/* Left: logo + project name */}
       <div className="flex items-center gap-3">
-        <HyperframesLogo />
-        <span className="text-text-5 select-none" aria-hidden="true">
-          |
-        </span>
-        <span className="text-step-11 font-medium text-text-1">{projectId}</span>
+        <ChopinLogo />
       </div>
+      <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-step-12 font-medium text-text-2 select-none">
+        {projectId}
+      </span>
       {/* Right: toolbar buttons */}
       <div className="flex items-center gap-3">
         <div className="flex h-ctl items-center divide-x divide-border-strong overflow-hidden rounded-md border border-border-strong bg-bg-2">

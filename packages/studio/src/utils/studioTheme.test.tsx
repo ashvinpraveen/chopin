@@ -44,9 +44,9 @@ describe("Studio's theme", () => {
     expect(boots()).toBe(savedStudioTheme());
   });
 
-  it("opens light the first time", () => {
-    expect(boots()).toBe("light");
-    expect(savedStudioTheme()).toBe("light");
+  it("opens dark the first time", () => {
+    expect(boots()).toBe("dark");
+    expect(savedStudioTheme()).toBe("dark");
   });
 
   it("runs the boot script before the app's module", () => {

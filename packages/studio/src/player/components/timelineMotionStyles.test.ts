@@ -44,7 +44,7 @@ describe("timeline motion styles", () => {
     ["--timeline-border-strong", "color-mix(in oklab, var(--color-text-0) 20%, transparent)"],
     ["--timeline-group-member-tint", "color-mix(in oklab, var(--color-text-0) 3.5%, transparent)"],
     ["--timeline-overlay-text", "var(--color-text-2)"],
-    ["--timeline-playhead-glow", "color-mix(in oklab, var(--color-accent) 14%, transparent)"],
+    ["--timeline-playhead-glow", "color-mix(in oklab, var(--color-playhead) 14%, transparent)"],
   ])("keeps the migrated default for %s", (token, expected) => {
     expect(themeTokenValue(token)).toBe(expected);
   });
@@ -91,12 +91,12 @@ describe("timeline motion styles", () => {
     expect(timelineClipTimecodeRule).toContain("color: var(--timeline-tick-text)");
     expect(themeCss).toContain("--timeline-clip-label-shadow: 0 1px 2px rgba(0, 0, 0, 0.85)");
     expect(themeCss).toContain("--timeline-clip-selection-highlight: rgb(255 255 255 / 0.55)");
-    expect(themeCss).toContain("--timeline-clip-radius: 12px");
-    expect(themeCss).toContain("--timeline-clip-audio-radius: 21px");
+    expect(themeCss).toContain("--timeline-clip-radius: 3px");
+    expect(themeCss).toContain("--timeline-clip-audio-radius: 3px");
     expect(themeCss).toContain("--timeline-clip-highlight: rgb(255 255 255 / 0.08)");
     expect(themeCss).toContain("--timeline-clip-shadow: 0 2px 6px rgb(0 0 0 / 0.3)");
     expect(themeCss).toContain("--timeline-clip-chip-bg: rgba(15, 22, 18, 0.73)");
-    expect(themeCss).toContain("--timeline-clip-chip-audio-bg: rgba(25, 16, 38, 0.7)");
+    expect(themeCss).toContain("--timeline-clip-chip-audio-bg: rgba(12, 28, 20, 0.7)");
     expect(themeCss).toContain("--timeline-clip-chip-text: #ffffff");
     expect(themeCss).toContain("--timeline-clip-shadow: 0 2px 6px rgb(0 0 0 / 0.12)");
     expect(audioClipRule).toContain("background-color: var(--timeline-clip-audio-bg)");
