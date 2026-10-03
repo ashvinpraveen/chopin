@@ -169,6 +169,31 @@ describe("external file change coordinator", () => {
     expect(onAcceptedPersistedFileChange).toHaveBeenLastCalledWith("index.html", null);
   });
 
+  it("keeps a head edit's thumbnail refresh through a conflict that a later write replaces", async () => {
+    const onAcceptedPersistedFileChange = vi.fn();
+    const conflict = new StudioFileConflictError({
+      filePath: "index.html",
+      currentVersion: "v1",
+      currentContent: "theirs",
+      attemptedContent: "mine",
+    });
+    const { captured } = await mountCoordinator({
+      onAcceptedPersistedFileChange,
+      drainPendingChanges: async () => ({ status: "conflict" as const, error: conflict }),
+    });
+    await act(async () => handler?.({ path: "index.html", content: "head", version: "v1" }));
+    await act(async () =>
+      handler?.({
+        path: "index.html",
+        content: "body",
+        version: "v2",
+        affectedCompositions: ["index.html"],
+      }),
+    );
+    await act(async () => captured.handle?.useExternalFile());
+    expect(onAcceptedPersistedFileChange).toHaveBeenLastCalledWith("index.html", null);
+  });
+
   it("does not refresh the tree for a suppressed self-write echo", async () => {
     const refreshFileTree = vi.fn();
     await mountCoordinator({ refreshFileTree });
