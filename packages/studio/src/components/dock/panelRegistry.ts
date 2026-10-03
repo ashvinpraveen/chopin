@@ -3,8 +3,8 @@ import type { Direction } from "dockview-react";
 export const PANEL_IDS = [
   "preview",
   "timeline",
-  "compositions",
   "assets",
+  "compositions",
   "code",
   "catalog",
   "design",
@@ -28,7 +28,7 @@ export interface PanelDefinition {
 
 export const PANEL_DEFINITIONS = {
   preview: {
-    title: "Preview",
+    title: "Viewer",
     zone: "center",
     reopen: { near: "timeline", direction: "above" },
     keepMounted: true,
@@ -39,21 +39,25 @@ export const PANEL_DEFINITIONS = {
     reopen: { near: "preview", direction: "below" },
     keepMounted: true,
   },
+  assets: { title: "Media Pool", zone: "left", reopen: { near: "preview", direction: "left" } },
   compositions: {
-    title: "Compositions",
+    title: "Timelines",
     zone: "left",
-    reopen: { near: "preview", direction: "left" },
+    reopen: { near: "assets", direction: "within" },
   },
-  assets: { title: "Assets", zone: "left", reopen: { near: "compositions", direction: "within" } },
-  code: { title: "Code", zone: "left", reopen: { near: "compositions", direction: "within" } },
+  code: { title: "Code", zone: "left", reopen: { near: "assets", direction: "within" } },
   catalog: {
-    title: "Catalog",
+    title: "Effects",
     zone: "left",
-    reopen: { near: "compositions", direction: "within" },
+    reopen: { near: "assets", direction: "within" },
   },
-  design: { title: "Design", zone: "right", reopen: { near: "preview", direction: "right" } },
-  layers: { title: "Layers", zone: "right", reopen: { near: "design", direction: "within" } },
-  renders: { title: "Renders", zone: "right", reopen: { near: "design", direction: "within" } },
+  design: { title: "Inspector", zone: "right", reopen: { near: "preview", direction: "right" } },
+  layers: { title: "Edit Index", zone: "right", reopen: { near: "design", direction: "within" } },
+  renders: {
+    title: "Render Queue",
+    zone: "right",
+    reopen: { near: "design", direction: "within" },
+  },
   variables: { title: "Variables", zone: "right", reopen: { near: "design", direction: "within" } },
   slideshow: { title: "Slideshow", zone: "right", reopen: { near: "design", direction: "within" } },
 } as const satisfies Record<PanelId, PanelDefinition>;

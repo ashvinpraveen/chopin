@@ -215,6 +215,14 @@ function authoredCompositionId(node: Element): string | null {
   );
 }
 
+function decodeAssetFilename(name: string): string {
+  try {
+    return decodeURIComponent(name);
+  } catch {
+    return name;
+  }
+}
+
 function buildTimelineClipLabel(node: Element, kind: RuntimeTimelineClip["kind"], ordinal: number) {
   const explicit =
     node.getAttribute("data-timeline-label") ??
@@ -222,6 +230,11 @@ function buildTimelineClipLabel(node: Element, kind: RuntimeTimelineClip["kind"]
     node.getAttribute("aria-label") ??
     null;
   if (explicit?.trim()) return explicit.trim();
+
+  if (kind === "video" || kind === "audio" || kind === "image") {
+    const fileName = filenameFromAssetUrl(resolveNodeAssetUrl(node));
+    if (fileName) return decodeAssetFilename(fileName);
+  }
 
   const compositionId = authoredCompositionId(node);
   if (compositionId) return humanizeTimelineToken(compositionId);

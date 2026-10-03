@@ -29,8 +29,8 @@
   --dv-active-sash-color: var(--color-panel-accent);
   --dv-drag-over-background-color: color-mix(in srgb, var(--color-panel-accent) 12%, transparent);
   --dv-drag-over-border-color: var(--color-panel-accent);
-  --dv-tab-font-size: 11.5px;
-  --dv-tabs-and-actions-container-font-size: 11.5px;
+  --dv-tab-font-size: 10.5px;
+  --dv-tabs-and-actions-container-font-size: 10.5px;
   background-color: var(--panel-shell-bg);
 }
 

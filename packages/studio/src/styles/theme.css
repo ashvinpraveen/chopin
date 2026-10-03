@@ -50,15 +50,15 @@
   --color-border-input: var(--color-border-strong);
 
   /* Text: primary, secondary, muted (4.5:1), and off (3:1, disabled controls only). */
-  --color-text-0: light-dark(oklch(0.205 0.003 70), oklch(0.92 0.002 260));
+  --color-text-0: light-dark(oklch(0.205 0.003 70), oklch(0.82 0.002 260));
   --color-text-1: var(--color-text-0);
   --color-text-body: var(--color-text-0);
-  --color-text-2: light-dark(oklch(0.403 0.003 70), oklch(0.84 0.002 260));
+  --color-text-2: light-dark(oklch(0.403 0.003 70), oklch(0.75 0.002 260));
   --color-text-3: var(--color-text-2);
-  --color-text-muted: light-dark(oklch(0.503 0.003 70), oklch(0.72 0.002 260));
+  --color-text-muted: light-dark(oklch(0.503 0.003 70), oklch(0.68 0.002 260));
   --color-text-4: var(--color-text-muted);
   --color-text-5: var(--color-text-muted);
-  --color-text-off: light-dark(oklch(0.597 0.003 70), oklch(0.62 0.002 260));
+  --color-text-off: light-dark(oklch(0.597 0.003 70), oklch(0.58 0.002 260));
 
   /* Roles. Selection and playhead are reserved and differ from the accent so a
    * selected clip, the playhead and an accented control stay tellable apart.
@@ -257,17 +257,17 @@
   /* Dense UI type sizes named by pixel value. `step` avoids a clash with
    * Tailwind's own `--text-*` scale, whose `xs`, `sm` and `lg` are unchanged. */
   --text-step-7: 7px;
-  --text-step-8: 8px;
-  --text-step-9: 9px;
-  --text-step-10: 10px;
-  --text-step-11: 11px;
-  --text-step-12: 12px;
-  --text-step-13: 13px;
-  --text-step-14: 14px;
-  --text-step-15: 15px;
-  --text-step-16: 16px;
-  --text-step-17: 17px;
-  --text-step-18: 18px;
+  --text-step-8: 7.5px;
+  --text-step-9: 8px;
+  --text-step-10: 9px;
+  --text-step-11: 10px;
+  --text-step-12: 11px;
+  --text-step-13: 12px;
+  --text-step-14: 13px;
+  --text-step-15: 14px;
+  --text-step-16: 15px;
+  --text-step-17: 16px;
+  --text-step-18: 17px;
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "IBM Plex Mono", "SF Mono", "Fira Code", monospace;

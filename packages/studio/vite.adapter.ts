@@ -134,7 +134,7 @@ export function createViteAdapter(
   let _producerModuleLoader:
     | (() => Promise<{
         createRenderJob: (config: {
-          fps: 24 | 30 | 60;
+          fps: number;
           quality: "draft" | "standard" | "high";
           format: string;
           renderBodyScripts?: string[];

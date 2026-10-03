@@ -657,6 +657,61 @@ describe("collectRuntimeTimelinePayload", () => {
     expect(result.clips[0].label).toBe("Hero Shot");
   });
 
+  it.each([
+    ["video", "my clip_01.mp4", "my%20clip_01.mp4"],
+    ["audio", "talk_audio.m4a", "talk_audio.m4a"],
+    ["img", "logo.png", "logo.png"],
+  ])("labels a %s clip with its file name, not its id", (tag, label, src) => {
+    const root = document.createElement("div");
+    root.setAttribute("data-composition-id", "main");
+    root.setAttribute("data-duration", "10");
+    document.body.appendChild(root);
+
+    const clip = document.createElement(tag);
+    clip.id = "cut-a";
+    clip.setAttribute("src", `./media/${src}`);
+    clip.setAttribute("data-start", "0");
+    clip.setAttribute("data-duration", "5");
+    root.appendChild(clip);
+
+    const result = collectRuntimeTimelinePayload(defaultParams);
+    expect(result.clips[0].label).toBe(label);
+  });
+
+  it("lets an explicit label beat the media file name", () => {
+    const root = document.createElement("div");
+    root.setAttribute("data-composition-id", "main");
+    root.setAttribute("data-duration", "10");
+    document.body.appendChild(root);
+
+    const clip = document.createElement("video");
+    clip.id = "cut-a";
+    clip.setAttribute("src", "./media/talk.mp4");
+    clip.setAttribute("data-label", "Opening bite");
+    clip.setAttribute("data-start", "0");
+    clip.setAttribute("data-duration", "5");
+    root.appendChild(clip);
+
+    const result = collectRuntimeTimelinePayload(defaultParams);
+    expect(result.clips[0].label).toBe("Opening bite");
+  });
+
+  it("keeps the id label for a non-media clip", () => {
+    const root = document.createElement("div");
+    root.setAttribute("data-composition-id", "main");
+    root.setAttribute("data-duration", "10");
+    document.body.appendChild(root);
+
+    const clip = document.createElement("div");
+    clip.id = "lower-third";
+    clip.setAttribute("data-start", "0");
+    clip.setAttribute("data-duration", "5");
+    root.appendChild(clip);
+
+    const result = collectRuntimeTimelinePayload(defaultParams);
+    expect(result.clips[0].label).toBe("Lower Third");
+  });
+
   it("uses a friendly label and null id for anonymous clips", () => {
     const root = document.createElement("div");
     root.setAttribute("data-composition-id", "main");

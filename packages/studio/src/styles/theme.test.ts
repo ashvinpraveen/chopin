@@ -101,8 +101,23 @@ describe("studio theme", () => {
     );
     const vars = rootVariables(css);
 
+    // Chopin runs one step smaller than upstream, flooring at 7px.
+    const sizes: Record<number, string> = {
+      7: "7px",
+      8: "7.5px",
+      9: "8px",
+      10: "9px",
+      11: "10px",
+      12: "11px",
+      13: "12px",
+      14: "13px",
+      15: "14px",
+      16: "15px",
+      17: "16px",
+      18: "17px",
+    };
     for (const step of steps) {
-      expect(vars.get(`--text-step-${step}`)).toBe(`${step}px`);
+      expect(vars.get(`--text-step-${step}`)).toBe(sizes[step]);
       expect(css).toContain(`.text-step-${step} {`);
     }
     expect(vars.get("--text-xs")).toBe("0.75rem");

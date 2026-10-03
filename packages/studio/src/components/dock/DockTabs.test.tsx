@@ -116,11 +116,18 @@ async function activate(id: PanelId) {
 
 describe("dock tabs", () => {
   it("draw the type icon and close glyph on the shown tab only", () => {
-    for (const id of ["design", "compositions"] as const) {
+    for (const id of ["design", "assets"] as const) {
       expect(shows(id, "icon")).toBe(true);
       expect(shows(id, "close")).toBe(true);
     }
-    for (const id of ["layers", "renders", "variables", "assets", "code", "catalog"] as const) {
+    for (const id of [
+      "layers",
+      "renders",
+      "variables",
+      "compositions",
+      "code",
+      "catalog",
+    ] as const) {
       expect(shows(id, "icon")).toBe(false);
       expect(shows(id, "close")).toBe(false);
     }
@@ -135,7 +142,7 @@ describe("dock tabs", () => {
 
   it("name the close control after the panel, and close only that panel", async () => {
     const close = tab("design")?.querySelector<HTMLElement>(".hf-dock-tab-close");
-    expect(close?.getAttribute("aria-label")).toBe("Close Design");
+    expect(close?.getAttribute("aria-label")).toBe("Close Inspector");
     await act(async () => close?.click());
     expect(useDockLayoutStore.getState().openPanels.has("design")).toBe(false);
     expect(useDockLayoutStore.getState().openPanels.has("layers")).toBe(true);

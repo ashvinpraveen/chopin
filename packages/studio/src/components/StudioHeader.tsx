@@ -153,7 +153,7 @@ export const StudioHeader = memo(function StudioHeader({
         <Tooltip
           label={
             ffmpegMissing
-              ? "FFmpeg is not installed. Opens the Renders panel with the install command."
+              ? "FFmpeg is not installed. Opens the Render Queue panel with the install command."
               : isRendering
                 ? "A render is already in progress"
                 : "Render and export this composition"

@@ -90,8 +90,8 @@ export const DEFAULT_SHORTCUT_SECTIONS: readonly ShortcutSection[] = [
   {
     title: "Panels",
     hints: [
-      { key: "⌘1", label: "Compositions tab" },
-      { key: "⌘2", label: "Assets tab" },
+      { key: "⌘1", label: "Media Pool tab" },
+      { key: "⌘2", label: "Timelines tab" },
     ],
   },
   {

@@ -1,9 +1,12 @@
 const RENDER_SETTINGS_KEY = "hf-studio-render-settings";
 
+export const RENDER_FPS_VALUES = [24, 25, 30, 50, 60] as const;
+export type RenderFps = (typeof RENDER_FPS_VALUES)[number];
+
 export interface PersistedRenderSettings {
   format: "mp4" | "webm" | "mov";
   quality: "draft" | "standard" | "high";
-  fps: 24 | 30 | 60;
+  fps: RenderFps;
 }
 
 export function getPersistedRenderSettings(): PersistedRenderSettings {
@@ -16,7 +19,7 @@ export function getPersistedRenderSettings(): PersistedRenderSettings {
         quality: ["draft", "standard", "high"].includes(parsed.quality)
           ? parsed.quality
           : "standard",
-        fps: [24, 30, 60].includes(parsed.fps) ? parsed.fps : 30,
+        fps: (RENDER_FPS_VALUES as readonly number[]).includes(parsed.fps) ? parsed.fps : 30,
       };
     }
   } catch {

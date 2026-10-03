@@ -192,7 +192,7 @@ export function ImageFillField({
           </div>
         ) : (
           <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-900/50 px-3 py-3 text-[11px] leading-5 text-neutral-500">
-            No image assets yet. Upload one here and Studio will also add it to the Assets tab.
+            No image assets yet. Upload one here and Studio will also add it to the Media Pool tab.
           </div>
         )}
       </div>

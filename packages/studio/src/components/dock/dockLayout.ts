@@ -8,7 +8,7 @@ const MIN_TIMELINE_H = 100;
 const MIN_SIDE_W = 200;
 const MIN_SIDE_W_FLOOR = 120;
 const DEFAULT_TIMELINE_H = 360;
-const DEFAULT_LEFT = ["compositions", "assets", "code", "catalog"] as const;
+const DEFAULT_LEFT = ["assets", "compositions", "code", "catalog"] as const;
 const DEFAULT_RIGHT = ["design", "layers", "renders", "variables"] as const;
 
 /** Preferred side widths; when they overflow the preview's floor the right yields first, then the left. */

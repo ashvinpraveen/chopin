@@ -73,7 +73,7 @@ const FOLLOW_UPS: readonly FollowUpQuestion[] = [
     prompt: "What would you cut from Studio?",
     placeholder: "The part you never use",
     presets: [
-      { label: "Layers panel", hint: "The layer tree on the right" },
+      { label: "Edit Index panel", hint: "The layer tree on the right" },
       { label: "Variables panel", hint: "Composition variables on the right" },
       { label: "Blocks browser", hint: "The block library in the sidebar" },
       { label: "Caption editing", hint: "Editing caption words and presets in Studio" },

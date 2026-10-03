@@ -104,12 +104,12 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-// The default Edit layout tabs [compositions|assets|code|catalog] into one
+// The default Edit layout tabs [assets|compositions|code|catalog] into one
 // group and [design|layers|renders|variables] into another; dockview shows
 // only the active tab's content per group. `slideshow` is never part of the
 // default build — StudioRightPanels opens it itself when the file is one.
 const DEFAULT_OPEN = PANEL_IDS.filter((id) => id !== "slideshow");
-const DEFAULT_VISIBLE = ["preview", "timeline", "compositions", "design"];
+const DEFAULT_VISIBLE = ["preview", "timeline", "assets", "design"];
 
 describe("Dock on React 19", () => {
   it("mounts the default layout's ten panels, showing only each group's active tab", () => {
@@ -175,9 +175,9 @@ describe("Dock on React 19", () => {
     const { closePanel, togglePanel } = useDockLayoutStore.getState();
     for (const id of ["compositions", "assets", "code", "catalog"] as const)
       act(() => closePanel(id));
-    act(() => togglePanel("compositions"));
-    expect(useDockLayoutStore.getState().openPanels.has("compositions")).toBe(true);
-    expect(useDockLayoutStore.getState().visiblePanels.has("compositions")).toBe(true);
+    act(() => togglePanel("assets"));
+    expect(useDockLayoutStore.getState().openPanels.has("assets")).toBe(true);
+    expect(useDockLayoutStore.getState().visiblePanels.has("assets")).toBe(true);
   });
 
   it("reopens a panel whose usual neighbour is only closed exactly as before: no new position", () => {
@@ -186,8 +186,8 @@ describe("Dock on React 19", () => {
     for (const id of ["compositions", "assets", "code", "catalog"] as const)
       act(() => closePanel(id));
     addRegisteredPanel.mockClear();
-    act(() => togglePanel("assets"));
-    expect(addRegisteredPanel).toHaveBeenCalledWith(expect.anything(), "assets", undefined);
+    act(() => togglePanel("compositions"));
+    expect(addRegisteredPanel).toHaveBeenCalledWith(expect.anything(), "compositions", undefined);
   });
 
   it("reopens the timeline as its own group, never as a tab of the preview", () => {
@@ -269,7 +269,7 @@ describe("a host's dock", () => {
     const menu = [...host.querySelectorAll("button")].find((b) => b.textContent === "Window");
     act(() => menu?.click());
     const items = [...host.querySelectorAll('[role="menuitemcheckbox"]')].map((i) => i.textContent);
-    expect(items).toEqual(["✓Preview", "✓Timeline", "✓Assets", "✓Renders"]);
+    expect(items).toEqual(["✓Viewer", "✓Timeline", "✓Media Pool", "✓Render Queue"]);
   });
 
   it("keeps its layout alone under its own key, never in Studio's preferences", () => {

@@ -135,7 +135,7 @@ describe("dock tab strips", () => {
       sash.dispatchEvent(onSash);
       press(tab, "ArrowRight", init);
       expect(onSash.defaultPrevented).toBe(false);
-      expect(active()).toBe("compositions");
+      expect(active()).toBe("assets");
     }
     expect(widthOf("compositions")).toBe(left);
   });
@@ -145,14 +145,14 @@ describe("dock tab strips", () => {
     const active = () => api.getPanel("compositions")?.group.activePanel?.id;
     (tabs[0] as HTMLElement).focus();
     press(tabs[0] as HTMLElement, "ArrowRight");
-    expect(active()).toBe("assets");
+    expect(active()).toBe("compositions");
     expect(document.activeElement).toBe(tabs[1]);
     press(tabs[1] as HTMLElement, "ArrowLeft");
     press(tabs[0] as HTMLElement, "ArrowLeft");
     expect(active()).toBe("catalog");
     expect(document.activeElement).toBe(tabs[3]);
     press(tabs[3] as HTMLElement, "ArrowRight");
-    expect(active()).toBe("compositions");
+    expect(active()).toBe("assets");
   });
 
   it("jump to the first and last tab with Home and End", () => {

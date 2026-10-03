@@ -10,7 +10,11 @@ import { Select, type SelectOption } from "../ui/Select";
 import { Tooltip } from "../ui/Tooltip";
 import { resolveFloatingPanelPosition, type FloatingPosition } from "../editor/floatingPanel";
 import type { RenderJob, ResolutionPreset } from "./useRenderQueue";
-import { getPersistedRenderSettings, persistRenderSettings } from "./renderSettings";
+import {
+  getPersistedRenderSettings,
+  persistRenderSettings,
+  type RenderFps,
+} from "./renderSettings";
 import { trackStudioEvent } from "../../utils/studioTelemetry";
 
 export interface CompositionDimensions {
@@ -22,7 +26,7 @@ export type StartRenderHandler = (
   format: "mp4" | "webm" | "mov",
   quality: "draft" | "standard" | "high",
   resolution: ResolutionPreset | "auto",
-  fps: 24 | 30 | 60,
+  fps: RenderFps,
 ) => void | Promise<void>;
 
 export interface RenderQueueProps {
@@ -272,7 +276,9 @@ const QUALITY_OPTIONS: SelectOption[] = [
 
 const FPS_OPTIONS: SelectOption[] = [
   { value: "24", label: "24 fps" },
+  { value: "25", label: "25 fps (PAL)" },
   { value: "30", label: "30 fps" },
+  { value: "50", label: "50 fps (PAL)" },
   { value: "60", label: "60 fps" },
 ];
 
@@ -302,7 +308,7 @@ function FormatExportButton({
   const [format, setFormat] = useState<"mp4" | "webm" | "mov">(persisted.format);
   const [quality, setQuality] = useState<"draft" | "standard" | "high">(persisted.quality);
   const [resolution, setResolution] = useState<RenderScale>("auto");
-  const [fps, setFps] = useState<24 | 30 | 60>(persisted.fps);
+  const [fps, setFps] = useState<RenderFps>(persisted.fps);
 
   // Only a definite "not installed" blocks Export. A null status means the
   // probe gave no answer, and refusing to export on no answer would break
@@ -362,7 +368,7 @@ function FormatExportButton({
             options={FPS_OPTIONS}
             disabled={isRendering}
             onCommit={(next) => {
-              const v = Number(next) as 24 | 30 | 60;
+              const v = Number(next) as RenderFps;
               setFps(v);
               persistRenderSettings(format, quality, v);
             }}

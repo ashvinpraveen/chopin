@@ -84,14 +84,14 @@ export function dispatchModifierKey(
 
   if (event.key === "1") {
     event.preventDefault();
-    trackStudioEvent("keyboard_shortcut", { action: "tab_compositions" });
-    useDockLayoutStore.getState().activatePanel("compositions");
+    trackStudioEvent("keyboard_shortcut", { action: "tab_assets" });
+    useDockLayoutStore.getState().activatePanel("assets");
     return true;
   }
   if (event.key === "2") {
     event.preventDefault();
-    trackStudioEvent("keyboard_shortcut", { action: "tab_assets" });
-    useDockLayoutStore.getState().activatePanel("assets");
+    trackStudioEvent("keyboard_shortcut", { action: "tab_compositions" });
+    useDockLayoutStore.getState().activatePanel("compositions");
     return true;
   }
 
