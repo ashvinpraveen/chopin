@@ -527,8 +527,10 @@
 }
 
 /* Quiet, monochrome mark: the accent dot goes grey too. */
-.hf-loader-mark circle:last-child {
-  fill: currentColor;
+/* The loader shows the mark in monochrome: the accent half becomes a dimmer grey. */
+.hf-loader-mark path:nth-of-type(2) {
+  stroke: currentColor;
+  stroke-opacity: 0.55;
 }
 
 .hf-loader-mark {

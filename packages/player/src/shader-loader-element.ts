@@ -56,7 +56,9 @@ export function createShaderLoader(): ShaderLoaderElements {
   markFrame.draggable = false;
   markFrame.innerHTML = [
     '<svg width="24" height="24" viewBox="0 0 100 100" fill="none" aria-hidden="true" draggable="false">',
-    '<circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="9"/>',
+    '<path d="M45 14.4 A36 36 0 0 0 45 85.6" stroke="currentColor" stroke-width="10"/>',
+    '<path d="M55 14.4 A36 36 0 0 1 55 85.6" stroke="currentColor" stroke-opacity="0.55" stroke-width="10"/>',
+    '<line x1="50" y1="5" x2="50" y2="95" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',
     "</svg>",
   ].join("");
 

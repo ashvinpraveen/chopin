@@ -1,9 +1,9 @@
 import type { SVGProps } from "react";
 
 /**
- * Chopin's mark: an open ring with a solid note-head resting inside it. Built
- * only from circles and drawn in `currentColor` (the dot in the accent), so it
- * stands on its own in dark and light with no container behind it.
+ * Chopin's mark: a ring cut at the playhead. The half already played is drawn
+ * in `currentColor`, the half still to come in the accent, and the playhead
+ * runs through the cut. No container, so it stands on its own in dark and light.
  */
 export function ChopinMark({ viewBox = "0 0 100 100", ...props }: SVGProps<SVGSVGElement>) {
   return (
@@ -14,8 +14,17 @@ export function ChopinMark({ viewBox = "0 0 100 100", ...props }: SVGProps<SVGSV
       aria-hidden="true"
       {...props}
     >
-      <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" />
-      <circle cx="61" cy="61" r="15" fill="var(--color-accent)" />
+      <path d="M45 14.4 A36 36 0 0 0 45 85.6" stroke="currentColor" strokeWidth="10" />
+      <path d="M55 14.4 A36 36 0 0 1 55 85.6" stroke="var(--color-accent)" strokeWidth="10" />
+      <line
+        x1="50"
+        y1="5"
+        x2="50"
+        y2="95"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

@@ -160,8 +160,7 @@ export function TopologyLens({ iframeRef, activeCompositionPath }: TopologyLensP
               {state.phase === "sealing" && (
                 <ChopinMark
                   data-topology-seal={state.receiptStage}
-                  className="hf-topology-seal absolute right-2 top-2 h-7 w-11 overflow-visible"
-                  viewBox="0 18 100 64"
+                  className="hf-topology-seal absolute right-2 top-2 h-7 w-7 overflow-visible"
                 />
               )}
             </div>
