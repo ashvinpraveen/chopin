@@ -5,7 +5,7 @@ import { useContextMenuDismiss } from "../hooks/useContextMenuDismiss";
 import { useMenuKeyboardNav } from "../player/components/menuKeyboardNav";
 import { useLinkedClipPreferences } from "../utils/linkedClipPreferences";
 import { Tooltip } from "./ui";
-import { flatActive, flatIdle } from "./timelineToolbarStyles";
+import { flatModeOn, flatOff } from "./timelineToolbarStyles";
 
 function SyncIndicatorMenu({ x, y, onClose }: { x: number; y: number; onClose: () => void }) {
   const menuRef = useContextMenuDismiss(onClose);
@@ -62,7 +62,7 @@ export function LinkedSelectionToggle() {
           }}
           aria-label="Linked Selection"
           aria-pressed={linkedSelection}
-          className={linkedSelection ? flatActive : flatIdle}
+          className={linkedSelection ? flatModeOn : flatOff}
         >
           <LinkSimple size={16} weight="bold" aria-hidden="true" />
         </button>

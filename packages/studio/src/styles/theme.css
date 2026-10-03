@@ -284,8 +284,7 @@
 
   /* The primary button reads as a raised key rather than a floating panel: a tight
    * contact shadow, a soft ambient one, and an inner top highlight. */
-  --shadow-btn-primary:
-    0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-btn-primary: 0 1px 2px rgb(0 0 0 / 0.5);
 
   /* ---------------------------------------------------------------- motion */
 

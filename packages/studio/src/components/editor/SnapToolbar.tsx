@@ -89,7 +89,7 @@ export const SnapToolbar = memo(function SnapToolbar() {
           className={`rounded-md p-1.5 transition-colors active:scale-[0.95] ${
             motionPathArmed
               ? "bg-black/40 text-white"
-              : "bg-black/40 text-white/55 hover:text-white/80"
+              : "bg-black/40 text-white/35 hover:text-white/70"
           }`}
           onClick={() => setMotionPathArmed(!motionPathArmed)}
           title={
@@ -113,7 +113,7 @@ export const SnapToolbar = memo(function SnapToolbar() {
             key={key}
             type="button"
             className={`rounded-md p-1.5 transition-colors active:scale-[0.95] ${
-              visible ? "bg-black/40 text-white" : "bg-black/40 text-white/55 hover:text-white/80"
+              visible ? "bg-black/40 text-white" : "bg-black/40 text-white/35 hover:text-white/70"
             }`}
             onClick={() => {
               toggle();
@@ -131,8 +131,8 @@ export const SnapToolbar = memo(function SnapToolbar() {
         type="button"
         className={`rounded-md p-1.5 transition-colors active:scale-[0.95] ${
           prefs.snapEnabled
-            ? "bg-black/40 text-white"
-            : "bg-black/40 text-white/55 hover:text-white/80"
+            ? "bg-black/40 text-studio-accent"
+            : "bg-black/40 text-white/35 hover:text-white/70"
         }`}
         onClick={toggleSnap}
         title={prefs.snapEnabled ? "Snap enabled (S)" : "Snap disabled (S)"}
@@ -148,7 +148,7 @@ export const SnapToolbar = memo(function SnapToolbar() {
           className={`rounded-md p-1.5 transition-colors active:scale-[0.95] ${
             prefs.gridVisible
               ? "bg-black/40 text-white"
-              : "bg-black/40 text-white/55 hover:text-white/80"
+              : "bg-black/40 text-white/35 hover:text-white/70"
           }`}
           onClick={toggleGrid}
           onContextMenu={(e) => {

@@ -123,7 +123,7 @@ export const StudioHeader = memo(function StudioHeader({
               aria-pressed={inspectorButtonActive}
               className={cn(
                 headerIconBtn,
-                inspectorButtonActive ? "text-text-0" : "text-text-2 hover:text-text-1",
+                inspectorButtonActive ? "text-text-0" : "text-text-off hover:text-text-2",
               )}
               onClick={() => {
                 if (shouldOpenInspector(rightCollapsed, inspectorPanelActive)) {

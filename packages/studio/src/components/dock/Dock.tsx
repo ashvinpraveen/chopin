@@ -287,7 +287,7 @@ function WindowMenu() {
         title="Window"
         onClick={() => setOpen((value) => !value)}
         className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
-          open ? "text-text-0" : "text-text-2 hover:text-text-1"
+          open ? "text-text-0" : "text-text-off hover:text-text-2"
         }`}
       >
         <SquaresFour size={16} aria-hidden="true" />

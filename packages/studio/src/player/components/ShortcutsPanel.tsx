@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useId, useRef, memo } from "react";
 import { formatTime, frameToSeconds } from "../lib/time";
 import { Tooltip } from "../../components/ui";
-import { flatActive, flatIdle } from "../../components/timelineToolbarStyles";
+import { flatActive, flatOff } from "../../components/timelineToolbarStyles";
 import { useContextMenuDismiss } from "../../hooks/useContextMenuDismiss";
 import { usePlayerStore } from "../store/playerStore";
 import { DEFAULT_SHORTCUT_SECTIONS, type ShortcutSection } from "./studioShortcuts";
@@ -78,7 +78,7 @@ export const ShortcutsPanel = memo(function ShortcutsPanel({
           ref={triggerRef}
           type="button"
           onClick={() => setShowShortcuts((v) => !v)}
-          className={showShortcuts ? flatActive : flatIdle}
+          className={showShortcuts ? flatActive : flatOff}
           aria-label="Shortcuts and tools"
           aria-expanded={showShortcuts}
           aria-controls={shortcutsPanelId}

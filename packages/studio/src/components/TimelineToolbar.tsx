@@ -24,7 +24,14 @@ import { usePlayerStore, type TimelineElement } from "../player";
 import { Tooltip } from "./ui";
 import { AudioMetersIcon } from "./icons/AudioMetersIcon";
 import { RippleEditIcon } from "./icons/RippleEditIcon";
-import { flatActive, flatBtn, flatDisabled, flatIdle } from "./timelineToolbarStyles";
+import {
+  flatActive,
+  flatBtn,
+  flatDisabled,
+  flatIdle,
+  flatModeOn,
+  flatOff,
+} from "./timelineToolbarStyles";
 import { TimelineHistoryButtons, type TimelineHistoryButtonsProps } from "./TimelineHistoryButtons";
 import { TimelineToolPicker } from "./TimelineToolPicker";
 import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
@@ -226,7 +233,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               onClick={() => setTimelineSnapEnabled(!timelineSnapEnabled)}
               aria-label="Toggle timeline snapping"
               aria-pressed={timelineSnapEnabled}
-              className={timelineSnapEnabled ? flatActive : flatIdle}
+              className={timelineSnapEnabled ? flatModeOn : flatOff}
             >
               <Magnet size={16} weight="bold" aria-hidden="true" />
             </button>
@@ -243,7 +250,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               onClick={() => setRippleEditEnabled(!rippleEditEnabled)}
               aria-label="Toggle ripple edit"
               aria-pressed={rippleEditEnabled}
-              className={rippleEditEnabled ? flatActive : flatIdle}
+              className={rippleEditEnabled ? flatModeOn : flatOff}
             >
               <RippleEditIcon size={16} />
             </button>
@@ -255,7 +262,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                 onClick={() => setAudioMetersVisible(!audioMetersVisible)}
                 aria-label="Toggle audio meters"
                 aria-pressed={audioMetersVisible}
-                className={audioMetersVisible ? flatActive : flatIdle}
+                className={audioMetersVisible ? flatActive : flatOff}
               >
                 <AudioMetersIcon size={16} />
               </button>
@@ -473,7 +480,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               aria-pressed={thumbnailsVisible}
               onClick={() => setThumbnailMode(thumbnailsVisible ? "hidden" : "adaptive")}
               className={`h-7 px-2 rounded-md text-[11px] font-medium transition-colors ${
-                thumbnailsVisible ? "text-text-0" : "text-text-2 hover:text-text-1"
+                thumbnailsVisible ? "text-text-0" : "text-text-off hover:text-text-2"
               }`}
             >
               <Image size={16} aria-hidden="true" />
@@ -486,7 +493,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               aria-label="Fit timeline to width"
               aria-pressed={zoomMode === "fit"}
               className={`h-7 px-2 rounded-md text-[11px] font-medium transition-colors ${
-                zoomMode === "fit" ? "text-text-0" : "text-text-2 hover:text-text-1"
+                zoomMode === "fit" ? "text-text-0" : "text-text-off hover:text-text-2"
               }`}
             >
               <ArrowsOutLineHorizontal size={16} aria-hidden="true" />
