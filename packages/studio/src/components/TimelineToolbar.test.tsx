@@ -26,7 +26,7 @@ vi.mock("../contexts/StudioContext", () => ({
 afterEach(() => {
   document.body.innerHTML = "";
   usePlayerStore.setState({
-    autoKeyframeEnabled: true,
+    autoKeyframeEnabled: false,
     thumbnailMode: "adaptive",
     zoomMode: "fit",
   });
@@ -50,13 +50,13 @@ function renderToolbar(
 // it must stay visible and usable with nothing selected — it must not be
 // gated behind `domEditSession`/`onToggleKeyframe`.
 describe("TimelineToolbar — auto-keyframe toggle (#1808)", () => {
-  it("renders enabled (pressed) by default with no selection", () => {
+  it("renders off (not pressed) by default with no selection", () => {
     const { host, root } = renderToolbar();
     const btn = host.querySelector<HTMLButtonElement>(
       'button[aria-label="Auto-record manual edits as keyframes"]',
     );
     expect(btn).not.toBeNull();
-    expect(btn?.getAttribute("aria-pressed")).toBe("true");
+    expect(btn?.getAttribute("aria-pressed")).toBe("false");
     act(() => root.unmount());
   });
 
@@ -71,8 +71,8 @@ describe("TimelineToolbar — auto-keyframe toggle (#1808)", () => {
       btn.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     });
 
-    expect(usePlayerStore.getState().autoKeyframeEnabled).toBe(false);
-    expect(btn.getAttribute("aria-pressed")).toBe("false");
+    expect(usePlayerStore.getState().autoKeyframeEnabled).toBe(true);
+    expect(btn.getAttribute("aria-pressed")).toBe("true");
     act(() => root.unmount());
   });
 });
@@ -203,6 +203,7 @@ describe("TimelineToolbar — keyframes on audio tracks", () => {
   });
 
   it("hides both controls for a host without keyframes, turns auto-record off and leaves K alone", () => {
+    act(() => usePlayerStore.setState({ autoKeyframeEnabled: true }));
     const { host, root } = renderToolbar(sessionFor("div"), { showKeyframes: false });
     expect(keyframeControls(host)).toEqual([null, null]);
     expect(usePlayerStore.getState().autoKeyframeEnabled).toBe(false);

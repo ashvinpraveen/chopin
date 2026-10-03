@@ -486,7 +486,7 @@ export const Player = forwardRef<HTMLIFrameElement, PlayerProps>(
         <div ref={containerRef} className="w-full h-full" />
         {showCompositionOverlay && (
           <div
-            className="absolute inset-0 bg-black flex items-center justify-center z-30 select-none"
+            className="absolute inset-0 bg-bg-0 flex items-center justify-center z-30 select-none"
             data-hyperframes-ignore=""
             data-testid="composition-loading-overlay"
             draggable={false}
@@ -494,16 +494,12 @@ export const Player = forwardRef<HTMLIFrameElement, PlayerProps>(
             onMouseDown={(event) => event.preventDefault()}
             onPointerDown={(event) => event.preventDefault()}
           >
-            <HyperframesLoader
-              title="Loading composition"
-              detail="Preparing the Studio preview."
-              size={56}
-            />
+            <HyperframesLoader title="Loading composition…" size={28} />
           </div>
         )}
         {showAssetOverlay && (
           <div
-            className="absolute inset-0 bg-black flex items-center justify-center z-20 select-none"
+            className="absolute inset-0 bg-bg-0 flex items-center justify-center z-20 select-none"
             data-hyperframes-ignore=""
             draggable={false}
             style={{
@@ -515,11 +511,7 @@ export const Player = forwardRef<HTMLIFrameElement, PlayerProps>(
             onMouseDown={(event) => event.preventDefault()}
           >
             <div className="flex flex-col items-center gap-3">
-              <HyperframesLoader
-                title="Preparing preview assets"
-                detail="Waiting for media and motion assets before playback starts."
-                size={56}
-              />
+              <HyperframesLoader title="Loading media…" size={28} />
               {assetWaitLong && (
                 <button
                   type="button"

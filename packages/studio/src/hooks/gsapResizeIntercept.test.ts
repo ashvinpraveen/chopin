@@ -14,7 +14,7 @@ vi.mock("../utils/studioTelemetry", () => ({ trackStudioEvent: vi.fn() }));
 afterEach(() => {
   vi.clearAllMocks();
   vi.restoreAllMocks();
-  usePlayerStore.setState({ currentTime: 0, activeKeyframePct: null });
+  usePlayerStore.setState({ currentTime: 0, activeKeyframePct: null, autoKeyframeEnabled: true });
 });
 
 /**

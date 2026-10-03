@@ -188,10 +188,10 @@ it("classifies the new header controls for the hotkey filters as the old ones we
 it("shows no theme toggle and leaves the host's data-theme alone when embedded", () => {
   document.documentElement.dataset.theme = "host";
   const host = mount();
-  expect(host.querySelector('[aria-label^="Switch to"]')).toBeNull();
+  expect(host.querySelector('[aria-label*="switch to"]')).toBeNull();
   expect(document.documentElement.dataset.theme).toBe("host");
 });
 
 it("shows the theme toggle in Studio's own app", () => {
-  expect(mount({ themeToggle: true }).querySelector('[aria-label^="Switch to"]')).not.toBeNull();
+  expect(mount({ themeToggle: true }).querySelector('[aria-label*="switch to"]')).not.toBeNull();
 });

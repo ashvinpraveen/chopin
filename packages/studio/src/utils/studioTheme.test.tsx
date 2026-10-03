@@ -60,12 +60,12 @@ describe("Studio's theme", () => {
     store("dark");
     const host = mountHost(<ThemeToggle />);
     const button = () => host.querySelector("button")!;
-    expect(button().getAttribute("aria-label")).toBe("Switch to light theme");
+    expect(button().getAttribute("aria-label")).toBe("Dark theme, switch to light");
 
     await act(async () => button().click());
     expect(document.documentElement.dataset.theme).toBe("paper");
     expect(JSON.parse(localStorage.getItem(KEY)!).theme).toBe("light");
-    expect(button().getAttribute("aria-label")).toBe("Switch to dark theme");
+    expect(button().getAttribute("aria-label")).toBe("Light theme, switch to dark");
 
     await act(async () => button().click());
     expect(document.documentElement.dataset.theme).toBeUndefined();
@@ -75,11 +75,15 @@ describe("Studio's theme", () => {
   it("follows the theme on screen, not only its own clicks", async () => {
     store("light");
     const host = mountHost(<ThemeToggle />);
-    expect(host.querySelector("button")!.getAttribute("aria-label")).toBe("Switch to light theme");
+    expect(host.querySelector("button")!.getAttribute("aria-label")).toBe(
+      "Dark theme, switch to light",
+    );
     await act(async () => {
       document.documentElement.dataset.theme = "paper";
     });
-    expect(host.querySelector("button")!.getAttribute("aria-label")).toBe("Switch to dark theme");
+    expect(host.querySelector("button")!.getAttribute("aria-label")).toBe(
+      "Light theme, switch to dark",
+    );
   });
 });
 

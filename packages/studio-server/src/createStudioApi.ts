@@ -17,6 +17,7 @@ import { registerSelectionRoutes } from "./routes/selection.js";
 import { registerMediaRoutes } from "./routes/media.js";
 import { registerGlobalAssetRoutes } from "./routes/globalAssets.js";
 import { registerHistoryRoutes } from "./routes/history.js";
+import { registerFsBrowseRoutes } from "./routes/fsBrowse.js";
 import { replaceWithProjectDirMissing } from "./helpers/projectDirMissing.js";
 import { folderGone, isProjectRootMissing } from "./helpers/safePath.js";
 
@@ -71,6 +72,7 @@ export function createStudioApi(adapter: StudioApiAdapter): Hono {
   registerRegistryRoutes(api, adapter);
   registerGlobalAssetRoutes(api);
   registerHistoryRoutes(api, adapter);
+  registerFsBrowseRoutes(api, adapter);
 
   return api;
 }

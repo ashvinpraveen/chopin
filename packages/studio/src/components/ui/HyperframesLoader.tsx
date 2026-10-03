@@ -17,7 +17,7 @@ export function HyperframesLoader({
   title,
   detail,
   mono,
-  size = 64,
+  size = 28,
   progress,
 }: HyperframesLoaderProps) {
   const boundedProgress =
@@ -56,7 +56,6 @@ export function HyperframesLoader({
   );
 }
 
-// fallow-ignore-next-line unused-export
 export function StatusFrame(props: HyperframesLoaderProps) {
   return (
     <div className="hf-frame">

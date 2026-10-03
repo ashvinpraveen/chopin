@@ -104,7 +104,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-// The default Edit layout tabs [assets|compositions|code|catalog] into one
+// The default Edit layout tabs [assets|storage|compositions|code|catalog] into one
 // group and [design|layers|renders|variables] into another; dockview shows
 // only the active tab's content per group. `slideshow` is never part of the
 // default build — StudioRightPanels opens it itself when the file is one.
@@ -173,7 +173,7 @@ describe("Dock on React 19", () => {
   it("reopens a side panel next to the preview when its whole column was closed", () => {
     mount("p1");
     const { closePanel, togglePanel } = useDockLayoutStore.getState();
-    for (const id of ["compositions", "assets", "code", "catalog"] as const)
+    for (const id of ["compositions", "assets", "storage", "code", "catalog"] as const)
       act(() => closePanel(id));
     act(() => togglePanel("assets"));
     expect(useDockLayoutStore.getState().openPanels.has("assets")).toBe(true);
@@ -183,7 +183,7 @@ describe("Dock on React 19", () => {
   it("reopens a panel whose usual neighbour is only closed exactly as before: no new position", () => {
     mount("p1");
     const { closePanel, togglePanel } = useDockLayoutStore.getState();
-    for (const id of ["compositions", "assets", "code", "catalog"] as const)
+    for (const id of ["compositions", "assets", "storage", "code", "catalog"] as const)
       act(() => closePanel(id));
     addRegisteredPanel.mockClear();
     act(() => togglePanel("compositions"));

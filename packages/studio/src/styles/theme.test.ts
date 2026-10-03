@@ -51,9 +51,7 @@ describe("studio theme", () => {
   it("emits the semantic palette as custom properties and as utilities", async () => {
     const css = await build("studio.css", ["bg-accent", "text-text-2", "border-border"]);
 
-    expect(rootVariables(css).get("--color-accent")).toBe(
-      "light-dark(oklch(0.56 0.15 50), oklch(0.74 0.15 55))",
-    );
+    expect(rootVariables(css).get("--color-accent")).toBe("light-dark(#c4501b, #e8692e)");
     expect(css).toContain(".bg-accent {");
     expect(css).toContain("background-color: var(--color-accent)");
   });

@@ -16,6 +16,7 @@ import {
 import { AudioRow } from "./AudioRow";
 import { GlobalAssetsView } from "./GlobalAssetsView";
 import { AssetCard, FontRow } from "./AssetCard";
+import { FilterMenu, ICON_BUTTON } from "./AssetsFilterMenu";
 
 interface AssetsTabProps {
   projectId: string;
@@ -104,13 +105,16 @@ export function deriveUsedPaths(elements: Array<{ src?: string }>): Set<string> 
 function ImportButton({ importing, onClick }: { importing: boolean; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={importing}
       aria-busy={importing}
-      className="w-full flex items-center justify-center gap-1.5 rounded-md bg-panel-input px-3 py-[7px] text-[11px] font-medium text-panel-text-3 enabled:hover:text-panel-text-1 enabled:active:scale-[0.98] disabled:opacity-60 transition-colors mb-2.5"
+      aria-label={importing ? "Importing" : "Import"}
+      title={importing ? "Importing…" : "Import"}
+      className={ICON_BUTTON}
     >
       {importing ? (
-        <svg className="animate-spin" width="11" height="11" viewBox="0 0 24 24" fill="none">
+        <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none">
           <circle
             className="opacity-25"
             cx="12"
@@ -127,22 +131,21 @@ function ImportButton({ importing, onClick }: { importing: boolean; onClick: () 
         </svg>
       ) : (
         <svg
-          width="11"
-          height="11"
+          width="13"
+          height="13"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2.5"
+          strokeWidth="2.25"
           strokeLinecap="round"
+          aria-hidden="true"
         >
           <path d="M12 5v14M5 12h14" />
         </svg>
       )}
-      {importing ? "Importing…" : "Import media"}
     </button>
   );
 }
-
 /** Empty list body. A query that matched nothing says so and offers a way out;
  *  a genuinely empty project gets the drop hint. */
 function EmptyState({
@@ -339,25 +342,15 @@ export const AssetsTab = memo(function AssetsTab({
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
     >
-      {/* Header — matches design panel Section pattern */}
-      <div className="px-4 pt-2.5 pb-1.5 shrink-0">
-        {/* Scope toggle */}
-        <div className="flex gap-1 mb-2.5 p-0.5 rounded-md bg-panel-input">
-          {(["local", "global"] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => setViewMode(m)}
-              className={`flex-1 px-2 py-1 text-[11px] font-medium rounded transition-colors ${
-                viewMode === m
-                  ? "bg-panel-accent/15 text-accent-ink"
-                  : "text-panel-text-3 hover:text-panel-text-1"
-              }`}
-            >
-              {m === "local" ? "This project" : "All projects"}
-            </button>
-          ))}
-        </div>
-        {/* Import */}
+      {/* Header — one compact row: search, import, filter menu */}
+      <div className="flex items-center gap-1 px-3 pt-2 pb-1.5 shrink-0">
+        <SearchInput
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search"
+          aria-label="Search assets"
+          className="flex-1 min-w-0"
+        />
         {onImport && (
           <>
             <ImportButton importing={importing} onClick={() => fileInputRef.current?.click()} />
@@ -376,75 +369,17 @@ export const AssetsTab = memo(function AssetsTab({
             />
           </>
         )}
-
-        {/* Search — gated on the UNFILTERED pool so it never unmounts itself */}
-        {allMediaAssets.length > 0 && (
-          <SearchInput
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search assets..."
-            aria-label="Search assets"
-            className="mb-2"
-          />
-        )}
-
-        {/* Filter chips */}
-        {viewMode === "local" && allMediaAssets.length > 0 && (
-          <div className="flex gap-1.5 flex-wrap">
-            <button
-              onClick={() => setActiveFilter("all")}
-              aria-pressed={activeFilter === "all"}
-              className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors active:scale-[0.98] ${
-                activeFilter === "all"
-                  ? "bg-panel-accent/15 text-accent-ink"
-                  : "bg-panel-input text-panel-text-3 hover:text-panel-text-1"
-              }`}
-            >
-              All {counts.all}
-            </button>
-            {FILTER_ORDER.map((cat) =>
-              counts[cat] > 0 ? (
-                <button
-                  key={cat}
-                  onClick={() => setActiveFilter(activeFilter === cat ? "all" : cat)}
-                  aria-pressed={activeFilter === cat}
-                  className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors active:scale-[0.98] ${
-                    activeFilter === cat
-                      ? "bg-panel-accent/15 text-accent-ink"
-                      : "bg-panel-input text-panel-text-3 hover:text-panel-text-1"
-                  }`}
-                >
-                  {CATEGORY_LABELS[cat]} {counts[cat]}
-                </button>
-              ) : null,
-            )}
-            {usageCounts.used > 0 && usageCounts.unused > 0 && (
-              <>
-                <span className="w-px self-stretch bg-panel-input mx-0.5" aria-hidden="true" />
-                <button
-                  onClick={() => setUsageFilter(usageFilter === "used" ? "all" : "used")}
-                  className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors ${
-                    usageFilter === "used"
-                      ? "bg-panel-accent/15 text-accent-ink"
-                      : "bg-panel-input text-panel-text-3 hover:text-panel-text-1"
-                  }`}
-                >
-                  In use {usageCounts.used}
-                </button>
-                <button
-                  onClick={() => setUsageFilter(usageFilter === "unused" ? "all" : "unused")}
-                  className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors ${
-                    usageFilter === "unused"
-                      ? "bg-panel-accent/15 text-accent-ink"
-                      : "bg-panel-input text-panel-text-3 hover:text-panel-text-1"
-                  }`}
-                >
-                  Unused {usageCounts.unused}
-                </button>
-              </>
-            )}
-          </div>
-        )}
+        <FilterMenu
+          viewMode={viewMode}
+          onViewMode={setViewMode}
+          activeFilter={activeFilter}
+          onFilter={setActiveFilter}
+          counts={counts}
+          usageFilter={usageFilter}
+          onUsageFilter={setUsageFilter}
+          usageCounts={usageCounts}
+          showKinds={allMediaAssets.length > 0}
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto mt-1">

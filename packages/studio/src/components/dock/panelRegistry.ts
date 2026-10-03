@@ -4,6 +4,7 @@ export const PANEL_IDS = [
   "preview",
   "timeline",
   "assets",
+  "storage",
   "compositions",
   "code",
   "catalog",
@@ -40,6 +41,11 @@ export const PANEL_DEFINITIONS = {
     keepMounted: true,
   },
   assets: { title: "Media Pool", zone: "left", reopen: { near: "preview", direction: "left" } },
+  storage: {
+    title: "Media Storage",
+    zone: "left",
+    reopen: { near: "assets", direction: "within" },
+  },
   compositions: {
     title: "Timelines",
     zone: "left",

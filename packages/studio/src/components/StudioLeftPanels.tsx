@@ -3,6 +3,7 @@ import { SourceEditor } from "./editor/SourceEditor";
 import { FileTree } from "./editor/FileTree";
 import { MediaPreview } from "./MediaPreview";
 import { AssetsTab } from "./sidebar/AssetsTab";
+import { MediaStoragePanel } from "./sidebar/MediaStoragePanel";
 import { BlocksTab, type BlockPreviewInfo } from "./sidebar/BlocksTab";
 import { CompositionsPanel } from "./sidebar/CompositionsPanel";
 import { SidebarLintButton } from "./sidebar/SidebarLintButton";
@@ -64,6 +65,7 @@ export const StudioLeftPanels = memo(function StudioLeftPanels({
     handleMoveFile,
     handleImportFiles,
     handleContentChange,
+    refreshFileTree,
   } = useFileManagerContext();
 
   const handleRenderComposition = useCallback(
@@ -120,6 +122,9 @@ export const StudioLeftPanels = memo(function StudioLeftPanels({
             onAddAssetToTimeline={onAddAssetToTimeline}
           />
         </PanelColumn>
+      </Dock.Panel>
+      <Dock.Panel id="storage">
+        <MediaStoragePanel projectId={projectId} onLinked={() => refreshFileTree()} />
       </Dock.Panel>
       <Dock.Panel id="code">
         <PanelColumn footer={lintButton}>

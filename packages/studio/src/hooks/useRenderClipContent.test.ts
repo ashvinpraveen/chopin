@@ -124,7 +124,7 @@ describe("useRenderClipContent", () => {
     return content;
   }
 
-  it("wraps a clip's waveform in peak marks at its own gain over its played source window", () => {
+  it("renders an audio clip's waveform without peak marks", () => {
     const content = renderRaw({
       id: "voiceover",
       tag: "audio",
@@ -132,18 +132,9 @@ describe("useRenderClipContent", () => {
       duration: 4,
       track: 1,
       src: "assets/voiceover.mp3",
-      playbackStart: 2,
-      playbackRate: 1.5,
       volume: 2,
     });
-    expect(isValidElement(content) && content.type).toBe(ClipPeakMarks);
-    if (isValidElement<Record<string, unknown>>(content)) {
-      expect(content.props).toMatchObject({
-        peaksUrl: "/api/projects/my-project/peaks/assets/voiceover.mp3",
-        sourceWindow: { mediaStart: 2, sourceSpan: 6 },
-        gain: 2,
-      });
-    }
+    expect(isValidElement(content) && content.type).toBe(AudioWaveform);
   });
 
   it("renders audio clips as waveforms even when a composition preview URL is active", () => {

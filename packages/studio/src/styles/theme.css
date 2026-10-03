@@ -10,14 +10,14 @@
    * keeps a dark scheme in both. Text clears 4.5:1 and icons 3:1 on every surface below. */
 
   /* Surfaces: the app shell first, menus and popovers last. */
-  --color-bg-0: light-dark(oklch(0.955 0.005 70), oklch(0.205 0.002 260));
+  --color-bg-0: light-dark(oklch(0.955 0 0), #1e1e1e);
   --color-bg-1: var(--color-bg-0);
   --color-bg-2: var(--color-surface);
-  --color-input: light-dark(oklch(1 0 70), oklch(0.225 0.002 260));
-  --color-surface: light-dark(oklch(0.987 0.005 70), oklch(0.255 0.002 260));
+  --color-input: light-dark(oklch(1 0 0), #1a1a1a);
+  --color-surface: light-dark(oklch(0.985 0 0), #262626);
   --color-surface-alt: var(--color-surface);
   /* Menus, popovers and tooltips. */
-  --color-raised: light-dark(oklch(1 0 70), oklch(0.305 0.002 260));
+  --color-raised: light-dark(oklch(1 0 0), #2d2d2d);
 
   /* States, washes of the brightest text so they work on any surface. `on` is a toggle that is on. */
   --color-hover: light-dark(
@@ -50,26 +50,26 @@
   --color-border-input: var(--color-border-strong);
 
   /* Text: primary, secondary, muted (4.5:1), and off (3:1, disabled controls only). */
-  --color-text-0: light-dark(oklch(0.205 0.003 70), oklch(0.82 0.002 260));
+  --color-text-0: light-dark(oklch(0.205 0 0), #d0d0d0);
   --color-text-1: var(--color-text-0);
   --color-text-body: var(--color-text-0);
-  --color-text-2: light-dark(oklch(0.403 0.003 70), oklch(0.75 0.002 260));
+  --color-text-2: light-dark(oklch(0.403 0 0), oklch(0.77 0 0));
   --color-text-3: var(--color-text-2);
-  --color-text-muted: light-dark(oklch(0.503 0.003 70), oklch(0.68 0.002 260));
+  --color-text-muted: light-dark(oklch(0.503 0 0), oklch(0.69 0 0));
   --color-text-4: var(--color-text-muted);
   --color-text-5: var(--color-text-muted);
-  --color-text-off: light-dark(oklch(0.597 0.003 70), oklch(0.58 0.002 260));
+  --color-text-off: light-dark(oklch(0.597 0 0), #8a8a8a);
 
   /* Roles. Selection and playhead are reserved and differ from the accent so a
    * selected clip, the playhead and an accented control stay tellable apart.
    * `accent-ink` is accent text on a surface; `on-accent` is text on an accent fill. */
-  --color-accent: light-dark(oklch(0.56 0.15 50), oklch(0.74 0.15 55));
-  --color-accent-hover: light-dark(oklch(0.5 0.14 50), oklch(0.8 0.15 55));
-  --color-on-accent: light-dark(oklch(1 0 0), oklch(0.2 0.04 55));
-  --color-accent-ink: light-dark(oklch(0.46 0.13 50), oklch(0.78 0.14 55));
+  --color-accent: light-dark(#c4501b, #e8692e);
+  --color-accent-hover: light-dark(#a9451a, #f07c45);
+  --color-on-accent: light-dark(#ffffff, #1a0d06);
+  --color-accent-ink: light-dark(#a9441a, #f08a5a);
   --color-ring: var(--color-accent-ink);
   --color-selection: light-dark(oklch(0.5 0.13 240), #4ba3d2);
-  --color-playhead: light-dark(oklch(0.55 0.22 27), oklch(0.66 0.22 27));
+  --color-playhead: light-dark(#d63a2c, #e64b3d);
   --color-danger: oklch(0.56 0.19 25);
   --color-danger-ink: light-dark(oklch(0.45 0.17 25), oklch(0.791 0.12 25));
   --color-warning-ink: light-dark(oklch(0.5 0.12 70), oklch(82.8% 0.189 84.429));
@@ -96,9 +96,9 @@
   --timeline-shell-bg: var(--color-surface);
   --timeline-shell-border: var(--color-border);
   --timeline-ruler-border: color-mix(in oklab, var(--color-text-0) 16%, transparent);
-  --timeline-row-bg: light-dark(oklch(0.997 0.002 70), oklch(0.265 0.002 260));
+  --timeline-row-bg: light-dark(oklch(0.997 0 0), #232323);
   --timeline-row-border: color-mix(in oklab, var(--color-text-0) 6%, transparent);
-  --timeline-gutter-bg: light-dark(oklch(0.967 0.005 70), oklch(0.235 0.002 260));
+  --timeline-gutter-bg: light-dark(oklch(0.967 0 0), #1c1c1c);
   --timeline-gutter-border: color-mix(in oklab, var(--color-text-0) 10%, transparent);
   --timeline-text-primary: var(--color-text-0);
   --timeline-text-secondary: var(--color-text-2);
@@ -113,29 +113,26 @@
   --timeline-clip-label-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
   /* Clip kinds, Resolve-style: each kind has a body, a darker name band and a hover body.
    * Every band carries white ink in both themes; bodies sit under thumbnails or waveforms. */
-  --timeline-clip-video-bg: light-dark(oklch(0.66 0.08 250), oklch(0.5 0.085 250));
-  --timeline-clip-video-bg-hover: light-dark(oklch(0.7 0.08 250), oklch(0.55 0.085 250));
-  --timeline-clip-video-band: light-dark(oklch(0.42 0.08 250), oklch(0.34 0.065 250));
-  --timeline-clip-text-bg: light-dark(oklch(0.66 0.08 300), oklch(0.48 0.08 300));
-  --timeline-clip-text-bg-hover: light-dark(oklch(0.7 0.08 300), oklch(0.53 0.08 300));
-  --timeline-clip-text-band: light-dark(oklch(0.42 0.08 300), oklch(0.34 0.065 300));
-  --timeline-clip-image-bg: light-dark(oklch(0.68 0.08 350), oklch(0.49 0.085 350));
-  --timeline-clip-image-bg-hover: light-dark(oklch(0.72 0.08 350), oklch(0.54 0.085 350));
-  --timeline-clip-image-band: light-dark(oklch(0.43 0.08 350), oklch(0.34 0.065 350));
-  --timeline-clip-composition-bg: light-dark(oklch(0.66 0.07 215), oklch(0.48 0.07 215));
-  --timeline-clip-composition-bg-hover: light-dark(oklch(0.7 0.07 215), oklch(0.53 0.07 215));
-  --timeline-clip-composition-band: light-dark(oklch(0.42 0.065 215), oklch(0.33 0.055 215));
-  --timeline-clip-effect-bg: light-dark(oklch(0.68 0.03 290), oklch(0.45 0.03 290));
-  --timeline-clip-effect-bg-hover: light-dark(oklch(0.72 0.03 290), oklch(0.5 0.03 290));
-  --timeline-clip-effect-band: light-dark(oklch(0.42 0.03 290), oklch(0.32 0.025 290));
-  /* Audio: a deep mint-teal body with the waveform in a light tint of the same hue. */
-  --timeline-clip-audio-bg: light-dark(oklch(0.48 0.07 168), oklch(0.36 0.06 168));
-  --timeline-clip-audio-border: light-dark(oklch(0.4 0.065 168), oklch(0.3 0.05 168));
-  --timeline-clip-audio-bg-hover: light-dark(oklch(0.52 0.07 168), oklch(0.4 0.06 168));
-  --timeline-clip-audio-bg-dragging: light-dark(
-    oklch(0.46 0.07 168 / 0.96),
-    oklch(0.34 0.06 168 / 0.96)
-  );
+  --timeline-clip-video-bg: light-dark(#6c9be0, #4e86ce);
+  --timeline-clip-video-bg-hover: light-dark(#82abe6, #6c9be0);
+  --timeline-clip-video-band: light-dark(#3c6db0, #3c6db0);
+  --timeline-clip-text-bg: light-dark(#a57ade, #8e5bd0);
+  --timeline-clip-text-bg-hover: light-dark(#b48ee4, #a173da);
+  --timeline-clip-text-band: light-dark(#7446b3, #7446b3);
+  --timeline-clip-image-bg: light-dark(#d474a6, #c4568e);
+  --timeline-clip-image-bg-hover: light-dark(#dc8ab4, #d06c9f);
+  --timeline-clip-image-band: light-dark(#a3416f, #a3416f);
+  --timeline-clip-composition-bg: light-dark(#d9a25c, #c98b3c);
+  --timeline-clip-composition-bg-hover: light-dark(#e0b073, #d69c52);
+  --timeline-clip-composition-band: light-dark(#a86f27, #a86f27);
+  --timeline-clip-effect-bg: light-dark(#5cb2b2, #3e9c9c);
+  --timeline-clip-effect-bg-hover: light-dark(#72bebe, #52adad);
+  --timeline-clip-effect-band: light-dark(#2f7d7d, #2f7d7d);
+  /* Audio: a fresh green body with the waveform in a light green. */
+  --timeline-clip-audio-bg: light-dark(#5cb066, #4fa35a);
+  --timeline-clip-audio-border: light-dark(#3c8746, #3c8746);
+  --timeline-clip-audio-bg-hover: light-dark(#6cbd75, #5fb36a);
+  --timeline-clip-audio-bg-dragging: light-dark(rgb(92 176 102 / 0.96), rgb(79 163 90 / 0.96));
   --timeline-clip-audio-muted-bg: rgb(72, 74, 78);
   --timeline-clip-selection: light-dark(#0f766e, rgba(255, 255, 255, 0.85));
   --timeline-clip-selection-highlight: rgb(255 255 255 / 0.55);
@@ -169,9 +166,9 @@
   /* A text clip's strip behind its live words: dark for light text, light for dark text. */
   --timeline-text-clip-dark-bg: #1c2028;
   --timeline-text-clip-light-bg: #e9e6df;
-  --timeline-waveform-bar-rgb: 156, 222, 198;
+  --timeline-waveform-bar-rgb: 182, 240, 168;
   --timeline-waveform-muted-rgb: 176, 180, 186;
-  --timeline-waveform-baseline-rgb: 104, 168, 146;
+  --timeline-waveform-baseline-rgb: 130, 200, 120;
   --timeline-waveform-error: repeating-linear-gradient(
     90deg,
     rgba(245, 237, 255, 0.35) 0 2px,

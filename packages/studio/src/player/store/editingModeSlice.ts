@@ -39,7 +39,7 @@ export function createEditingModeSlice(
     setMotionPathArmed: (armed) => set({ motionPathArmed: armed }),
     motionPathCreateAvailable: false,
     setMotionPathCreateAvailable: (available) => set({ motionPathCreateAvailable: available }),
-    autoKeyframeEnabled: true,
+    autoKeyframeEnabled: false,
     setAutoKeyframeEnabled: (enabled) => set({ autoKeyframeEnabled: enabled }),
   };
 }

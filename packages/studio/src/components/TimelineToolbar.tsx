@@ -5,6 +5,7 @@ import {
   Magnet,
   MagnifyingGlassMinus,
   MagnifyingGlassPlus,
+  Record,
 } from "@phosphor-icons/react";
 import {
   useEnableKeyframes,
@@ -348,26 +349,14 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                   onClick={() => setAutoKeyframeEnabled(!autoKeyframeEnabled)}
                   aria-label="Auto-record manual edits as keyframes"
                   aria-pressed={autoKeyframeEnabled}
-                  className={`${flatBtn} active:scale-[0.98] hover:bg-hover ${
-                    autoKeyframeEnabled
-                      ? "text-danger-ink"
-                      : "text-neutral-600 hover:text-neutral-400"
-                  }`}
+                  className={autoKeyframeEnabled ? flatModeOn : flatOff}
                 >
-                  <svg width="16" height="16" viewBox="0 0 10 10" fill="none">
-                    {/* Same diamond outline as the Add-keyframe icon, with a
-                      record-style dot inside: filled = auto-recording,
-                      hollow = manual edits won't be keyframed. */}
-                    <path d="M5 0.7L9.3 5L5 9.3L0.7 5Z" stroke="currentColor" strokeWidth="1" />
-                    <circle
-                      cx="5"
-                      cy="5"
-                      r="1.8"
-                      fill={autoKeyframeEnabled ? "currentColor" : "none"}
-                      stroke="currentColor"
-                      strokeWidth="1"
-                    />
-                  </svg>
+                  {/* A record button, so it never reads as the keyframe diamond beside it. */}
+                  <Record
+                    size={16}
+                    weight={autoKeyframeEnabled ? "fill" : "regular"}
+                    aria-hidden="true"
+                  />
                 </button>
               </Tooltip>
             </>
