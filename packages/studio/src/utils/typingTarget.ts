@@ -26,8 +26,9 @@ export function ownsPlainKeys(target: EventTarget | null): boolean {
   return isTypingTarget(target) || asElement(target)?.closest(KEY_OWNING_CONTROLS) != null;
 }
 
-// A slider steps and a native player seeks and plays with these keys themselves.
-const KEY_OWNING_CONTROLS = "[role='slider'],video[controls],audio[controls]";
+// A slider steps and a native player seeks and plays with these keys themselves, and so
+// does the source viewer (Space, J/K/L, I/O, arrows act on the source clip, not the timeline).
+const KEY_OWNING_CONTROLS = "[role='slider'],video[controls],audio[controls],[data-source-viewer]";
 
 /**
  * Things a keystroke belongs to rather than to a shortcut. `contenteditable` is

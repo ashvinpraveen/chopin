@@ -27,10 +27,20 @@ export async function serveHlsProxy(
   const facts = await probeAssetCodec(file, undefined, probeCache);
   if (!facts?.heavy) return c.text("media proxy unavailable: not a heavy source", 422);
 
+  return respondHls(c, projectDir, file, basename(subPath));
+}
+
+/** The playlist (no `seg` query) or segment `seg` of `file`'s HLS proxy. */
+export async function respondHls(
+  c: Context,
+  projectDir: string,
+  file: string,
+  segmentUri: string | ((index: number) => string),
+): Promise<Response> {
   const seg = c.req.query("seg");
   try {
     if (seg === undefined) {
-      const playlist = await hlsPlaylist(projectDir, file, basename(subPath));
+      const playlist = await hlsPlaylist(projectDir, file, segmentUri);
       return new Response(playlist, {
         headers: {
           "Content-Type": "application/vnd.apple.mpegurl",

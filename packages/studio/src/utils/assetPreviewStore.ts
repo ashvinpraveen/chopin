@@ -13,21 +13,41 @@
  * switches — EditorShell isn't keyed by projectId).
  */
 import { create } from "zustand";
+import { NO_MARKS, type SourceMarks } from "./sourceMarks";
 
 interface AssetPreviewState {
-  /** Project-relative asset path currently being previewed, or null. */
+  /** Asset being previewed: project-relative, or an absolute path when `previewExternal`. */
   previewAsset: string | null;
+  /** True when `previewAsset` is a file outside the project (opened from Media Storage). */
+  previewExternal: boolean;
   /** projectId for which the preview was opened (used to build the serve URL). */
   previewProjectId: string | null;
-  /** Open a media preview for the given asset. */
+  /** Source viewer in/out marks per previewed path, kept for the session. */
+  marks: Record<string, SourceMarks>;
+  /** Open a media preview for the given project asset. */
   setPreviewAsset: (asset: string, projectId: string) => void;
-  /** Close the preview overlay. */
+  /** Open a file outside the project (absolute path) in the source viewer. */
+  setPreviewExternal: (absolutePath: string, projectId: string) => void;
+  setMarks: (path: string, marks: SourceMarks) => void;
+  /** Close the preview overlay. Marks are kept. */
   clearPreviewAsset: () => void;
 }
 
 export const useAssetPreviewStore = create<AssetPreviewState>((set) => ({
   previewAsset: null,
+  previewExternal: false,
   previewProjectId: null,
-  setPreviewAsset: (asset, projectId) => set({ previewAsset: asset, previewProjectId: projectId }),
-  clearPreviewAsset: () => set({ previewAsset: null, previewProjectId: null }),
+  marks: {},
+  setPreviewAsset: (asset, projectId) =>
+    set({ previewAsset: asset, previewExternal: false, previewProjectId: projectId }),
+  setPreviewExternal: (absolutePath, projectId) =>
+    set({ previewAsset: absolutePath, previewExternal: true, previewProjectId: projectId }),
+  setMarks: (path, marks) => set((state) => ({ marks: { ...state.marks, [path]: marks } })),
+  clearPreviewAsset: () =>
+    set({ previewAsset: null, previewExternal: false, previewProjectId: null }),
 }));
+
+/** Marks of `path`, or none. */
+export function marksFor(path: string | null): SourceMarks {
+  return (path && useAssetPreviewStore.getState().marks[path]) || NO_MARKS;
+}

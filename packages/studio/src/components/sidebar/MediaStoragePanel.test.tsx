@@ -4,6 +4,7 @@ import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanupMounted, mountHost } from "../ui/mountHost.testHelpers";
 import { breadcrumbs, formatBytes, MediaStoragePanel } from "./MediaStoragePanel";
+import { useAssetPreviewStore } from "../../utils/assetPreviewStore";
 
 afterEach(() => {
   cleanupMounted();
@@ -14,6 +15,7 @@ const LISTINGS: Record<string, unknown[]> = {
   "/Users/me": [{ name: "Footage", path: "/Users/me/Footage", kind: "dir", size: 0, mtime: 0 }],
   "/Users/me/Footage": [
     { name: "a.mov", path: "/Users/me/Footage/a.mov", kind: "video", size: 2048, mtime: 0 },
+    { name: "aM01.XML", path: "/Users/me/Footage/aM01.XML", kind: "other", size: 10, mtime: 0 },
   ],
 };
 
@@ -52,10 +54,22 @@ describe("MediaStoragePanel", () => {
     act(() => rows()[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true })));
     await flush();
     await flush();
-    expect(rows()[0]?.textContent).toContain("a.mov");
-    expect(rows()[0]?.textContent).toContain("2.0 KB");
+    // The XML sidecar is hidden until "Show all files"; the clip is a grid card.
+    expect(rows().map((r) => r.textContent)).toEqual(["a.mov"]);
+    expect(rows()[0]?.dataset.kind).toBe("video");
+    act(() => host.querySelector<HTMLElement>('[aria-label="Show all files"]')?.click());
+    expect(rows().map((r) => r.textContent)).toEqual(["aM01.XML10 B", "a.mov"]);
 
+    // A single click opens the clip in the source viewer.
+    act(() => rows()[1]?.click());
+    expect(useAssetPreviewStore.getState()).toMatchObject({
+      previewAsset: "/Users/me/Footage/a.mov",
+      previewExternal: true,
+    });
     act(() => rows()[0]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true })));
+    expect(fetchMock.mock.calls.some(([u]) => u.endsWith("/media/link"))).toBe(false);
+
+    act(() => rows()[1]?.dispatchEvent(new MouseEvent("dblclick", { bubbles: true })));
     await flush();
     await flush();
     const linkCall = fetchMock.mock.calls.find(([u]) => u.endsWith("/media/link"));

@@ -29,6 +29,8 @@ import { commitTimelineCompositionInsertion } from "../utils/timelineComposition
 import { extendRootDurationInSource } from "../utils/rootDuration";
 import { deriveTimelineStoreKeyForDomId } from "../player/lib/timelineElementHelpers";
 import { selectAndRevealTimelineElement } from "../player/components/timelineDropReveal";
+import { resolveDropAsset } from "../utils/sourceViewerDrag";
+import { useSourceEditOps } from "./useSourceEditOps";
 
 /** The first uploaded file opens the new track (if asked); each next one aims right after the previous. */
 function fileDropPlacement(
@@ -60,6 +62,7 @@ function timelineDropTarget(
   };
 }
 
+// fallow-ignore-next-line code-duplication
 interface UseTimelineAssetDropOpsOptions {
   projectIdRef: MutableRefObject<string | null>;
   activeCompPath: string | null;
@@ -97,6 +100,7 @@ export function useTimelineAssetDropOps({
       placement: TimelineDropPlacement,
       durationOverride?: number,
       gesture: DropGesture = { placed: [], onNewTrack: false },
+      mediaStart?: number,
     ): Promise<TimelineElement | undefined> => {
       if (isRecordingRef?.current) {
         showToast("Cannot edit timeline while recording", "error");
@@ -167,6 +171,7 @@ export function useTimelineAssetDropOps({
                 track,
                 zIndex: newElementZIndex,
                 hasAudio,
+                mediaStart,
                 geometry: fitTimelineAssetGeometry(
                   null,
                   resolveTimelineAssetCompositionSize(originalContent),
@@ -221,10 +226,30 @@ export function useTimelineAssetDropOps({
 
   const handleTimelineAssetDrop = useCallback(
     async (assetPath: string, placement: TimelineDropPlacement, durationOverride?: number) => {
-      await dropAssetAt(assetPath, placement, durationOverride);
+      const pid = projectIdRef.current;
+      if (!pid) return;
+      // Media Storage files are linked in first; a source viewer drag brings its marked range.
+      const asset = await resolveDropAsset(pid, assetPath).catch((error: unknown) => {
+        showToast(error instanceof Error ? error.message : "Could not add this file.");
+        return null;
+      });
+      if (!asset) return;
+      const duration = asset.duration ?? durationOverride;
+      await dropAssetAt(asset.path, placement, duration, undefined, asset.mediaStart);
     },
-    [dropAssetAt],
+    [dropAssetAt, projectIdRef, showToast],
   );
+  useSourceEditOps({
+    projectIdRef,
+    activeCompPath,
+    showToast,
+    writeProjectFile,
+    recordEdit,
+    reloadPreview,
+    isRecordingRef,
+    forceReloadSdkSession,
+    checkEditable,
+  });
 
   // fallow-ignore-next-line complexity
   const handleTimelineFileDrop = useCallback(

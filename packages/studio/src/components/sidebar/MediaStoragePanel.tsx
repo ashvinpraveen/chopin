@@ -1,18 +1,26 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { File, FilmStrip, Folder, Image, MusicNote, Plus, type Icon } from "@phosphor-icons/react";
+import {
+  File,
+  FileDashed,
+  FilmStrip,
+  Folder,
+  Image,
+  MusicNote,
+  Plus,
+  type Icon,
+} from "@phosphor-icons/react";
 import { Select } from "../ui/Select";
 import { Tooltip } from "../ui/Tooltip";
-import { buildProjectApiPath } from "../../utils/projectRouting";
-
-type StorageEntryKind = "dir" | "video" | "audio" | "image" | "other";
-
-interface StorageEntry {
-  name: string;
-  path: string;
-  kind: StorageEntryKind;
-  size: number;
-  mtime: number;
-}
+import { useAssetPreviewStore } from "../../utils/assetPreviewStore";
+import { linkExternalMedia } from "../../utils/sourceMediaApi";
+import { sourceViewerBridge } from "../../utils/sourceViewerDrag";
+import { MediaStorageGrid } from "./MediaStorageGrid";
+import {
+  isMediaEntry as isMedia,
+  partitionStorageEntries,
+  type StorageEntry,
+  type StorageEntryKind,
+} from "./mediaStorageEntries";
 
 interface StorageRoot {
   name: string;
@@ -47,10 +55,6 @@ export function breadcrumbs(path: string): { name: string; path: string }[] {
   return crumbs;
 }
 
-function isMedia(entry: StorageEntry): boolean {
-  return entry.kind === "video" || entry.kind === "audio" || entry.kind === "image";
-}
-
 interface MediaStoragePanelProps {
   projectId: string;
   /** Called after a file is linked into the project, with its project-relative path. */
@@ -69,6 +73,17 @@ export const MediaStoragePanel = memo(function MediaStoragePanel({
   const [selected, setSelected] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [linking, setLinking] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const openInSourceViewer = useAssetPreviewStore((s) => s.setPreviewExternal);
+
+  // Linking from anywhere (a timeline drop, a source viewer edit) refreshes the Media Pool.
+  useEffect(() => {
+    const refresh = () => void onLinked?.("");
+    sourceViewerBridge.onLinked = refresh;
+    return () => {
+      if (sourceViewerBridge.onLinked === refresh) sourceViewerBridge.onLinked = null;
+    };
+  }, [onLinked]);
 
   useEffect(() => {
     let cancelled = false;
@@ -118,20 +133,11 @@ export const MediaStoragePanel = memo(function MediaStoragePanel({
       if (!isMedia(entry) || linking) return;
       setLinking(true);
       try {
-        const res = await fetch(buildProjectApiPath(projectId, "media/link"), {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ source: entry.path }),
-        });
-        const data = (await res.json().catch(() => ({}))) as { path?: string; error?: string };
-        if (!res.ok || !data.path) {
-          setStatus(data.error ?? `Could not add ${entry.name}`);
-          return;
-        }
-        setStatus(`Linked ${entry.name} as ${data.path}`);
-        await onLinked?.(data.path);
-      } catch {
-        setStatus(`Could not add ${entry.name}`);
+        const path = await linkExternalMedia(projectId, entry.path);
+        setStatus(`Linked ${entry.name} as ${path}`);
+        await onLinked?.(path);
+      } catch (error) {
+        setStatus(error instanceof Error ? error.message : `Could not add ${entry.name}`);
       } finally {
         setLinking(false);
       }
@@ -144,7 +150,16 @@ export const MediaStoragePanel = memo(function MediaStoragePanel({
     else void link(entry);
   };
 
+  const preview = useCallback(
+    (entry: StorageEntry) => {
+      setSelected(entry.path);
+      openInSourceViewer(entry.path, projectId);
+    },
+    [openInSourceViewer, projectId],
+  );
+
   const selectedEntry = entries.find((e) => e.path === selected) ?? null;
+  const { rows, media } = partitionStorageEntries(entries, showAll);
   const rootValue =
     roots.find((r) => path === r.path || path?.startsWith(`${r.path}/`))?.path ?? "";
 
@@ -178,6 +193,19 @@ export const MediaStoragePanel = memo(function MediaStoragePanel({
               </span>
             ))}
         </nav>
+        <Tooltip label={showAll ? "Show media only" : "Show all files"}>
+          <button
+            type="button"
+            aria-label="Show all files"
+            aria-pressed={showAll}
+            onClick={() => setShowAll((v) => !v)}
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-sm transition-colors ${
+              showAll ? "text-studio-accent" : "text-neutral-500 hover:text-neutral-200"
+            }`}
+          >
+            <FileDashed size={14} />
+          </button>
+        </Tooltip>
         <Tooltip label="Add to Media Pool">
           <button
             type="button"
@@ -191,7 +219,7 @@ export const MediaStoragePanel = memo(function MediaStoragePanel({
         </Tooltip>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-1" role="listbox" aria-label="Files">
-        {entries.map((entry) => {
+        {rows.map((entry) => {
           const KindIcon = KIND_ICONS[entry.kind];
           const active = entry.path === selected;
           return (
@@ -228,8 +256,17 @@ export const MediaStoragePanel = memo(function MediaStoragePanel({
             </div>
           );
         })}
-        {path && entries.length === 0 && !status && (
-          <p className="px-2 py-4 text-center text-[11px] text-neutral-600">Empty folder</p>
+        <MediaStorageGrid
+          projectId={projectId}
+          entries={media}
+          selected={selected}
+          onSelect={preview}
+          onLink={(entry) => void link(entry)}
+        />
+        {path && rows.length + media.length === 0 && !status && (
+          <p className="px-2 py-4 text-center text-[11px] text-neutral-600">
+            {entries.length > 0 ? "No media files" : "Empty folder"}
+          </p>
         )}
       </div>
       {(status || truncated) && (

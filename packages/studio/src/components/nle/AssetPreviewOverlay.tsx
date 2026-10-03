@@ -1,89 +1,31 @@
 /**
- * CapCut-style asset preview overlay rendered inside PreviewPane.
+ * The source viewer (Resolve's single-viewer Source mode), rendered inside
+ * PreviewPane over the timeline viewer.
  *
- * Shown when the user clicks an asset card that has NOT yet been added to the
- * timeline. Displays the media (image / video / audio) as a compact floating
- * card over the canvas — the canvas stays visible behind a barely-tinted
- * click-catcher — without modifying the composition (no undo entry, no file
- * mutation).
+ * Opened by clicking a Media Pool asset that is NOT yet on the timeline, or a
+ * media file in Media Storage (an outside file, previewed read-only through
+ * the server's source route). Plays, shuttles and marks the clip, and edits
+ * the marked range into the timeline — without touching the composition until
+ * an edit is made.
  *
- * Dismiss: X button, Escape key, click outside the card, or any playhead
- * activity (starting playback / seeking) — the canvas refocuses.
- * Switching to another not-added asset replaces the current preview.
+ * Dismiss: the close button, Escape, or any timeline playhead activity
+ * (starting playback / seeking) — the timeline viewer comes back. Marks are
+ * kept per clip for the session, so reopening a clip restores them.
  */
 import { useEffect, useCallback } from "react";
-import { VIDEO_EXT, IMAGE_EXT } from "../../utils/mediaTypes";
 import { useAssetPreviewStore } from "../../utils/assetPreviewStore";
 import { usePlayerStore } from "../../player/store/playerStore";
 import { shouldDismissAssetPreview } from "../../utils/assetPreviewDismiss";
-import { resolveMediaPreviewUrl } from "../../player/components/thumbnailUtils";
+import { SourceViewer } from "./sourceViewer/SourceViewer";
 
 function basename(path: string): string {
   return path.split("/").pop() ?? path;
 }
 
-type AssetKind = "image" | "video" | "audio";
-
-function resolveAssetKind(path: string): AssetKind {
-  if (VIDEO_EXT.test(path)) return "video";
-  if (IMAGE_EXT.test(path)) return "image";
-  return "audio";
-}
-
-/** The media element for a previewed asset, chosen by kind. */
-function AssetPreviewMedia({
-  kind,
-  serveUrl,
-  name,
-}: {
-  kind: AssetKind;
-  serveUrl: string;
-  name: string;
-}) {
-  if (kind === "image") {
-    return (
-      <img
-        src={serveUrl}
-        alt={name}
-        className="max-w-full max-h-[40vh] rounded-sm object-contain"
-      />
-    );
-  }
-  if (kind === "video") {
-    return (
-      <video
-        src={serveUrl}
-        controls
-        autoPlay
-        muted
-        playsInline
-        className="max-w-full max-h-[40vh] rounded-sm"
-      />
-    );
-  }
-  return (
-    <div className="flex flex-col items-center gap-3 px-6 py-4">
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className="text-neutral-500"
-      >
-        <path d="M9 18V5l12-2v13" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="6" cy="18" r="3" />
-        <circle cx="18" cy="16" r="3" />
-      </svg>
-      <audio src={serveUrl} controls className="w-64" />
-    </div>
-  );
-}
-
 export function AssetPreviewOverlay() {
   const previewAsset = useAssetPreviewStore((s) => s.previewAsset);
   const previewProjectId = useAssetPreviewStore((s) => s.previewProjectId);
+  const previewExternal = useAssetPreviewStore((s) => s.previewExternal);
   const clearPreviewAsset = useAssetPreviewStore((s) => s.clearPreviewAsset);
 
   const handleKeyDown = useCallback(
@@ -125,51 +67,19 @@ export function AssetPreviewOverlay() {
 
   if (!previewAsset || !previewProjectId) return null;
 
-  const serveUrl = resolveMediaPreviewUrl(previewAsset, previewProjectId);
-  const name = basename(previewAsset);
-
   return (
     <div
-      className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/20"
-      onClick={clearPreviewAsset}
+      className="absolute inset-0 z-50"
       role="dialog"
-      aria-label={`Preview: ${name}`}
+      aria-label={`Source: ${basename(previewAsset)}`}
     >
-      {/* Floating preview card — compact, canvas stays visible around it */}
-      <div
-        className="relative flex flex-col items-center gap-2 max-w-[58%] rounded-lg border border-neutral-800 bg-neutral-950/95 p-2 pt-8 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          className="absolute top-2 right-2 w-6 h-6 rounded-full bg-raised hover:bg-press text-text-2 hover:text-text-0 flex items-center justify-center transition-colors z-10"
-          onClick={(e) => {
-            e.stopPropagation();
-            clearPreviewAsset();
-          }}
-          aria-label="Close preview"
-        >
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            fill="none"
-            strokeLinecap="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-
-        <AssetPreviewMedia kind={resolveAssetKind(previewAsset)} serveUrl={serveUrl} name={name} />
-
-        {/* Filename label */}
-        <span className="text-[12px] text-neutral-400 truncate max-w-full px-2 text-center">
-          {name}
-        </span>
-      </div>
+      <SourceViewer
+        key={previewAsset}
+        projectId={previewProjectId}
+        path={previewAsset}
+        external={previewExternal}
+        onClose={clearPreviewAsset}
+      />
     </div>
   );
 }

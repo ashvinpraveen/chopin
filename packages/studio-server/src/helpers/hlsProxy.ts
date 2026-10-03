@@ -79,34 +79,26 @@ function parseSourceInfo(stdout: string): SourceInfo {
   return { duration, width, height };
 }
 
-function probeSource(sourcePath: string): Promise<SourceInfo> {
+/** Run ffprobe with `args` and hand its stdout to `parse`. */
+export function runFfprobe<T>(args: string[], parse: (stdout: string) => T): Promise<T> {
   const ffprobe = findFfBinary("ffprobe", { configuredMustExist: true });
   if (!ffprobe) return Promise.reject(new Error("ffprobe unavailable"));
   return new Promise((resolve, reject) => {
-    execFile(
-      ffprobe,
-      [
-        "-v",
-        "error",
-        "-select_streams",
-        "v:0",
-        "-show_entries",
-        "stream=width,height:format=duration",
-        "-of",
-        "json",
-        sourcePath,
-      ],
-      { timeout: 30_000 },
-      (err, stdout) => {
-        if (err) return reject(err);
-        try {
-          resolve(parseSourceInfo(String(stdout)));
-        } catch (parseErr) {
-          reject(parseErr instanceof Error ? parseErr : new Error(String(parseErr)));
-        }
-      },
-    );
+    execFile(ffprobe, args, { timeout: 30_000 }, (err, stdout) => {
+      if (err) return reject(err);
+      try {
+        resolve(parse(String(stdout)));
+      } catch (parseErr) {
+        reject(parseErr instanceof Error ? parseErr : new Error(String(parseErr)));
+      }
+    });
   });
+}
+
+function probeSource(sourcePath: string): Promise<SourceInfo> {
+  const args = ["-v", "error", "-select_streams", "v:0", "-show_entries"];
+  args.push("stream=width,height:format=duration", "-of", "json", sourcePath);
+  return runFfprobe(args, parseSourceInfo);
 }
 
 function loadSource(projectDir: string, sourcePath: string): Promise<SourceState> {
@@ -221,7 +213,7 @@ export function encodeArgs(
 
 let hardwareWorks = process.platform === "darwin";
 
-function runFfmpeg(args: string[]): Promise<void> {
+export function runFfmpeg(args: string[]): Promise<void> {
   const ffmpeg = findFfBinary("ffmpeg", { configuredMustExist: true });
   if (!ffmpeg) return Promise.reject(new Error("ffmpeg unavailable"));
   return new Promise((resolve, reject) => {
@@ -326,22 +318,26 @@ function pump(queue: DeviceQueue): void {
     });
 }
 
+/** Segment URI for a project asset: relative to the asset's own URL, so it stays inside the project. */
+function projectAssetSegmentUri(requestName: string): (index: number) => string {
+  const name = encodeURIComponent(requestName);
+  return (i) => `${name}?hf-proxy=${HLS_PROXY_VARIANT}&seg=${i}`;
+}
+
 /**
- * The VOD playlist for `sourcePath`. Starts no encode by itself. `requestName`
- * is the last segment of the URL the browser asked for (a project may reach
- * the source through a symlink with a different name).
+ * The VOD playlist for `sourcePath`. Starts no encode by itself. `segmentUri`
+ * is either the last segment of the URL the browser asked for (a project may
+ * reach the source through a symlink with a different name), or a builder for
+ * callers that serve segments from another endpoint.
  */
 export async function hlsPlaylist(
   projectDir: string,
   sourcePath: string,
-  requestName: string,
+  segmentUri: string | ((index: number) => string),
 ): Promise<string> {
   const state = await loadSource(projectDir, sourcePath);
-  const name = encodeURIComponent(requestName);
-  return buildHlsPlaylist(
-    state.info.duration,
-    (i) => `${name}?hf-proxy=${HLS_PROXY_VARIANT}&seg=${i}`,
-  );
+  const uri = typeof segmentUri === "string" ? projectAssetSegmentUri(segmentUri) : segmentUri;
+  return buildHlsPlaylist(state.info.duration, uri);
 }
 
 /** Path of segment `index`, encoding it first (ahead of everything else) if needed. */

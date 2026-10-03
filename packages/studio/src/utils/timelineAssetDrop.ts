@@ -9,9 +9,12 @@ const FALLBACK_TIMELINE_FILE_DROP_DURATION = 5;
 
 export type TimelineAssetKind = "image" | "video" | "audio";
 
+/** Camera containers the preview reaches through the server's proxy (Media Storage links them). */
+const CAMERA_VIDEO_EXT = /\.(mxf|mts|m2ts|mkv|avi)$/i;
+
 export function getTimelineAssetKind(assetPath: string): TimelineAssetKind | null {
   if (IMAGE_EXT.test(assetPath)) return "image";
-  if (VIDEO_EXT.test(assetPath)) return "video";
+  if (VIDEO_EXT.test(assetPath) || CAMERA_VIDEO_EXT.test(assetPath)) return "video";
   if (AUDIO_EXT.test(assetPath)) return "audio";
   return null;
 }
@@ -118,8 +121,14 @@ export function buildTimelineAssetInsertHtml(input: {
   geometry?: { left: number; top: number; width: number; height: number };
   /** Video only: true inserts `data-has-audio="true"` with no `muted`. Unknown or false stays muted. */
   hasAudio?: boolean;
+  /** Video / audio in-point in the media (a source viewer range); omitted when 0. */
+  mediaStart?: number;
 }): string {
-  const sharedAttrs = `id="${input.id}" data-hf-id="${input.hfId}" class="clip" src="${input.assetPath}" data-start="${input.start}" data-duration="${input.duration}" data-track-index="${input.track}"`;
+  const inPoint =
+    input.kind !== "image" && input.mediaStart && input.mediaStart > 0
+      ? ` data-media-start="${Number(input.mediaStart.toFixed(6))}"`
+      : "";
+  const sharedAttrs = `id="${input.id}" data-hf-id="${input.hfId}" class="clip" src="${input.assetPath}" data-start="${input.start}" data-duration="${input.duration}"${inPoint} data-track-index="${input.track}"`;
   const geometry = input.geometry ?? { left: 0, top: 0, width: 640, height: 360 };
   const visualStyles = `position: absolute; left: ${geometry.left}px; top: ${geometry.top}px; width: ${geometry.width}px; height: ${geometry.height}px; object-fit: contain; z-index: ${input.zIndex}`;
 

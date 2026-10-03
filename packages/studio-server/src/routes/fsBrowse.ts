@@ -42,7 +42,7 @@ const AUDIO = new Set(["mp3", "wav", "ogg", "m4a", "aac", "flac", "aif", "aiff"]
 const IMAGE = new Set(["jpg", "jpeg", "png", "gif", "webp", "avif", "svg", "tif", "tiff", "heic"]);
 const HIDDEN = new Set(["$RECYCLE.BIN", "System Volume Information", "Thumbs.db", "desktop.ini"]);
 
-function kindOfFile(name: string): FsEntryKind {
+export function kindOfFile(name: string): FsEntryKind {
   const ext = extname(name).slice(1).toLowerCase();
   if (VIDEO.has(ext)) return "video";
   if (AUDIO.has(ext)) return "audio";
@@ -159,7 +159,7 @@ export function sanitizeLinkName(name: string): string {
 type LinkResult = { ok: true; path: string; existing: boolean } | Failure<400 | 403 | 404 | 409>;
 
 /** The source's real path when it is an existing media file. */
-function realMediaSource(source: string): string | Failure<400 | 404> {
+export function realMediaSource(source: string): string | Failure<400 | 404> {
   if (!isUsableAbsolute(source)) return fail(400, "absolute source path required");
   let real: string;
   try {
