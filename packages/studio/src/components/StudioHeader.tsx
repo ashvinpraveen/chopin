@@ -8,6 +8,7 @@ import { cn, Tooltip } from "./ui";
 import { Dock } from "./dock/Dock";
 import { InspectorIcon } from "./icons/InspectorIcon";
 import { ChopinLogo } from "./ui/ChopinLogo";
+import { ProjectSwitcher } from "./ProjectSwitcher";
 import { ShowThemeToggle, ThemeToggle } from "./ThemeToggle";
 
 /** Quiet icon-only header control: no fill or border, state lives in the icon colour. */
@@ -62,9 +63,9 @@ export const StudioHeader = memo(function StudioHeader({
       <div className="flex items-center gap-3">
         <ChopinLogo />
       </div>
-      <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 text-step-12 font-medium text-text-2 select-none">
-        {projectId}
-      </span>
+      <div className="absolute left-1/2 -translate-x-1/2">
+        <ProjectSwitcher projectId={projectId} />
+      </div>
       {/* Right: toolbar buttons */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
@@ -159,7 +160,7 @@ export const StudioHeader = memo(function StudioHeader({
             type="button"
             data-testid="header-export"
             aria-label={isRendering ? "Rendering" : "Export"}
-            className="flex h-7 w-7 items-center justify-center rounded-md text-[color:light-dark(#1c1c1c,#ffffff)] transition-colors hover:bg-text-0/10 disabled:cursor-default disabled:opacity-60"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-[color:light-dark(var(--color-text-0),white)] transition-colors hover:bg-text-0/10 disabled:cursor-default disabled:opacity-60"
             disabled={isRendering}
             onClick={() => {
               if (isRendering) return;
