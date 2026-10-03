@@ -3339,10 +3339,10 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
     });
     if ("error" in res) return res.error;
 
-    // The parse is a pure function of the file, so a client that revalidates on every read
-    // (Studio does, after any write) gets a 304 for every file that did not change.
+    // The parse is a pure function of the file and the parser, so a client that revalidates on
+    // every read gets a 304 for every unchanged file; bump the `v1` salt when the parser changes.
     const html = readFileSync(res.absPath, "utf-8");
-    const etag = fileContentVersion(html);
+    const etag = `${fileContentVersion(html).slice(0, -1)}:gsap-animations:v1"`;
     const headers = { ETag: etag, "Cache-Control": "no-cache" };
     if (c.req.header("If-None-Match") === etag) return new Response(null, { status: 304, headers });
 

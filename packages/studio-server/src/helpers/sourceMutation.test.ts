@@ -485,8 +485,8 @@ describe("probeElementInSource", () => {
 
   it("answers every target of a batch in order from one parse", () => {
     expect(
-      probeElementsInSource(FIXTURE, [{ id: "hero" }, { id: "gone" }, {}, { selector: ".brand" }]),
-    ).toEqual([true, false, false, true]);
+      probeElementsInSource(FIXTURE, [{ id: "hero" }, { id: "gone" }, { selector: ".brand" }, {}]),
+    ).toEqual([true, false, true, false]);
   });
 
   it("returns true for an element found by class selector", () => {

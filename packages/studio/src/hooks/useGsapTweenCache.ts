@@ -321,7 +321,12 @@ export function usePopulateKeyframeCacheForFile(
     if (stale.length === 0) return;
     runtimeScanDoneRef.current = "";
     const doc = iframeRef?.current?.contentDocument;
-    void Promise.all(stale.map((sf) => populateKeyframeCacheFromAst(projectId, sf, doc)));
+    for (const sf of stale) {
+      void populateKeyframeCacheFromAst(projectId, sf, doc).then((loaded) => {
+        // A failed read is not loaded: the next selection flip asks for it again.
+        if (!loaded && loadedRef.current.dataKey === dataKey) loadedRef.current.files.delete(sf);
+      });
+    }
     // elementCount is in the deps because new timeline elements (e.g. after a
     // sub-composition expand) need their keyframe cache populated immediately;
     // without it the effect won't re-run when elements appear/disappear.

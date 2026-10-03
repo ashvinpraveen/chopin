@@ -103,4 +103,42 @@ describe("usePopulateKeyframeCacheForFile", () => {
     await render({ sourceFile: "index.html", version: 2 });
     expect(urls.length).toBe(loaded * 2);
   });
+
+  it("asks again for a covered file whose first read failed", async () => {
+    const urls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        const url = String(input);
+        urls.push(url);
+        const failed =
+          url.includes("keyframe-lab.html") && urls.filter((u) => u === url).length === 1;
+        return Promise.resolve({
+          ok: !failed,
+          json: () => Promise.resolve({ animations: [] }),
+        });
+      }),
+    );
+    const render = async (sourceFile: string) => {
+      await act(async () => {
+        if (!root) {
+          container = document.createElement("div");
+          document.body.appendChild(container);
+          root = createRoot(container);
+        }
+        root.render(<HookHost sourceFile={sourceFile} />);
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+    };
+
+    await render("index.html");
+    const labReads = () => urls.filter((u) => u.includes("keyframe-lab.html")).length;
+    expect(labReads()).toBe(1);
+    await render("compositions/keyframe-lab.html");
+    expect(labReads()).toBe(2);
+    await render("index.html");
+    expect(labReads()).toBe(2);
+  });
 });

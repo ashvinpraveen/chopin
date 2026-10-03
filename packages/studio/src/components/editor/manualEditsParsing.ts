@@ -43,3 +43,14 @@ export function readFileChangeAffectedCompositions(payload: unknown): readonly s
   if (!Array.isArray(value) || !value.every((path) => typeof path === "string")) return null;
   return value.map(normalizeStudioFileChangePath);
 }
+
+/**
+ * `incoming` replacing a `waiting` change must not forget what `waiting` invalidated: the
+ * result carries both lists, or "all" when either said so.
+ */
+export function mergeFileChangeAffectedCompositions(waiting: unknown, incoming: unknown): unknown {
+  const before = readFileChangeAffectedCompositions(waiting);
+  const after = readFileChangeAffectedCompositions(incoming);
+  const merged = before && after ? [...new Set([...before, ...after])] : null;
+  return { ...asPayloadRecord(incoming), affectedCompositions: merged };
+}

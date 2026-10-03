@@ -99,17 +99,17 @@ async function requestParsedAnimations(
 }
 
 /**
- * Read one composition file's tweens into the keyframe cache. Split out of the
- * hook so the effect can run it per file without re-nesting the whole body.
+ * Read one composition file's tweens into the keyframe cache; false when the read failed.
+ * Split out of the hook so the effect can run it per file without re-nesting the whole body.
  */
 // fallow-ignore-next-line complexity
 export async function populateKeyframeCacheFromAst(
   projectId: string,
   sf: string,
   doc: Document | null | undefined,
-): Promise<void> {
+): Promise<boolean> {
   const parsed = await fetchParsedAnimations(projectId, sf);
-  if (!parsed) return;
+  if (!parsed) return false;
   const { elements, domClipChildren } = usePlayerStore.getState();
   const mergedByElement = new Map<string, GsapKeyframesData<MergeableKeyframe>>();
   const sourceByElement = new Map<string, GsapAnimation[]>();
@@ -137,4 +137,5 @@ export async function populateKeyframeCacheFromAst(
     }
   }
   replaceKeyframeCacheForFile(sf, mergedByElement, sourceByElement);
+  return true;
 }

@@ -143,6 +143,32 @@ describe("external file change coordinator", () => {
     expect(onAcceptedPersistedFileChange).toHaveBeenLastCalledWith("scene.html", ["scene.html"]);
   });
 
+  it("keeps a waiting head edit's thumbnail refresh when a later write replaces it", async () => {
+    let release = () => {};
+    const inFlight = new Promise<void>((resolve) => (release = resolve));
+    const onAcceptedPersistedFileChange = vi.fn();
+    let drains = 0;
+    await mountCoordinator({
+      onAcceptedPersistedFileChange,
+      drainPendingChanges: async () => {
+        if (drains++ === 0) await inFlight;
+        return { status: "clean" as const };
+      },
+    });
+    await act(async () => handler?.({ path: "other.html", content: "a", version: "v1" }));
+    await act(async () => handler?.({ path: "index.html", content: "b", version: "v2" }));
+    await act(async () =>
+      handler?.({
+        path: "index.html",
+        content: "c",
+        version: "v3",
+        affectedCompositions: ["index.html"],
+      }),
+    );
+    await act(async () => release());
+    expect(onAcceptedPersistedFileChange).toHaveBeenLastCalledWith("index.html", null);
+  });
+
   it("does not refresh the tree for a suppressed self-write echo", async () => {
     const refreshFileTree = vi.fn();
     await mountCoordinator({ refreshFileTree });

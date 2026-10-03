@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type MutableRefObject } from "react";
 import {
+  mergeFileChangeAffectedCompositions,
   readFileChangeAffectedCompositions,
   readFileChangeAffectsPreview,
   readFileChangeField,
@@ -419,7 +420,12 @@ export function useExternalFileChangeCoordinator({
         waiting != null &&
         readFileChangeAffectsPreview(waiting) &&
         !readFileChangeAffectsPreview(payload);
-      if (!waitingChangeOutranksThis) pendingPayloadRef.current = { payload };
+      if (!waitingChangeOutranksThis) {
+        pendingPayloadRef.current = {
+          payload:
+            waiting == null ? payload : mergeFileChangeAffectedCompositions(waiting, payload),
+        };
+      }
       void startDrainLoop();
     },
     [projectId, pendingTimelineEditPathRef, startDrainLoop, onAcceptedPersistedFileChange],
