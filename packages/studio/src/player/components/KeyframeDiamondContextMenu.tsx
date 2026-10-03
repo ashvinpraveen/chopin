@@ -4,7 +4,7 @@ import { useContextMenuDismiss } from "../../hooks/useContextMenuDismiss";
 import { useMenuKeyboardNav } from "./menuKeyboardNav";
 import type { TimelineElement } from "../store/playerStore";
 import type { TimelineKeyframeTarget } from "./timelineKeyframeIdentity";
-import { MENU_DIVIDER, MENU_PANEL, MENU_ROW, MENU_ROW_DANGER, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
+import { menuClasses } from "../../components/ui/menuStyle";
 
 export interface KeyframeDiamondContextMenuState {
   x: number;
@@ -40,8 +40,9 @@ interface KeyframeDiamondContextMenuProps {
   onMoveToPlayhead?: (element: TimelineElement, keyframe: TimelineKeyframeTarget) => void;
 }
 
-const ITEM_CLS = `${MENU_ROW} ${MENU_ROW_ENABLED} flex items-center gap-2`;
-const DESTRUCTIVE_ITEM_CLS = `${MENU_ROW} ${MENU_ROW_DANGER} flex items-center gap-2`;
+const ITEM_CLS = `${menuClasses.row} ${menuClasses.rowEnabled} flex items-center gap-2`;
+// The single delete hovers quietly; only Delete All turns red, so the two cannot be misread (#1967).
+const DESTRUCTIVE_ITEM_CLS = `${menuClasses.row} text-danger-ink hover:bg-neutral-800 focus-visible:bg-neutral-800 cursor-pointer flex items-center gap-2`;
 
 export function KeyframeDiamondContextMenu({
   state,
@@ -95,7 +96,7 @@ export function KeyframeDiamondContextMenu({
       ref={menuRef}
       role="menu"
       aria-label="Keyframe actions"
-      className={`${MENU_PANEL} fixed z-200 min-w-[180px] overflow-y-auto`}
+      className={`${menuClasses.panel} fixed z-200 min-w-[180px] overflow-y-auto`}
       style={{ left: adjustedX, top: adjustedY, maxHeight: `calc(100vh - ${adjustedY + 8}px)` }}
     >
       {onMoveToPlayhead && (
@@ -164,9 +165,9 @@ export function KeyframeDiamondContextMenu({
 
       {/* Deleting every keyframe sat adjacent to the single delete and styled
           identically. Separate and mark it so the two cannot be misread. */}
-      <div className={MENU_DIVIDER} role="separator" />
-
-      <div className={MENU_DIVIDER} role="separator" />
+      <div className={menuClasses.divider} role="separator" />
+      <div className="h-1" aria-hidden="true" />
+      <div className={menuClasses.divider} role="separator" />
 
       <button
         type="button"

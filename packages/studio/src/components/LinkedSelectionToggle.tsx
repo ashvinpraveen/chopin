@@ -6,7 +6,7 @@ import { useMenuKeyboardNav } from "../player/components/menuKeyboardNav";
 import { useLinkedClipPreferences } from "../utils/linkedClipPreferences";
 import { Tooltip } from "./ui";
 import { flatActive, flatIdle } from "./timelineToolbarStyles";
-import { MENU_PANEL, MENU_ROW, MENU_ROW_ENABLED } from "./ui/menuStyle";
+import { menuClasses } from "./ui/menuStyle";
 
 function SyncIndicatorMenu({ x, y, onClose }: { x: number; y: number; onClose: () => void }) {
   const menuRef = useContextMenuDismiss(onClose);
@@ -18,14 +18,14 @@ function SyncIndicatorMenu({ x, y, onClose }: { x: number; y: number; onClose: (
       ref={menuRef}
       role="menu"
       aria-label="Linked clips"
-      className={`${MENU_PANEL} fixed z-200 min-w-[200px]`}
+      className={`${menuClasses.panel} fixed z-200 min-w-[200px]`}
       style={{ left: x, top: y }}
     >
       <button
         type="button"
         role="menuitemcheckbox"
         aria-checked={visible}
-        className={`${MENU_ROW} ${MENU_ROW_ENABLED} flex items-center gap-2`}
+        className={`${menuClasses.row} ${menuClasses.rowEnabled} flex items-center gap-2`}
         onClick={() => {
           setVisible(!visible);
           onClose();

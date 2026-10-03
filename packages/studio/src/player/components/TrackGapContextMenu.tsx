@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { createPortal } from "react-dom";
 import { useContextMenuDismiss } from "../../hooks/useContextMenuDismiss";
-import { MENU_PANEL, MENU_ROW, MENU_ROW_DISABLED, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
+import { menuClasses } from "../../components/ui/menuStyle";
 
 interface TrackGapContextMenuProps {
   x: number;
@@ -54,7 +54,7 @@ export const TrackGapContextMenu = memo(function TrackGapContextMenu({
   const adjustedY = overflowY > 0 ? y - overflowY - 8 : y;
 
   const itemClass = (enabled: boolean) =>
-    `${MENU_ROW} flex items-center justify-between ${enabled ? MENU_ROW_ENABLED : MENU_ROW_DISABLED}`;
+    `${menuClasses.row} flex items-center justify-between ${enabled ? menuClasses.rowEnabled : menuClasses.rowDisabled}`;
 
   // Disabled reasons: no gap under the pointer beats the lock reason — a
   // pointer not on a gap has nothing to close regardless of movability.
@@ -72,7 +72,7 @@ export const TrackGapContextMenu = memo(function TrackGapContextMenu({
   return createPortal(
     <div
       ref={menuRef}
-      className={`${MENU_PANEL} fixed z-200 min-w-[180px]`}
+      className={`${menuClasses.panel} fixed z-200 min-w-[180px]`}
       style={{ left: adjustedX, top: adjustedY }}
       onPointerLeave={() => onHoverAction(null)}
     >

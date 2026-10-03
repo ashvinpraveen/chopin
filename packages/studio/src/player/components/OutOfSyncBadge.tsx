@@ -7,11 +7,11 @@ import { useLinkedClipPreferences } from "../../utils/linkedClipPreferences";
 import { usePlayerStore, type TimelineElement } from "../store/playerStore";
 import { clipSyncState, type ClipSyncState } from "./clipSync";
 import { useMenuKeyboardNav } from "./menuKeyboardNav";
-import { MENU_PANEL, MENU_ROW, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
+import { menuClasses } from "../../components/ui/menuStyle";
 
 const stop = (e: SyntheticEvent) => e.stopPropagation();
 
-const ROW = `${MENU_ROW} ${MENU_ROW_ENABLED} block disabled:opacity-40`;
+const ROW = `${menuClasses.row} ${menuClasses.rowEnabled} block disabled:cursor-not-allowed disabled:opacity-40`;
 
 function SyncMenu({
   x,
@@ -39,7 +39,7 @@ function SyncMenu({
       ref={menuRef}
       role="menu"
       aria-label="Out of sync"
-      className={`${MENU_PANEL} fixed z-200 min-w-[170px]`}
+      className={`${menuClasses.panel} fixed z-200 min-w-[170px]`}
       style={{ left, top }}
     >
       <button

@@ -18,20 +18,14 @@ import {
   type InlineInputState,
   DIM,
 } from "./FileTreeIcons";
-import {
-  MENU_DIVIDER,
-  MENU_PANEL,
-  MENU_ROW,
-  MENU_ROW_DANGER,
-  MENU_ROW_ENABLED,
-} from "../ui/menuStyle";
+import { menuClasses } from "../ui/menuStyle";
 
 export type { ContextMenuState, InlineInputState };
 export { buildTree, sortChildren, isActiveInSubtree } from "./FileTreeIcons";
 
 const SZ_ICON = 14;
-const ROW = `${MENU_ROW} ${MENU_ROW_ENABLED} flex items-center gap-2 active:bg-neutral-700`;
-const DANGER_ROW = `${MENU_ROW} ${MENU_ROW_DANGER} flex items-center gap-2 active:bg-danger/25`;
+const ROW = `${menuClasses.row} ${menuClasses.rowEnabled} flex items-center gap-2 active:bg-neutral-700`;
+const DANGER_ROW = `${menuClasses.row} ${menuClasses.rowDanger} flex items-center gap-2 active:bg-danger/25`;
 
 // ── Context Menu Component ──
 
@@ -110,7 +104,7 @@ export function ContextMenu({
       ref={menuRef}
       role="menu"
       onKeyDown={handleMenuKeyDown}
-      className={`${MENU_PANEL} fixed z-50 min-w-[160px]`}
+      className={`${menuClasses.panel} fixed z-50 min-w-[160px]`}
       style={{ left: adjustedX, top: adjustedY }}
     >
       {state.targetIsFolder && (
@@ -137,7 +131,7 @@ export function ContextMenu({
             <FolderSimplePlus size={12} weight="duotone" className="text-neutral-500" />
             New Folder
           </button>
-          <div className={MENU_DIVIDER} />
+          <div className={menuClasses.divider} />
         </>
       )}
       {!state.targetIsFolder && (
@@ -153,7 +147,7 @@ export function ContextMenu({
             <FilePlus size={12} weight="duotone" className="text-neutral-500" />
             New File
           </button>
-          <div className={MENU_DIVIDER} />
+          <div className={menuClasses.divider} />
         </>
       )}
       <button
@@ -180,7 +174,7 @@ export function ContextMenu({
           Duplicate
         </button>
       )}
-      <div className={MENU_DIVIDER} />
+      <div className={menuClasses.divider} />
       <button
         role="menuitem"
         className={DANGER_ROW}

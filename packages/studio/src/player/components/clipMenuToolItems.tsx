@@ -15,7 +15,7 @@ import {
   type ClipToolChoice,
 } from "./clipToolAttrs";
 import { useClipToolState } from "./useClipToolState";
-import { MENU_DIVIDER, MENU_PANEL, MENU_ROW, MENU_ROW_DISABLED, MENU_ROW_ENABLED } from "../../components/ui/menuStyle";
+import { menuClasses } from "../../components/ui/menuStyle";
 
 export type ClipMenuToolGroup = "time" | "sound" | "picture";
 
@@ -26,8 +26,8 @@ interface ClipMenuToolItemsProps {
   onClose: () => void;
 }
 
-const ROW_CLASS = `${MENU_ROW} flex items-center justify-between ${MENU_ROW_ENABLED}`;
-const DISABLED_ROW_CLASS = `${MENU_ROW} flex items-center justify-between ${MENU_ROW_DISABLED}`;
+const ROW_CLASS = `${menuClasses.row} flex items-center justify-between ${menuClasses.rowEnabled}`;
+const DISABLED_ROW_CLASS = `${menuClasses.row} flex items-center justify-between ${menuClasses.rowDisabled}`;
 const SUBMENU_WIDTH = 170;
 const HOVER_PREVIEW_DELAY_MS = 80;
 
@@ -97,7 +97,8 @@ function ChoiceSubmenu({
   preview?: HoverPreview;
 }) {
   const [open, setOpen] = useState(false);
-  const [flipLeft, setFlipLeft] = useState(false);
+  // Where the submenu opens, in window pixels: `position: fixed`, so the clipped panel around its row cannot cut it off.
+  const [anchor, setAnchor] = useState<{ top: number; left?: number; right?: number }>({ top: 0 });
   const rowRef = useRef<HTMLButtonElement | null>(null);
   const submenuRef = useRef<HTMLDivElement | null>(null);
   const hover = useHoverPreview(preview);
@@ -110,7 +111,12 @@ function ChoiceSubmenu({
 
   const show = (focusFirst: boolean) => {
     const rect = rowRef.current?.getBoundingClientRect();
-    setFlipLeft(rect ? rect.right + SUBMENU_WIDTH > window.innerWidth : false);
+    if (rect)
+      setAnchor(
+        rect.right + SUBMENU_WIDTH > window.innerWidth
+          ? { top: rect.top, right: window.innerWidth - rect.left }
+          : { top: rect.top, left: rect.right },
+      );
     setOpen(true);
     if (!focusFirst) return;
     openingFocusRef.current = true;
@@ -183,8 +189,8 @@ function ChoiceSubmenu({
           ref={submenuRef}
           role="menu"
           aria-label={label}
-          className={`${MENU_PANEL} absolute top-0 z-10`}
-          style={{ width: SUBMENU_WIDTH, ...(flipLeft ? { right: "100%" } : { left: "100%" }) }}
+          className={`${menuClasses.panel} fixed z-10`}
+          style={{ width: SUBMENU_WIDTH, ...anchor }}
           onKeyDown={onSubmenuKeyDown}
         >
           {choiceRow(null, "None")}
@@ -192,7 +198,7 @@ function ChoiceSubmenu({
             <div key={section.heading ?? index}>
               {section.heading && (
                 <>
-                  <div className={MENU_DIVIDER} />
+                  <div className={menuClasses.divider} />
                   <div className="px-3 py-1 text-[9px] uppercase tracking-wide text-neutral-500">
                     {section.heading}
                   </div>
