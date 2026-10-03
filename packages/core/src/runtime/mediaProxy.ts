@@ -239,10 +239,7 @@ export function swapToProxy(
   const originalAttr = el.getAttribute("src");
   proxyRequested.set(el, originalAttr);
   const live = () => el.isConnected && el.getAttribute("src") === originalAttr;
-  // A heavy source's playlist is always servable (segments are made on demand),
-  // so swap at once: waiting would let the original start streaming meanwhile.
-  const served = entry?.heavy ? Promise.resolve(true) : waitForServedProxy(proxiedSrc, live);
-  const swap = served.then((served) => {
+  const apply = (served: boolean) => {
     if (!live()) {
       if (proxyRequested.get(el) === originalAttr) proxyRequested.delete(el);
       return;
@@ -260,7 +257,13 @@ export function swapToProxy(
       el.addEventListener("loadeddata", landed, { once: true });
       el.addEventListener("error", landed, { once: true });
     });
-  });
+  };
+  // A heavy source's playlist is always servable (segments are made on demand),
+  // so swap synchronously: even one deferred tick lets the original start
+  // streaming, and a timeline of many cuts would open the file once per clip.
+  const swap = entry?.heavy
+    ? Promise.resolve(apply(true))
+    : waitForServedProxy(proxiedSrc, live).then(apply);
   // A frame capture holds for the copy as it held for a loading video before, up to the same cap.
   registerSeekCompletion(Promise.race([swap, new Promise((cap) => setTimeout(cap, HOLD_CAP_MS))]));
   const codecName = entry?.codecName ?? null;
