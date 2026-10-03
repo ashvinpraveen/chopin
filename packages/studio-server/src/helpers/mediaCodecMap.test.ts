@@ -22,7 +22,10 @@ import {
 const FAKE_FFPROBE_PATH = process.execPath;
 
 function makeRunner(
-  codecByPath: Record<string, string | { codecName: string; pixFmt?: string }>,
+  codecByPath: Record<
+    string,
+    string | { codecName: string; pixFmt?: string; width?: number; height?: number }
+  >,
 ): FfprobeRunner {
   return (_command, args) => {
     const filePath = args[args.length - 1] ?? "";
@@ -34,6 +37,8 @@ function makeRunner(
             codec_type: "video",
             codec_name: normalized.codecName,
             pix_fmt: normalized.pixFmt,
+            width: normalized.width,
+            height: normalized.height,
           },
         ]
       : [];
@@ -97,6 +102,40 @@ describe("probeAssetCodec", () => {
       representativeMime: BROWSER_HOSTILE_CODECS.hevc?.representativeMime,
       hasAlpha: false,
     });
+  });
+
+  it("proxies a 4K H.264 asset unconditionally, without a canPlayType probe", async () => {
+    const project = tmpProject();
+    const videoPath = join(project, "clip.mp4");
+    writeFileSync(videoPath, "fake video bytes");
+
+    const facts = await probeAssetCodec(
+      videoPath,
+      makeRunner({ [videoPath]: { codecName: "h264", width: 3840, height: 2160 } }),
+    );
+
+    expect(facts).toEqual({
+      codecName: "h264",
+      browserHostile: true,
+      representativeMime: null,
+      hasAlpha: false,
+      heavy: true,
+    });
+    expect(facts && shouldPrewarmProxy(facts)).toBe(true);
+  });
+
+  it("keeps a 1080p H.264 asset as the original", async () => {
+    const project = tmpProject();
+    const videoPath = join(project, "clip.mp4");
+    writeFileSync(videoPath, "fake video bytes");
+
+    const facts = await probeAssetCodec(
+      videoPath,
+      makeRunner({ [videoPath]: { codecName: "h264", width: 1920, height: 1080 } }),
+    );
+
+    expect(facts?.browserHostile).toBe(false);
+    expect(facts?.heavy).toBeUndefined();
   });
 
   it("reports an H.264 asset as not browser-hostile", async () => {

@@ -26,7 +26,7 @@ import { mkdirWithinProject, realpath, realProjectRoot } from "./safePath.js";
  * entry still lands for the next request.
  */
 
-export const PROXY_PARAMS_VERSION = "v5";
+export const PROXY_PARAMS_VERSION = "v6-chopin";
 
 export const CACHE_DIR_NAME = ".transcode-cache";
 
@@ -339,7 +339,10 @@ async function runFfmpeg(
   const toneMap = (hdrTransfer === "pq" || hdrTransfer === "hlg") && !keepsAlpha;
   if (toneMap) await ensureHdrFilters(ffmpegPath);
   const firstFrame = toneMap ? await probeFirstFrameColour(sourcePath) : {};
-  const evenScale = "scale=trunc(iw/2)*2:trunc(ih/2)*2";
+  // Chopin: proxies are preview-only, so cap them at 720p (never upscale) to keep
+  // several streams playable at once on a small laptop.
+  const evenScale =
+    "scale=w='min(iw,1280)':h='min(ih,720)':force_original_aspect_ratio=decrease:force_divisible_by=2";
   const pixelFormat = keepsAlpha ? "yuva420p" : "yuv420p";
   // The tone map ends in RGB; older ffmpeg (seen on 5.1) converts it with BT.601 unless the matrix is named.
   const videoFilter = toneMap
@@ -366,9 +369,12 @@ async function runFfmpeg(
       "-color_trc",
       "bt709",
       "-crf",
-      "18",
+      "21",
       "-preset",
       "veryfast",
+      // A keyframe every second, so seeking to a cut does not decode a long GOP.
+      "-g",
+      "30",
       "-c:a",
       "aac",
       "-movflags",

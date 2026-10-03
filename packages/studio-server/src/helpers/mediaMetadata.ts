@@ -66,6 +66,8 @@ export interface MediaColorMetadata {
   colorTransfer?: string;
   colorPrimaries?: string;
   bitsPerRawSample?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface MediaMetadata {
@@ -85,6 +87,8 @@ interface FfprobeStream {
   color_transfer?: string;
   color_primaries?: string;
   bits_per_raw_sample?: string;
+  width?: number;
+  height?: number;
   disposition?: { attached_pic?: number };
 }
 
@@ -222,7 +226,7 @@ export async function probeMediaMetadata(
       "-v",
       "error",
       "-show_entries",
-      "stream=codec_type,codec_name,profile,pix_fmt,color_space,color_transfer,color_primaries,bits_per_raw_sample:stream_disposition=attached_pic",
+      "stream=codec_type,codec_name,profile,width,height,pix_fmt,color_space,color_transfer,color_primaries,bits_per_raw_sample:stream_disposition=attached_pic",
       "-of",
       "json",
       "--",
@@ -244,7 +248,9 @@ export async function probeMediaMetadata(
       if (kind === "image") return item.codec_type === "video";
       return item.codec_type === kind && item.disposition?.attached_pic !== 1;
     });
-    const metadata: MediaMetadata = { kind, color: classifyMediaColor(stream) };
+    const color = classifyMediaColor(stream);
+    if (stream) Object.assign(color, { width: stream.width, height: stream.height });
+    const metadata: MediaMetadata = { kind, color };
     if (kind === "video") {
       metadata.hasAudio = (parsed.streams ?? []).some((item) => item.codec_type === "audio");
     }

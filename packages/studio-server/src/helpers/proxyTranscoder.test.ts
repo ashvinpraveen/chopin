@@ -163,7 +163,7 @@ describe("resolveProxy", () => {
     expect(call.args).toContain("-c:v");
     expect(call.args).toContain("libx264");
     expect(call.args).toContain("-crf");
-    expect(call.args).toContain("18");
+    expect(call.args).toContain("21");
     expect(call.args).toContain("-preset");
     expect(call.args).toContain("veryfast");
     expect(call.args).toContain("-movflags");

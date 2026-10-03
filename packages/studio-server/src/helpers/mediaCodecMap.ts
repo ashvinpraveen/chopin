@@ -27,6 +27,8 @@ export interface AssetCodecFacts {
   /** Source carries an alpha channel (ffprobe pix_fmt). Alpha sources use a
    * VP8/WebM proxy so their transparency is preserved across Chromium builds. */
   hasAlpha: boolean;
+  /** Chopin: above `HEAVY_SOURCE_MAX_PIXELS`, so proxied for preview whatever the codec. */
+  heavy?: boolean;
 }
 
 /** Server-root-relative URL pathname -> that asset's codec facts. */
@@ -75,7 +77,7 @@ function hostileCodecEntry(codecName: string): BrowserHostileCodec | undefined {
 /** The pre-warm gate: true only for codecs with no cross-platform browser
  * decode, so some client will ask. See `BrowserHostileCodec.prewarm`. */
 export function shouldPrewarmProxy(facts: AssetCodecFacts): boolean {
-  return hostileCodecEntry(facts.codecName)?.prewarm === true;
+  return facts.heavy === true || hostileCodecEntry(facts.codecName)?.prewarm === true;
 }
 
 // Per process, and deliberately in one unit — a call to `resolveProxy` — so
@@ -182,13 +184,26 @@ export function decideMediaProxyEligibility(facts: AssetCodecFacts | null): Medi
   return { eligible: true };
 }
 
-function codecFactsFor(codecName: string, hasAlpha: boolean): AssetCodecFacts {
+/**
+ * Chopin: a source above this pixel count is proxied whatever its codec. A
+ * browser can decode 4K H.264, but not smoothly on a small laptop, and never
+ * across several clips at once. Renders still read the original.
+ */
+export const HEAVY_SOURCE_MAX_PIXELS = 1920 * 1080;
+
+export function isHeavySource(width: number | undefined, height: number | undefined): boolean {
+  return width !== undefined && height !== undefined && width * height > HEAVY_SOURCE_MAX_PIXELS;
+}
+
+function codecFactsFor(codecName: string, hasAlpha: boolean, heavy = false): AssetCodecFacts {
   const hostile = hostileCodecEntry(codecName);
   return {
     codecName,
-    browserHostile: hostile !== undefined,
-    representativeMime: hostile?.representativeMime ?? null,
+    browserHostile: hostile !== undefined || heavy,
+    // A heavy source is swapped unconditionally: no `canPlayType` probe.
+    representativeMime: heavy ? null : (hostile?.representativeMime ?? null),
     hasAlpha,
+    ...(heavy ? { heavy } : {}),
   };
 }
 
@@ -204,7 +219,11 @@ async function probeCodecFacts(
   if (metadata.kind !== "video") return null;
   const codecName = metadata.color.codecName;
   if (!codecName) return null;
-  return codecFactsFor(codecName, pixelFormatHasAlpha(metadata.color.pixelFormat));
+  return codecFactsFor(
+    codecName,
+    pixelFormatHasAlpha(metadata.color.pixelFormat),
+    isHeavySource(metadata.color.width, metadata.color.height),
+  );
 }
 
 interface CachedAssetProbe {
