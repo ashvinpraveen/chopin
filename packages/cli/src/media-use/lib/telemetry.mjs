@@ -35,9 +35,14 @@ function posthogHost() {
   return override || POSTHOG_HOST;
 }
 
+// Chopin: telemetry is off until Chopin has its own PostHog project.
+// Stays on under Vitest so the pipeline tests keep exercising it.
+const CHOPIN_TELEMETRY_ENABLED = process.env.VITEST === "true";
+
 /** True when telemetry must NOT be sent (opt-out envs, CI, dev). */
 export function optedOut() {
   return (
+    !CHOPIN_TELEMETRY_ENABLED ||
     process.env.HYPERFRAMES_NO_TELEMETRY === "1" ||
     process.env.DO_NOT_TRACK === "1" ||
     process.env.CI === "true" ||

@@ -26,6 +26,9 @@ export { flush, flushSync } from "./transport.js";
 
 let telemetryEnabled: boolean | null = null;
 
+// Stays on under Vitest so the pipeline tests keep exercising it.
+const CHOPIN_TELEMETRY_ENABLED = process.env.VITEST === "true";
+
 /**
  * Check if telemetry should be active.
  * Disabled when: a privacy env var is set, this is a development or
@@ -33,6 +36,12 @@ let telemetryEnabled: boolean | null = null;
  */
 export function shouldTrack(): boolean {
   if (telemetryEnabled !== null) return telemetryEnabled;
+
+  // Chopin: telemetry and feedback are off until Chopin has its own PostHog project.
+  if (!CHOPIN_TELEMETRY_ENABLED) {
+    telemetryEnabled = false;
+    return false;
+  }
 
   if (telemetryRuntimeOverride() !== null) {
     telemetryEnabled = false;

@@ -98,8 +98,22 @@ declare global {
   }
 }
 
+// Chopin: analytics and the feedback card are off until Chopin has its own
+// PostHog project. Flip to true and replace POSTHOG_API_KEY to re-enable.
+// Stays on under Vitest so the pipeline tests keep exercising it.
+const CHOPIN_TELEMETRY_ENABLED = isVitest();
+
+function isVitest(): boolean {
+  try {
+    return import.meta.env.MODE === "test";
+  } catch {
+    return false;
+  }
+}
+
 function allowed(): boolean {
   return (
+    CHOPIN_TELEMETRY_ENABLED &&
     isApiKeyConfigured() &&
     !isBuildTimeOptOut() &&
     !(typeof window !== "undefined" && window.__HF_CLI_TELEMETRY_DISABLED === true) &&
