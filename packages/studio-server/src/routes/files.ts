@@ -19,6 +19,7 @@ import {
   readdirSync,
   type Dirent,
 } from "node:fs";
+import { createHash } from "node:crypto";
 import { resolve, dirname, join } from "node:path";
 import type { StudioApiAdapter } from "../types.js";
 import { isAudioFile } from "../helpers/mime.js";
@@ -80,8 +81,10 @@ import {
 } from "@hyperframes/parsers/gsap-writer-acorn";
 import {
   removeElementFromHtml,
+  removeElementsFromHtml,
   patchElementInHtml,
   probeElementInSource,
+  probeElementsInSource,
   splitElementInHtml,
   relinkSplitHalvesInHtml,
   wrapElementsInHtml,
@@ -2708,11 +2711,14 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
     // is a normal outcome here rather than a failure. The response says whether
     // the file changed, not how many of the targets landed — so a caller can
     // tell a no-op from a write, but not a partial pass from a complete one.
-    let next = originalContent;
-    for (const target of targets) {
-      next = removeElementFromHtml(next, target);
-    }
-    return writeIfChanged(c, ctx.project.dir, ctx.filePath, ctx.absPath, originalContent, next);
+    return writeIfChanged(
+      c,
+      ctx.project.dir,
+      ctx.filePath,
+      ctx.absPath,
+      originalContent,
+      removeElementsFromHtml(originalContent, targets),
+    );
   });
 
   api.post("/projects/:id/file-mutations/split-batch", async (c) => {
@@ -3211,6 +3217,22 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
     return c.json({ exists });
   });
 
+  api.post("/projects/:id/file-mutations/probe-elements/*", async (c) => {
+    const ctx = await resolveFileMutationContext(c, adapter, "probe-elements");
+    if ("error" in ctx) return ctx.error;
+
+    const body = (await c.req.json().catch(() => null)) as { targets?: MutationTarget[] } | null;
+    if (!Array.isArray(body?.targets)) return c.json({ error: "targets required" }, 400);
+
+    let content: string;
+    try {
+      content = readFileSync(ctx.absPath, "utf-8");
+    } catch {
+      return c.json({ exists: body.targets.map(() => false) });
+    }
+    return c.json({ exists: probeElementsInSource(content, body.targets) });
+  });
+
   // ── Rename / Move ──
 
   api.patch("/projects/:id/files/*", async (c) => {
@@ -3320,19 +3342,23 @@ export function registerFileRoutes(api: Hono, adapter: StudioApiAdapter): void {
     });
     if ("error" in res) return res.error;
 
+    // The parse is a pure function of the file, so a client that revalidates on every read
+    // (Studio does, after any write) gets a 304 for every file that did not change.
     const html = readFileSync(res.absPath, "utf-8");
+    const etag = `"gsap-animations:${createHash("sha1").update(html).digest("hex").slice(0, 16)}"`;
+    const headers = { ETag: etag, "Cache-Control": "no-cache" };
+    if (c.req.header("If-None-Match") === etag) return new Response(null, { status: 304, headers });
+
     const block = extractGsapScriptBlock(html);
     if (!block) {
-      return c.json({
-        animations: [],
-        timelineVar: "tl",
-        preamble: "",
-        postamble: "",
-      });
+      return c.json(
+        { animations: [], timelineVar: "tl", preamble: "", postamble: "" },
+        200,
+        headers,
+      );
     }
 
-    const parsed = parseGsapScriptAcorn(block.scriptText);
-    return c.json(parsed);
+    return c.json(parseGsapScriptAcorn(block.scriptText), 200, headers);
   });
 
   // ── GSAP Mutations ──

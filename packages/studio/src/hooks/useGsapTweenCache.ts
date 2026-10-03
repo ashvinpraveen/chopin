@@ -290,17 +290,17 @@ export function usePopulateKeyframeCacheForFile(
   const domClipChildrenKey = usePlayerStore((s) =>
     s.domClipChildren.map((c) => `${c.id}<${c.hostId}`).join("|"),
   );
-  const lastFetchKeyRef = useRef("");
+  // What each file's cache entries were last loaded for. Switching `sourceFile` to a
+  // file that is already loaded for the current data must not refetch the others.
+  const loadedRef = useRef<{ dataKey: string; files: Set<string> }>({
+    dataKey: "",
+    files: new Set(),
+  });
 
   const runtimeScanDoneRef = useRef("");
-  const astFetchDoneRef = useRef("");
 
   useEffect(() => {
-    const fetchKey = `kf-cache:${projectId}:${sourceFile}:${version}:${elementCount}:${domClipChildrenKey}:${compositionSrcKey}`;
-    if (fetchKey === lastFetchKeyRef.current) return;
-    lastFetchKeyRef.current = fetchKey;
-    runtimeScanDoneRef.current = "";
-    astFetchDoneRef.current = "";
+    const dataKey = `kf-cache:${projectId}:${version}:${elementCount}:${domClipChildrenKey}:${compositionSrcKey}`;
     if (!projectId) return;
 
     // The active file first: it owns the selection, and each file clears only
@@ -309,13 +309,19 @@ export function usePopulateKeyframeCacheForFile(
     const files = Array.from(
       new Set([sourceFile, ...(compositionSrcKey ? compositionSrcKey.split("|") : [])]),
     );
-    const doc = iframeRef?.current?.contentDocument;
+    const sameData = loadedRef.current.dataKey === dataKey;
+    const stale = sameData ? files.filter((sf) => !loadedRef.current.files.has(sf)) : files;
+    // Flipping `sourceFile` among files already covered keeps all of them; only new data
+    // (another composition, a write) narrows the set back to what is on screen.
+    const covered = sameData ? new Set([...loadedRef.current.files, ...files]) : new Set(files);
+    loadedRef.current = { dataKey, files: covered };
     // Everything the previous scan cached for a file this one no longer covers
     // (the composition just switched away from) has no owner left to clear it.
-    pruneKeyframeCacheToFiles(files);
-    Promise.all(files.map((sf) => populateKeyframeCacheFromAst(projectId, sf, doc))).then(() => {
-      astFetchDoneRef.current = fetchKey;
-    });
+    pruneKeyframeCacheToFiles([...covered]);
+    if (stale.length === 0) return;
+    runtimeScanDoneRef.current = "";
+    const doc = iframeRef?.current?.contentDocument;
+    void Promise.all(stale.map((sf) => populateKeyframeCacheFromAst(projectId, sf, doc)));
     // elementCount is in the deps because new timeline elements (e.g. after a
     // sub-composition expand) need their keyframe cache populated immediately;
     // without it the effect won't re-run when elements appear/disappear.

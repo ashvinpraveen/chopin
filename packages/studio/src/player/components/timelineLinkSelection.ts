@@ -1,5 +1,6 @@
 import { usePlayerStore, type TimelineElement } from "../store/playerStore";
-import { expandToLinkedMembers, linkedMembersOf } from "./audioClipLink";
+import { expandToLinkedMembers, linkedGestureKeys, linkedMembersOf } from "./audioClipLink";
+import { MAX_HAND_MOVE_CLIPS } from "./timelineEditing";
 import { isLinkedSelectionOn } from "../../utils/linkedClipPreferences";
 
 /**
@@ -38,4 +39,17 @@ export function toggleClipWithLinks(key: string, altKey: boolean): TimelineEleme
   state.setSelection(next, removing ? state.selectedElementId : key);
   const primary = usePlayerStore.getState().selectedElementId;
   return state.elements.find((el) => (el.key ?? el.id) === primary) ?? null;
+}
+
+/** Whether grabbing `grabbed` would move more clips by hand than a hand drag allows. */
+export function exceedsHandMoveLimit(grabbed: TimelineElement, altKey: boolean): boolean {
+  const { selectedElementIds, elements } = usePlayerStore.getState();
+  const moved = linkedGestureKeys(
+    selectedElementIds,
+    grabbed,
+    elements,
+    altKey,
+    isLinkedSelectionOn(),
+  );
+  return moved.size > MAX_HAND_MOVE_CLIPS;
 }

@@ -81,9 +81,10 @@ async function requestParsedAnimations(
   try {
     const res = await fetch(
       `/api/projects/${encodeURIComponent(projectId)}/gsap-animations/${encodeURIComponent(sourceFile)}`,
-      // Always re-read the freshly-parsed source; no per-call timestamp (which
-      // would defeat caching forever and is a deterministic-render no-no).
-      { cache: "no-store" },
+      // Always revalidate against the source; the server answers 304 for a file that did not
+      // change, so a write elsewhere costs no re-parse here. No per-call timestamp (a
+      // deterministic-render no-no).
+      { cache: "no-cache" },
     );
     if (!res.ok) return null;
     const parsed: unknown = await res.json();

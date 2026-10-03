@@ -8,7 +8,11 @@ import {
 import type { TimelineEditCapabilities } from "./timelineEditCapabilities";
 import type { TimelineEditCallbacks } from "./timelineCallbacks";
 import { CLIP_HANDLE_W } from "./timelineLayout";
-import { selectClipWithLinks, toggleClipWithLinks } from "./timelineLinkSelection";
+import {
+  exceedsHandMoveLimit,
+  selectClipWithLinks,
+  toggleClipWithLinks,
+} from "./timelineLinkSelection";
 import { SPLIT_BOUNDARY_EPSILON_S } from "../../utils/timelineElementSplit";
 
 export interface ClipGestureDeps {
@@ -73,6 +77,7 @@ function isIntentBlocked(
  */
 function resolvePointerDownAction(
   e: ReactPointerEvent,
+  grabbed: TimelineElement,
   capabilities: TimelineEditCapabilities,
   onResizeElement: ClipGestureDeps["onResizeElement"],
   onMoveElement: ClipGestureDeps["onMoveElement"],
@@ -93,6 +98,7 @@ function resolvePointerDownAction(
   }
 
   if (!onMoveElement || !capabilities.canMove) return { kind: "ignore" };
+  if (exceedsHandMoveLimit(grabbed, e.altKey)) return { kind: "block", intent: "move-many", rect };
   return { kind: "move", rect };
 }
 
@@ -147,7 +153,7 @@ export function createClipGestureHandlers(
   };
 
   const onPointerDown = (e: ReactPointerEvent): void => {
-    const action = resolvePointerDownAction(e, capabilities, onResizeElement, onMoveElement);
+    const action = resolvePointerDownAction(e, el, capabilities, onResizeElement, onMoveElement);
     if (action.kind === "ignore") return;
 
     if (action.kind === "block") {
