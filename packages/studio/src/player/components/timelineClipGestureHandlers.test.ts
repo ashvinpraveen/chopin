@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { usePlayerStore, type TimelineElement } from "../store/playerStore";
 import { createClipGestureHandlers, type ClipGestureDeps } from "./timelineClipGestureHandlers";
-import { MAX_HAND_MOVE_CLIPS } from "./timelineEditing";
+import { MAX_HAND_EDIT_CLIPS } from "./timelineEditing";
 
 afterEach(() => usePlayerStore.getState().reset());
 
@@ -17,51 +17,62 @@ const clips: TimelineElement[] = Array.from({ length: 6 }, (_, i) => ({
 }));
 const capabilities = { canMove: true, canTrimStart: true, canTrimEnd: true, readOnly: false };
 
-function pressFirstClipWithSelection(count: number) {
+function grabFirstClip(count: number, gesture: "move" | "resize") {
   const store = usePlayerStore.getState();
   store.setElements(clips);
   store.setSelectedElementIds(new Set(clips.slice(0, count).map((c) => c.id)));
   const setDraggedClip = vi.fn();
+  const setResizingClip = vi.fn();
   const blockedClipRef = { current: null as { intent: string } | null };
   const deps = {
     pps: 100,
     onMoveElement: vi.fn(),
+    onResizeElement: vi.fn(),
     blockedClipRef,
     suppressClickRef: { current: false },
     scrollRef: { current: null },
     setShowPopover: vi.fn(),
     setRangeSelection: vi.fn(),
-    setResizingClip: vi.fn(),
+    setResizingClip,
     setDraggedClip,
     setSelectedElementId: vi.fn(),
   } as unknown as ClipGestureDeps;
-  const { onPointerDown } = createClipGestureHandlers(
-    clips[0],
-    clips[0].id,
-    clips[0],
-    capabilities,
-    deps,
-  );
-  onPointerDown({
+  const handlers = createClipGestureHandlers(clips[0], clips[0].id, clips[0], capabilities, deps);
+  const event = {
     button: 0,
     clientX: 50,
     clientY: 5,
     pointerId: 1,
+    stopPropagation: vi.fn(),
     currentTarget: { getBoundingClientRect: () => ({ left: 0, width: 100 }) },
-  } as unknown as ReactPointerEvent);
-  return { setDraggedClip, blockedClipRef };
+  } as unknown as ReactPointerEvent;
+  if (gesture === "move") handlers.onPointerDown(event);
+  else handlers.onResizeStart("end", event);
+  return { setDraggedClip, setResizingClip, blockedClipRef };
 }
 
-describe("hand-moving a multi-selection", () => {
+describe("hand-editing a multi-selection", () => {
   it("moves up to the limit by hand", () => {
-    const { setDraggedClip, blockedClipRef } = pressFirstClipWithSelection(MAX_HAND_MOVE_CLIPS);
+    const { setDraggedClip, blockedClipRef } = grabFirstClip(MAX_HAND_EDIT_CLIPS, "move");
     expect(setDraggedClip).toHaveBeenCalledOnce();
     expect(blockedClipRef.current).toBeNull();
   });
 
   it("refuses to start a drag above the limit and asks for the toast", () => {
-    const { setDraggedClip, blockedClipRef } = pressFirstClipWithSelection(MAX_HAND_MOVE_CLIPS + 1);
+    const { setDraggedClip, blockedClipRef } = grabFirstClip(MAX_HAND_EDIT_CLIPS + 1, "move");
     expect(setDraggedClip).not.toHaveBeenCalled();
-    expect(blockedClipRef.current?.intent).toBe("move-many");
+    expect(blockedClipRef.current?.intent).toBe("edit-many");
+  });
+
+  it("resizes up to the limit by hand", () => {
+    const { setResizingClip, blockedClipRef } = grabFirstClip(MAX_HAND_EDIT_CLIPS, "resize");
+    expect(setResizingClip).toHaveBeenCalledOnce();
+    expect(blockedClipRef.current).toBeNull();
+  });
+
+  it("refuses to start a resize above the limit and asks for the toast", () => {
+    const { setResizingClip, blockedClipRef } = grabFirstClip(MAX_HAND_EDIT_CLIPS + 1, "resize");
+    expect(setResizingClip).not.toHaveBeenCalled();
+    expect(blockedClipRef.current?.intent).toBe("edit-many");
   });
 });

@@ -248,10 +248,10 @@ export interface TimelinePromptElement {
   track: number;
 }
 
-export type BlockedTimelineEditIntent = "move" | "move-many" | "resize-start" | "resize-end";
+export type BlockedTimelineEditIntent = "move" | "edit-many" | "resize-start" | "resize-end";
 
-/** Most clips a hand drag moves at once; a larger selection goes through the prompt box. */
-export const MAX_HAND_MOVE_CLIPS = 3;
+/** Most clips a hand drag moves or resizes at once; a larger selection goes through the prompt box. */
+export const MAX_HAND_EDIT_CLIPS = 3;
 
 export interface TimelineRangeSelection {
   start: number;

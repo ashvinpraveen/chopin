@@ -172,6 +172,6 @@ it("does not pick up a clip held in a selection above the hand-move limit", () =
   expect(view.drag).toBeNull();
   expect(view.onBlockedEditAttempt).toHaveBeenCalledWith(
     expect.objectContaining({ id: "hero" }),
-    "move-many",
+    "edit-many",
   );
 });

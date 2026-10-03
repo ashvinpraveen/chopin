@@ -9,7 +9,7 @@
 import { useCallback, useRef } from "react";
 import type { TimelineElement } from "../player";
 import {
-  MAX_HAND_MOVE_CLIPS,
+  MAX_HAND_EDIT_CLIPS,
   type BlockedTimelineEditIntent,
 } from "../player/components/timelineEditing";
 
@@ -25,8 +25,8 @@ export function useBlockedTimelineEditToast(
       if (now - lastAtRef.current < BLOCKED_TOAST_INTERVAL_MS) return;
       lastAtRef.current = now;
       showToast(
-        intent === "move-many"
-          ? `Select ${MAX_HAND_MOVE_CLIPS} or fewer clips to move by hand, or describe the change.`
+        intent === "edit-many"
+          ? `Select ${MAX_HAND_EDIT_CLIPS} or fewer clips to move or resize by hand, or describe the change.`
           : "This clip can't be moved or resized from the timeline yet.",
         "info",
       );

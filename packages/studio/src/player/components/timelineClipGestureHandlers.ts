@@ -9,7 +9,7 @@ import type { TimelineEditCapabilities } from "./timelineEditCapabilities";
 import type { TimelineEditCallbacks } from "./timelineCallbacks";
 import { CLIP_HANDLE_W } from "./timelineLayout";
 import {
-  exceedsHandMoveLimit,
+  exceedsHandEditLimit,
   selectClipWithLinks,
   toggleClipWithLinks,
 } from "./timelineLinkSelection";
@@ -98,7 +98,7 @@ function resolvePointerDownAction(
   }
 
   if (!onMoveElement || !capabilities.canMove) return { kind: "ignore" };
-  if (exceedsHandMoveLimit(grabbed, e.altKey)) return { kind: "block", intent: "move-many", rect };
+  if (exceedsHandEditLimit(grabbed, e.altKey)) return { kind: "block", intent: "edit-many", rect };
   return { kind: "move", rect };
 }
 
@@ -135,6 +135,17 @@ export function createClipGestureHandlers(
   const onResizeStart = (edge: "start" | "end", e: ReactPointerEvent): void => {
     if (!canStartResize(edge, e, capabilities, onResizeElement)) return;
     e.stopPropagation();
+    if (exceedsHandEditLimit(el, e.altKey)) {
+      blockedClipRef.current = {
+        pointerId: e.pointerId,
+        element: el,
+        intent: "edit-many",
+        originClientX: e.clientX,
+        originClientY: e.clientY,
+        started: false,
+      };
+      return;
+    }
     blockedClipRef.current = null;
     setShowPopover(false);
     setRangeSelection(null);

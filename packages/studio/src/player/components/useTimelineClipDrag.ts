@@ -29,7 +29,7 @@ import type {
 } from "./timelineClipDragTypes";
 import { getTimelineElementIndexes } from "../lib/timelineElementIndexes";
 import { dropMisalignedTrimPartners, linkedGestureKeys } from "./audioClipLink";
-import { exceedsHandMoveLimit } from "./timelineLinkSelection";
+import { exceedsHandEditLimit } from "./timelineLinkSelection";
 import { isLinkedSelectionOn } from "../../utils/linkedClipPreferences";
 import { useTimelineClipCapabilities } from "./timelineReadOnly";
 import { timelineClipFocusId } from "./timelineNavigationIdentity";
@@ -542,8 +542,8 @@ export function useTimelineClipDrag({
       if (!element || !getClipCapabilities(element).canMove) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      if (exceedsHandMoveLimit(element, false)) {
-        onBlockedEditAttemptRef.current?.(element, "move-many");
+      if (exceedsHandEditLimit(element, false)) {
+        onBlockedEditAttemptRef.current?.(element, "edit-many");
         return;
       }
       setShowPopover(false);
