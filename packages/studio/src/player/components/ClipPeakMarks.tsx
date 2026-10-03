@@ -42,7 +42,7 @@ export function ClipPeakMarks({
           {runs.map((run) => (
             <div
               key={run.from}
-              className="absolute inset-y-0 bg-red-500/80"
+              className="absolute inset-y-0 border-t-2 border-red-500/90 bg-red-500/15"
               style={{
                 left: `${run.from * 100}%`,
                 width: `max(1px, ${(run.to - run.from) * 100}%)`,

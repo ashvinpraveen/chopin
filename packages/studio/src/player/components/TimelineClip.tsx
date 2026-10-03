@@ -5,6 +5,7 @@ import {
   clipWidthLadder,
   defaultTimelineTheme,
   getClipHandleOpacity,
+  timelineClipKind,
   type TimelineTheme,
 } from "./timelineTheme";
 import type { TimelineEditCapabilities } from "./timelineEditing";
@@ -136,6 +137,7 @@ export const TimelineClip = memo(function TimelineClip({
       data-clip-hidden={el.hidden ? "true" : undefined}
       data-link-color={linkColor ?? undefined}
       data-ladder={ladder}
+      data-clip-kind={timelineClipKind(el, isAudioClip)}
       data-active={isActive ? "" : undefined}
       aria-hidden={isGestureActor ? "true" : undefined}
       tabIndex={isGestureActor ? undefined : tabIndex}

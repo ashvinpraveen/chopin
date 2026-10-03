@@ -111,11 +111,31 @@
   );
   --timeline-clip-label-active: light-dark(#0b3d2c, rgba(240, 245, 252, 0.95));
   --timeline-clip-label-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-  /* Audio clips are a solid fill that carries white ink in both themes. */
-  --timeline-clip-audio-bg: oklch(0.42 0.08 160);
-  --timeline-clip-audio-border: oklch(0.34 0.07 160);
-  --timeline-clip-audio-bg-hover: oklch(0.46 0.08 160);
-  --timeline-clip-audio-bg-dragging: oklch(0.4 0.08 160 / 0.96);
+  /* Clip kinds, Resolve-style: each kind has a body, a darker name band and a hover body.
+   * Every band carries white ink in both themes; bodies sit under thumbnails or waveforms. */
+  --timeline-clip-video-bg: light-dark(oklch(0.66 0.08 250), oklch(0.5 0.085 250));
+  --timeline-clip-video-bg-hover: light-dark(oklch(0.7 0.08 250), oklch(0.55 0.085 250));
+  --timeline-clip-video-band: light-dark(oklch(0.42 0.08 250), oklch(0.34 0.065 250));
+  --timeline-clip-text-bg: light-dark(oklch(0.66 0.08 300), oklch(0.48 0.08 300));
+  --timeline-clip-text-bg-hover: light-dark(oklch(0.7 0.08 300), oklch(0.53 0.08 300));
+  --timeline-clip-text-band: light-dark(oklch(0.42 0.08 300), oklch(0.34 0.065 300));
+  --timeline-clip-image-bg: light-dark(oklch(0.68 0.08 350), oklch(0.49 0.085 350));
+  --timeline-clip-image-bg-hover: light-dark(oklch(0.72 0.08 350), oklch(0.54 0.085 350));
+  --timeline-clip-image-band: light-dark(oklch(0.43 0.08 350), oklch(0.34 0.065 350));
+  --timeline-clip-composition-bg: light-dark(oklch(0.66 0.07 215), oklch(0.48 0.07 215));
+  --timeline-clip-composition-bg-hover: light-dark(oklch(0.7 0.07 215), oklch(0.53 0.07 215));
+  --timeline-clip-composition-band: light-dark(oklch(0.42 0.065 215), oklch(0.33 0.055 215));
+  --timeline-clip-effect-bg: light-dark(oklch(0.68 0.03 290), oklch(0.45 0.03 290));
+  --timeline-clip-effect-bg-hover: light-dark(oklch(0.72 0.03 290), oklch(0.5 0.03 290));
+  --timeline-clip-effect-band: light-dark(oklch(0.42 0.03 290), oklch(0.32 0.025 290));
+  /* Audio: a deep mint-teal body with the waveform in a light tint of the same hue. */
+  --timeline-clip-audio-bg: light-dark(oklch(0.48 0.07 168), oklch(0.36 0.06 168));
+  --timeline-clip-audio-border: light-dark(oklch(0.4 0.065 168), oklch(0.3 0.05 168));
+  --timeline-clip-audio-bg-hover: light-dark(oklch(0.52 0.07 168), oklch(0.4 0.06 168));
+  --timeline-clip-audio-bg-dragging: light-dark(
+    oklch(0.46 0.07 168 / 0.96),
+    oklch(0.34 0.06 168 / 0.96)
+  );
   --timeline-clip-audio-muted-bg: rgb(72, 74, 78);
   --timeline-clip-selection: light-dark(#0f766e, rgba(255, 255, 255, 0.85));
   --timeline-clip-selection-highlight: rgb(255 255 255 / 0.55);
@@ -127,7 +147,7 @@
   --timeline-clip-highlight: rgb(255 255 255 / 0.08);
   --timeline-clip-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
   --timeline-clip-chip-bg: rgba(15, 22, 18, 0.73);
-  --timeline-clip-chip-audio-bg: rgba(12, 28, 20, 0.7);
+  --timeline-clip-chip-audio-bg: transparent;
   --timeline-clip-chip-text: #ffffff;
   --timeline-shortcut-bg: color-mix(in oklab, var(--color-raised) 94%, transparent);
   /* Composition and text clips draw their frame as it is, like video filmstrips; a host may dim them. */
@@ -149,9 +169,9 @@
   /* A text clip's strip behind its live words: dark for light text, light for dark text. */
   --timeline-text-clip-dark-bg: #1c2028;
   --timeline-text-clip-light-bg: #e9e6df;
-  --timeline-waveform-bar-rgb: 225, 245, 232;
-  --timeline-waveform-muted-rgb: 236, 238, 242;
-  --timeline-waveform-baseline-rgb: 200, 225, 210;
+  --timeline-waveform-bar-rgb: 156, 222, 198;
+  --timeline-waveform-muted-rgb: 176, 180, 186;
+  --timeline-waveform-baseline-rgb: 104, 168, 146;
   --timeline-waveform-error: repeating-linear-gradient(
     90deg,
     rgba(245, 237, 255, 0.35) 0 2px,

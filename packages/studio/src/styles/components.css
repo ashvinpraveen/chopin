@@ -152,7 +152,7 @@
 }
 
 .timeline-clip {
-  background-color: var(--clip-bg);
+  background-color: var(--clip-kind-bg, var(--clip-bg));
   border: 1px solid var(--clip-border);
   border-radius: var(--timeline-clip-radius);
   box-shadow:
@@ -162,6 +162,34 @@
 
 .timeline-clip:not(.is-audio) {
   border-width: 0;
+}
+
+/* One colour family per clip kind (tokens in theme.css). A host that themes
+   --timeline-clip-bg still wins for kinds it does not name. */
+.timeline-clip[data-clip-kind="video"] {
+  --clip-kind-bg: var(--timeline-clip-video-bg);
+  --clip-kind-bg-hover: var(--timeline-clip-video-bg-hover);
+  --clip-kind-band: var(--timeline-clip-video-band);
+}
+.timeline-clip[data-clip-kind="text"] {
+  --clip-kind-bg: var(--timeline-clip-text-bg);
+  --clip-kind-bg-hover: var(--timeline-clip-text-bg-hover);
+  --clip-kind-band: var(--timeline-clip-text-band);
+}
+.timeline-clip[data-clip-kind="image"] {
+  --clip-kind-bg: var(--timeline-clip-image-bg);
+  --clip-kind-bg-hover: var(--timeline-clip-image-bg-hover);
+  --clip-kind-band: var(--timeline-clip-image-band);
+}
+.timeline-clip[data-clip-kind="composition"] {
+  --clip-kind-bg: var(--timeline-clip-composition-bg);
+  --clip-kind-bg-hover: var(--timeline-clip-composition-bg-hover);
+  --clip-kind-band: var(--timeline-clip-composition-band);
+}
+.timeline-clip[data-clip-kind="effect"] {
+  --clip-kind-bg: var(--timeline-clip-effect-bg);
+  --clip-kind-bg-hover: var(--timeline-clip-effect-bg-hover);
+  --clip-kind-band: var(--timeline-clip-effect-band);
 }
 
 .timeline-clip__content {
@@ -326,7 +354,7 @@
 }
 
 .timeline-clip.is-hovered {
-  background-color: var(--clip-bg-hover);
+  background-color: var(--clip-kind-bg-hover, var(--clip-bg-hover));
 }
 
 .timeline-clip[data-active].is-hovered {
@@ -379,7 +407,7 @@
   border-radius: inherit;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  background: var(--timeline-clip-band-bg);
+  background: var(--clip-kind-band, var(--timeline-clip-band-bg));
   font-weight: 600;
   line-height: var(--timeline-clip-band-height);
 }
@@ -409,9 +437,10 @@
 }
 
 .timeline-clip.is-audio .timeline-clip__label {
-  top: 11px;
-  left: 9px;
+  top: 4px;
+  left: 6px;
   background: var(--timeline-clip-chip-audio-bg);
+  text-shadow: var(--timeline-clip-label-shadow);
 }
 
 .timeline-clip__timecode {

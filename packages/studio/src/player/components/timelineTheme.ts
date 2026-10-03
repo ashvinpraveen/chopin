@@ -79,6 +79,21 @@ export const defaultTimelineTheme: TimelineTheme = {
   transitionBadgeInk: "var(--timeline-transition-badge-ink)",
 };
 
+/** The kind a clip is coloured by: one token family per kind in styles/theme.css. */
+export type TimelineClipKind = "video" | "audio" | "text" | "image" | "composition" | "effect";
+
+export function timelineClipKind(
+  el: Pick<TimelineElement, "tag" | "text" | "compositionSrc">,
+  isAudio: boolean,
+): TimelineClipKind {
+  if (isAudio) return "audio";
+  if (el.compositionSrc) return "composition";
+  if (el.tag === "video") return "video";
+  if (el.tag === "img") return "image";
+  if (el.text) return "text";
+  return "effect";
+}
+
 export type ClipWidthLadder = "labeled" | "picture" | "frame";
 
 /** Label chip from 60px. Under 24px the clip is one cropped frame. */

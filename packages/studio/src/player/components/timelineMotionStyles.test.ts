@@ -79,7 +79,7 @@ describe("timeline motion styles", () => {
     const bloomOverlayRule = expectRule(studioCss, ".timeline-clip::before");
     const activeBloomOverlayRule = expectRule(studioCss, ".timeline-clip[data-active]::before");
 
-    expect(baseTimelineClipRule).toContain("background-color: var(--clip-bg)");
+    expect(baseTimelineClipRule).toContain("background-color: var(--clip-kind-bg, var(--clip-bg))");
     expect(baseTimelineClipRule).toContain("border: 1px solid var(--clip-border)");
     expect(baseTimelineClipRule).toContain("box-shadow:");
     expect(baseTimelineClipRule).toContain("inset 0 1px 0 var(--timeline-clip-highlight)");
@@ -96,7 +96,7 @@ describe("timeline motion styles", () => {
     expect(themeCss).toContain("--timeline-clip-highlight: rgb(255 255 255 / 0.08)");
     expect(themeCss).toContain("--timeline-clip-shadow: 0 2px 6px rgb(0 0 0 / 0.3)");
     expect(themeCss).toContain("--timeline-clip-chip-bg: rgba(15, 22, 18, 0.73)");
-    expect(themeCss).toContain("--timeline-clip-chip-audio-bg: rgba(12, 28, 20, 0.7)");
+    expect(themeCss).toContain("--timeline-clip-chip-audio-bg: transparent");
     expect(themeCss).toContain("--timeline-clip-chip-text: #ffffff");
     expect(themeCss).toContain("--timeline-clip-shadow: 0 2px 6px rgb(0 0 0 / 0.12)");
     expect(audioClipRule).toContain("background-color: var(--timeline-clip-audio-bg)");

@@ -12,7 +12,6 @@ import type { TimelineClipRenderContext } from "../player/components/TimelineTyp
 import { audioPillFlags } from "../player/components/audioClipLink";
 import { AudioWaveform, rendersWaveform } from "../player/components/AudioWaveform";
 import { ImageThumbnail } from "../player/components/ImageThumbnail";
-import { TextClipContent } from "../player/components/TextClipContent";
 import { AudibleVideoClipContent } from "../player/components/AudibleVideoClipContent";
 import { ClipPeakMarks } from "../player/components/ClipPeakMarks";
 import { clipPeaksUrl, clipSourceWindow } from "../player/components/clipPeakMap";
@@ -185,7 +184,9 @@ export function useRenderClipContent({
         return renderAudioClip(el, pid, sessionEpoch, style.label, context, elements);
       }
 
-      if (el.text) return createElement(TextClipContent, { text: el.text });
+      // Text and caption layers are a calm solid bar: the clip band carries the name,
+      // so a live preview of the words underneath would only repeat it.
+      if (el.text) return null;
 
       // When drilled into a composition, render all inner elements via
       // CompositionThumbnail at their start time — most accurate visual.
