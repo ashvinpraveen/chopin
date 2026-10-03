@@ -439,11 +439,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                   onClick={() => {
                     if (canAdd) addBeatAtCompositionTime(currentTime);
                   }}
-                  className={
-                    canAdd
-                      ? `${flatBtn} text-text-2 hover:bg-hover hover:text-accent-ink active:scale-[0.98]`
-                      : flatDisabled
-                  }
+                  className={canAdd ? flatIdle : flatDisabled}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path
@@ -477,9 +473,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               aria-pressed={thumbnailsVisible}
               onClick={() => setThumbnailMode(thumbnailsVisible ? "hidden" : "adaptive")}
               className={`h-7 px-2 rounded-md text-[11px] font-medium transition-colors ${
-                thumbnailsVisible
-                  ? "bg-studio-accent/10 text-accent-ink"
-                  : "text-neutral-400 hover:bg-hover hover:text-neutral-200"
+                thumbnailsVisible ? "text-text-0" : "text-text-2 hover:text-text-1"
               }`}
             >
               <Image size={16} aria-hidden="true" />
@@ -492,9 +486,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               aria-label="Fit timeline to width"
               aria-pressed={zoomMode === "fit"}
               className={`h-7 px-2 rounded-md text-[11px] font-medium transition-colors ${
-                zoomMode === "fit"
-                  ? "bg-studio-accent/10 text-accent-ink"
-                  : "text-neutral-400 hover:bg-hover hover:text-neutral-200"
+                zoomMode === "fit" ? "text-text-0" : "text-text-2 hover:text-text-1"
               }`}
             >
               <ArrowsOutLineHorizontal size={16} aria-hidden="true" />

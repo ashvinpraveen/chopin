@@ -76,7 +76,7 @@ const LoopButton = memo(function LoopButton({
         }}
         disabled={disabled}
         className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:opacity-30 ${
-          loopEnabled ? "text-accent-ink" : "text-neutral-500 hover:text-neutral-200"
+          loopEnabled ? "text-text-0" : "text-text-2 hover:text-text-1"
         }`}
         aria-label={loopEnabled ? "Disable loop playback" : "Enable loop playback"}
         aria-pressed={loopEnabled}

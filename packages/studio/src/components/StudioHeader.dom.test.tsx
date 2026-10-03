@@ -125,20 +125,15 @@ it("no longer renders Undo or Redo in the header", () => {
   expect(host.querySelector('[aria-label="Redo"]')).toBeNull();
 });
 
-it("groups Capture and Inspector in one bordered segment, Export outside it", () => {
-  const host = mount();
-  const group = query(host, '[aria-label="Capture current frame"]').closest(".divide-x");
-
-  expect(group?.contains(query(host, '[aria-label="Inspector"]'))).toBe(true);
-  expect(group?.contains(query(host, '[data-testid="header-export"]'))).toBe(false);
-  expect(group).not.toBeNull();
-});
-
-it("drops the Capture label below 1000px but keeps its accessible name", () => {
+it("renders Capture and Inspector icon-only, with no bordered box around them", () => {
   const host = mount();
   const capture = query(host, '[aria-label="Capture current frame"]');
+  const inspector = query(host, '[aria-label="Inspector"]');
 
-  expect(query(capture, "span").className).toContain("max-[1000px]:hidden");
+  expect(capture.textContent).toBe("");
+  expect(inspector.textContent).toBe("");
+  expect(capture.closest(".divide-x")).toBeNull();
+  expect(hasToken(capture.parentElement?.className ?? "", "border")).toBe(false);
 });
 
 /** The bare token, not a `hover:`/`data-[…]:`-prefixed variant of it. */
@@ -146,19 +141,20 @@ function hasToken(className: string, token: string): boolean {
   return className.split(/\s+/).includes(token);
 }
 
-it("shows Inspector pressed and filled only when on", () => {
+it("shows Inspector on by icon colour alone, never a fill or accent", () => {
   const host = mount({ inspectorButtonActive: true });
   const on = query(host, '[aria-label="Inspector"]');
   expect(on.getAttribute("aria-pressed")).toBe("true");
-  expect(hasToken(on.className, "text-accent-ink")).toBe(true);
-  expect(hasToken(on.className, "bg-on")).toBe(true);
+  expect(hasToken(on.className, "text-text-0")).toBe(true);
+  expect(hasToken(on.className, "text-accent-ink")).toBe(false);
+  expect(hasToken(on.className, "bg-on")).toBe(false);
   act(() => mounted?.root.unmount());
   mounted?.host.remove();
   mounted = null;
 
   const off = query(mount(), '[aria-label="Inspector"]');
   expect(off.getAttribute("aria-pressed")).toBe("false");
-  expect(hasToken(off.className, "text-accent-ink")).toBe(false);
+  expect(hasToken(off.className, "text-text-0")).toBe(false);
   expect(hasToken(off.className, "bg-on")).toBe(false);
 });
 
@@ -170,8 +166,6 @@ it("keeps Capture a real download link rather than a button", () => {
 
   expect(capture.tagName).toBe("A");
   expect(capture.getAttribute("download")).toBe("frame.png");
-  // h-full replaces the md height: the group's own h-ctl sets the shared control height.
-  expectRecipe(capture, "px-3", "text-step-12");
 });
 
 it("classifies the new header controls for the hotkey filters as the old ones were (KTD13)", () => {

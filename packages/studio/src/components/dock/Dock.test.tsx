@@ -266,7 +266,9 @@ describe("a host's dock", () => {
     expect(useDockLayoutStore.getState().openPanels).toEqual(new Set(panels));
     expect(useDockLayoutStore.getState().visiblePanels).toEqual(new Set(panels));
     expect(dockApi?.getPanel("assets")?.group.id).not.toBe(dockApi?.getPanel("renders")?.group.id);
-    const menu = [...host.querySelectorAll("button")].find((b) => b.textContent === "Window");
+    const menu = [...host.querySelectorAll("button")].find(
+      (b) => b.getAttribute("aria-label") === "Window",
+    );
     act(() => menu?.click());
     const items = [...host.querySelectorAll('[role="menuitemcheckbox"]')].map((i) => i.textContent);
     expect(items).toEqual(["✓Viewer", "✓Timeline", "✓Media Pool", "✓Render Queue"]);

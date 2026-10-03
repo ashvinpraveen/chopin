@@ -296,15 +296,13 @@ function CompCard({
       }}
       onPointerEnter={handleEnter}
       onPointerLeave={handleLeave}
-      className={`group/card w-full select-none text-left px-2 py-1.5 flex items-center gap-2.5 transition-colors cursor-grab active:cursor-grabbing outline-hidden focus-visible:bg-neutral-800/60 ${
-        isActive
-          ? "bg-studio-accent/10 border-l-2 border-studio-accent"
-          : "border-l-2 border-transparent hover:bg-neutral-800/50"
-      }`}
+      className="group/card w-full select-none text-left rounded-md px-2 py-1.5 flex items-center gap-2.5 transition-colors cursor-grab active:cursor-grabbing outline-hidden focus-visible:bg-neutral-800/60 hover:bg-neutral-800/40"
     >
       <div
         ref={thumbnailBox}
-        className="w-20 h-[45px] rounded-sm overflow-hidden bg-neutral-900 shrink-0 relative"
+        className={`w-20 h-[45px] rounded-sm overflow-hidden bg-neutral-900 shrink-0 relative ring-1 transition-shadow ${
+          isActive ? "ring-text-2" : "ring-transparent"
+        }`}
       >
         {thumbnailFailed ? (
           <div className="absolute inset-0 flex items-center justify-center px-1 text-center text-[8px] leading-tight text-neutral-600">
@@ -360,7 +358,13 @@ function CompCard({
         title={lintInfo && lintInfo.count > 0 ? lintInfo.messages.join("\n") : undefined}
       >
         <div className="flex items-center gap-1">
-          <span className="text-[11px] font-medium text-neutral-300 truncate">{name}</span>
+          <span
+            className={`text-[11px] font-medium truncate ${
+              isActive ? "text-text-0" : "text-neutral-400"
+            }`}
+          >
+            {name}
+          </span>
           {isRoot && (
             <span
               aria-label="Root composition — opens automatically on load"

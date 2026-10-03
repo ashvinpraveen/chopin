@@ -3,11 +3,15 @@ import { Camera } from "../icons/SystemIcons";
 import { useStudioShellContext } from "../contexts/StudioContext";
 import { usePanelLayoutContext } from "../contexts/PanelLayoutContext";
 import { trackStudioEvent } from "../utils/studioTelemetry";
-import { Button, buttonBase, buttonSizes, buttonVariants, cn, Tooltip } from "./ui";
+import { Button, cn, Tooltip } from "./ui";
 import { Dock } from "./dock/Dock";
 import { InspectorIcon } from "./icons/InspectorIcon";
 import { ChopinLogo } from "./ui/ChopinLogo";
 import { ShowThemeToggle, ThemeToggle } from "./ThemeToggle";
+
+/** Quiet icon-only header control: no fill or border, state lives in the icon colour. */
+const headerIconBtn =
+  "flex h-7 w-7 items-center justify-center rounded-md transition-colors active:scale-[0.98] outline-hidden focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent";
 
 interface StudioHeaderProps {
   captureFrameHref: string;
@@ -62,12 +66,10 @@ export const StudioHeader = memo(function StudioHeader({
       </span>
       {/* Right: toolbar buttons */}
       <div className="flex items-center gap-3">
-        <div className="flex h-ctl items-center divide-x divide-border-strong overflow-hidden rounded-md border border-border-strong bg-bg-2">
+        <div className="flex items-center gap-1">
           <Tooltip label={capturing ? "Capturing frame…" : "Capture current frame"} side="bottom">
-            {/* A real download link, so it wears Button's recipe rather than being
-              one: `download` on an <a> is what saves the frame, and no <button>
-              can do that. `enabled:` never matches a link, so the ghost
-              variant's hover look is repeated unprefixed here. */}
+            {/* A real download link: `download` on an <a> is what saves the frame,
+              and no <button> can do that. */}
             <a
               href={captureFrameHref}
               download={captureFrameFilename}
@@ -83,13 +85,8 @@ export const StudioHeader = memo(function StudioHeader({
               onPointerDown={refreshCaptureFrameTime}
               aria-disabled={capturing || undefined}
               className={cn(
-                buttonBase,
-                buttonVariants.ghost,
-                buttonSizes.md,
-                "h-full rounded-none max-[1000px]:px-2",
-                capturing
-                  ? "text-text-4 cursor-default"
-                  : "hover:bg-hover hover:text-text-0 active:scale-[0.98]",
+                headerIconBtn,
+                capturing ? "text-text-4 cursor-default" : "text-text-2 hover:text-text-1",
               )}
               aria-label={capturing ? "Capturing frame" : "Capture current frame"}
             >
@@ -117,20 +114,17 @@ export const StudioHeader = memo(function StudioHeader({
               ) : (
                 <Camera size={14} />
               )}
-              <span className="max-[1000px]:hidden">{capturing ? "Capturing…" : "Capture"}</span>
             </a>
           </Tooltip>
           <Tooltip label="Inspector" side="bottom">
-            <Button
-              variant="ghost"
+            <button
+              type="button"
               aria-label="Inspector"
               aria-pressed={inspectorButtonActive}
               className={cn(
-                "h-full rounded-none",
-                inspectorButtonActive &&
-                  "bg-on text-accent-ink enabled:hover:bg-on-hover enabled:hover:text-accent-ink",
+                headerIconBtn,
+                inspectorButtonActive ? "text-text-0" : "text-text-2 hover:text-text-1",
               )}
-              icon={<InspectorIcon size={16} />}
               onClick={() => {
                 if (shouldOpenInspector(rightCollapsed, inspectorPanelActive)) {
                   trackStudioEvent("panel_toggle", { panel: "inspector", collapsed: false });
@@ -144,8 +138,8 @@ export const StudioHeader = memo(function StudioHeader({
                 setRightCollapsed(true);
               }}
             >
-              Inspector
-            </Button>
+              <InspectorIcon size={16} />
+            </button>
           </Tooltip>
         </div>
         {showThemeToggle && <ThemeToggle />}

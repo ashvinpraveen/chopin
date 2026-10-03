@@ -1,7 +1,5 @@
-<svg width="64" height="64" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="g" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#F2994A"/><stop offset="1" stop-color="#F2C94C"/></linearGradient></defs>
-<rect width="22" height="22" rx="4" fill="url(#g)"/>
-<rect x="5" y="9" width="2.5" height="8" rx="1.25" fill="#181818"/>
-<rect x="9.75" y="5" width="2.5" height="12" rx="1.25" fill="#181818"/>
-<rect x="14.5" y="11" width="2.5" height="6" rx="1.25" fill="#181818"/>
+<svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>circle.ring{stroke:#1c1c1c}@media (prefers-color-scheme:dark){circle.ring{stroke:#e8e8e8}}</style>
+<circle class="ring" cx="50" cy="50" r="40" stroke-width="8"/>
+<circle cx="61" cy="61" r="15" fill="#F2994A"/>
 </svg>

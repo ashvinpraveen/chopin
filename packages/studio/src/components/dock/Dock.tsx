@@ -30,6 +30,7 @@ import {
   type PanelDefinition,
   type PanelId,
 } from "./panelRegistry";
+import { SquaresFour } from "@phosphor-icons/react";
 import "./dock.css";
 
 const PERSIST_DEBOUNCE_MS = 250;
@@ -282,10 +283,14 @@ function WindowMenu() {
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label="Window"
+        title="Window"
         onClick={() => setOpen((value) => !value)}
-        className="h-7 px-2.5 rounded-md text-[11px] font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
+        className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+          open ? "text-text-0" : "text-text-2 hover:text-text-1"
+        }`}
       >
-        Window
+        <SquaresFour size={16} aria-hidden="true" />
       </button>
       {open && (
         <div
