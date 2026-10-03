@@ -1,4 +1,5 @@
 import type { Hono } from "hono";
+import { HLS_PROXY_VARIANT, serveHlsProxy } from "../helpers/hlsProxyRoute.js";
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { Readable } from "node:stream";
 import { join, resolve } from "node:path";
@@ -600,6 +601,17 @@ export function registerPreviewRoutes(api: Hono, adapter: PreviewApiAdapter): vo
     // for this adapter/project. Checked BEFORE any transcode or 304 shortcut
     // so a bogus/disabled request never spawns ffmpeg.
     const proxyParam = c.req.query("hf-proxy");
+    if (proxyParam === HLS_PROXY_VARIANT) {
+      return serveHlsProxy(
+        c,
+        adapter,
+        project.dir,
+        file,
+        subPath,
+        contentType,
+        mediaCodecProbeCache,
+      );
+    }
     let proxyVariant: ProxyVariant | undefined;
     if (proxyParam !== undefined) {
       if (

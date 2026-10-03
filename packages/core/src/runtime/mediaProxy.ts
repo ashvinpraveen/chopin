@@ -23,7 +23,11 @@ export type MediaCodecMapEntry = {
   /** Source carries an alpha channel and therefore needs a VP8/WebM proxy.
    * Optional so pre-alpha-aware maps stay assignable; absent means "no alpha detected". */
   hasAlpha?: boolean;
+  /** Chopin: above 1080p. Served as a segmented HLS proxy made on demand. */
+  heavy?: boolean;
 };
+
+const HLS_MIME = "application/vnd.apple.mpegurl";
 
 declare global {
   interface Window {
@@ -166,7 +170,8 @@ function lookupCodecMapEntry(
 
 function appendProxyParam(src: string, entry: MediaCodecMapEntry | null): string {
   const url = new URL(src, document.baseURI);
-  url.searchParams.set(PROXY_QUERY_PARAM, entry ? (entry.hasAlpha ? "vp8" : "h264") : "auto");
+  const variant = entry?.heavy ? "hls" : entry ? (entry.hasAlpha ? "vp8" : "h264") : "auto";
+  url.searchParams.set(PROXY_QUERY_PARAM, variant);
   return url.href;
 }
 
@@ -234,7 +239,10 @@ export function swapToProxy(
   const originalAttr = el.getAttribute("src");
   proxyRequested.set(el, originalAttr);
   const live = () => el.isConnected && el.getAttribute("src") === originalAttr;
-  const swap = waitForServedProxy(proxiedSrc, live).then((served) => {
+  // A heavy source's playlist is always servable (segments are made on demand),
+  // so swap at once: waiting would let the original start streaming meanwhile.
+  const served = entry?.heavy ? Promise.resolve(true) : waitForServedProxy(proxiedSrc, live);
+  const swap = served.then((served) => {
     if (!live()) {
       if (proxyRequested.get(el) === originalAttr) proxyRequested.delete(el);
       return;
@@ -285,13 +293,19 @@ export function swapToProxy(
  */
 export function maybeProxyProactively(el: HTMLMediaElement): void {
   if (isRenderMode(el)) return;
-  if (!isVideoElement(el)) return;
   if (swappedElements.has(el)) return;
   const map = window.__HF_MEDIA_CODEC_MAP__;
   if (!map) return;
   const key = deriveCodecMapKey(el);
   if (key === null) return;
   const entry = lookupCodecMapEntry(key, map);
+  // A heavy source is swapped for <audio> too: playing its sound track from
+  // the original would still stream the whole multi-gigabyte file.
+  if (entry?.heavy) {
+    if (el.canPlayType(HLS_MIME) !== "") swapToProxy(el, entry, "proactive");
+    return;
+  }
+  if (!isVideoElement(el)) return;
   if (!entry || !entry.browserHostile) return;
   const canPlay = entry.representativeMime ? el.canPlayType(entry.representativeMime) : "";
   if (canPlay === "probably" || canPlay === "maybe") return;

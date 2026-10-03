@@ -2474,7 +2474,7 @@ export function initSandboxRuntimeModular(): void {
       // Proactive proxy-fallback trigger: consult the codec map and swap
       // BEFORE the eager load() below, so a known-hostile asset never even
       // attempts to load (and error-flash) the original. No-op in render
-      // mode, for <audio>, or when the codec map is absent.
+      // mode, for <audio> (unless its source is heavy), or when the codec map is absent.
       maybeProxyProactively(mediaEl);
 
       // Studio's preview loads a timed clip only near the playhead; the visibility pass decides.

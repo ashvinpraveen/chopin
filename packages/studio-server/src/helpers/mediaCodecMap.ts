@@ -77,7 +77,8 @@ function hostileCodecEntry(codecName: string): BrowserHostileCodec | undefined {
 /** The pre-warm gate: true only for codecs with no cross-platform browser
  * decode, so some client will ask. See `BrowserHostileCodec.prewarm`. */
 export function shouldPrewarmProxy(facts: AssetCodecFacts): boolean {
-  return facts.heavy === true || hostileCodecEntry(facts.codecName)?.prewarm === true;
+  // A heavy source is never transcoded whole: its segmented proxy is made on demand.
+  return facts.heavy !== true && hostileCodecEntry(facts.codecName)?.prewarm === true;
 }
 
 // Per process, and deliberately in one unit — a call to `resolveProxy` — so
@@ -171,7 +172,11 @@ export function resolveProxyVariantRequest(
   return request === "auto" || request === expected ? expected : null;
 }
 
-export type MediaProxyIneligibilityReason = "browser_safe_codec" | "unknown_codec";
+export type MediaProxyIneligibilityReason =
+  | "browser_safe_codec"
+  | "unknown_codec"
+  /** Chopin: heavy sources get the segmented `?hf-proxy=hls` proxy, never a whole-file one. */
+  | "segmented_only";
 
 export type MediaProxyEligibility =
   | { eligible: true }
@@ -180,6 +185,7 @@ export type MediaProxyEligibility =
 /** Single policy gate shared by proactive scans and on-demand proxy routes. */
 export function decideMediaProxyEligibility(facts: AssetCodecFacts | null): MediaProxyEligibility {
   if (!facts) return { eligible: false, reason: "unknown_codec" };
+  if (facts.heavy) return { eligible: false, reason: "segmented_only" };
   if (!facts.browserHostile) return { eligible: false, reason: "browser_safe_codec" };
   return { eligible: true };
 }

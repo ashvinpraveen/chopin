@@ -104,7 +104,7 @@ describe("probeAssetCodec", () => {
     });
   });
 
-  it("proxies a 4K H.264 asset unconditionally, without a canPlayType probe", async () => {
+  it("proxies a 4K H.264 asset unconditionally, segmented on demand rather than pre-warmed", async () => {
     const project = tmpProject();
     const videoPath = join(project, "clip.mp4");
     writeFileSync(videoPath, "fake video bytes");
@@ -121,7 +121,7 @@ describe("probeAssetCodec", () => {
       hasAlpha: false,
       heavy: true,
     });
-    expect(facts && shouldPrewarmProxy(facts)).toBe(true);
+    expect(facts && shouldPrewarmProxy(facts)).toBe(false);
   });
 
   it("keeps a 1080p H.264 asset as the original", async () => {
