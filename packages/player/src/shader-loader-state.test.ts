@@ -66,6 +66,6 @@ describe("shader loader progress rows", () => {
     state.update({ loading: false, ready: true }, "player");
     state.update({ loading: true, ready: false }, "composition");
     expect(root.classList.contains("hfp-visible")).toBe(true);
-    expect(root.getAttribute("aria-label")).toBe("Loading assets");
+    expect(root.getAttribute("aria-label")).toBe("Loading media");
   });
 });

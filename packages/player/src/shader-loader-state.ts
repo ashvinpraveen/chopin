@@ -147,9 +147,9 @@ export class ShaderLoaderState {
    *  panel's DOM rather than drawing a second one. */
   showAssetsLoading(): void {
     this.reset();
-    this._el.title.textContent = "Loading assets";
+    this._el.title.textContent = "Loading media…";
     this._el.detail.textContent = "Waiting for images, video and fonts to finish loading.";
-    this._el.root.setAttribute("aria-label", "Loading assets");
+    this._el.root.setAttribute("aria-label", "Loading media");
     this._drawingAssets = true;
     this.show();
   }

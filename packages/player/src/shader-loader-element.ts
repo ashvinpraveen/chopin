@@ -55,12 +55,8 @@ export function createShaderLoader(): ShaderLoaderElements {
   markFrame.className = "hfp-shader-loader-mark";
   markFrame.draggable = false;
   markFrame.innerHTML = [
-    '<svg width="78" height="78" viewBox="0 0 100 100" fill="none" aria-hidden="true" draggable="false">',
-    '<defs><linearGradient id="hfp-shader-loader-grad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse"><stop stop-color="rgb(242 153 74)"/><stop offset="1" stop-color="rgb(242 201 76)"/></linearGradient></defs>',
-    '<rect x="8" y="8" width="84" height="84" rx="18" fill="url(#hfp-shader-loader-grad)"/>',
-    '<rect x="27" y="43" width="11" height="30" rx="5.5" fill="rgb(24 24 24)"/>',
-    '<rect x="44.5" y="27" width="11" height="46" rx="5.5" fill="rgb(24 24 24)"/>',
-    '<rect x="62" y="50" width="11" height="23" rx="5.5" fill="rgb(24 24 24)"/>',
+    '<svg width="24" height="24" viewBox="0 0 100 100" fill="none" aria-hidden="true" draggable="false">',
+    '<circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="9"/>',
     "</svg>",
   ].join("");
 
