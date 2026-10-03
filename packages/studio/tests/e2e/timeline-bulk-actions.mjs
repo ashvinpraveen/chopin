@@ -1,17 +1,15 @@
 #!/usr/bin/env node
-/**
- * Times the timeline's bulk actions in a real browser on a real project:
- * select-all, move 3 by hand, delete N, and the multi-select prompt box for N.
- * Each action is the median of RUNS (default 5), fresh Studio page per run.
- *
- *   BULK_PROJECT_DIR=/path/to/launch-project node packages/studio/tests/e2e/timeline-bulk-actions.mjs
- *
- * Runs the built CLI's preview server (what users ship), so build first:
- *   bun run --filter @hyperframes/studio build && bun run --filter @hyperframes/cli build
- * BULK_PROJECT_DIR is copied, never modified. BULK_PORT, BULK_RUNS, BULK_ONLY (action name
- * substring) and BULK_PROFILE=1 (CPU profile and request summary per action) are optional.
- * "Settled" = no request in flight, no long task and no network for QUIET_MS.
- */
+/** Times select-all, move 3 and delete-all in a real browser on a real project; see USAGE. */
+const USAGE = `
+BULK_PROJECT_DIR=<project> node packages/studio/tests/e2e/timeline-bulk-actions.mjs
+
+Runs the built CLI's preview server, so build first:
+  bun run --filter @hyperframes/studio build && bun run --filter @hyperframes/cli build
+BULK_PROJECT_DIR is copied, never modified. Optional: BULK_RUNS (default 5), BULK_PORT,
+BULK_ONLY (action name substring), BULK_PROFILE=1 (CPU profile and request summary).
+An action is done when no foreground request is in flight and no long task ran for 500 ms.
+Thumbnail and lint requests are background and not awaited. Each run starts a fresh server.
+`;
 import { cpSync, mkdtempSync, rmSync, existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
@@ -29,7 +27,7 @@ const TIMEOUT_MS = 120_000;
 const ORIGIN = `http://127.0.0.1:${PORT}`;
 
 if (!SOURCE || !existsSync(join(SOURCE, "index.html"))) {
-  console.error("BULK_PROJECT_DIR must point at a project directory with an index.html");
+  console.error(`BULK_PROJECT_DIR must point at a project directory with an index.html.\n${USAGE}`);
   process.exit(2);
 }
 const chrome = resolveChromeExecutable();
@@ -126,7 +124,7 @@ const nextPaint = (page) =>
 const selectedCount = (page) =>
   page.evaluate(() => Number(document.body.innerText.match(/(\d+) elements selected/)?.[1] ?? 0));
 
-/** Ctrl-clicks the first `count` mounted clips; dispatched, so row virtualization and layout cannot misplace a click. */
+/** Ctrl-clicks the first `count` mounted clips, dispatched so layout cannot misplace a click. */
 async function clickClips(page, count) {
   await page.evaluate((n) => {
     for (const clip of [...document.querySelectorAll("button[data-clip]")].slice(0, n))
