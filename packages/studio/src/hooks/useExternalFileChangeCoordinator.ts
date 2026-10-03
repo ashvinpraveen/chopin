@@ -175,8 +175,7 @@ export function useExternalFileChangeCoordinator({
   blockedRef.current = blocked;
   // A newer blocked change replaces the held one, so it inherits the thumbnails the held one owed.
   const setBlocked = useCallback((next: ExternalFileChangeBlockedState | null) => {
-    const held = blockedRef.current;
-    setBlockedState(
+    setBlockedState((held) =>
       next && held
         ? { ...next, payload: mergeFileChangeAffectedCompositions(held.payload, next.payload) }
         : next,
@@ -285,14 +284,17 @@ export function useExternalFileChangeCoordinator({
             await deleteConflictSnapshot(projectId!, path);
           } catch (error) {
             if (mountedRef.current && generation === generationRef.current) {
-              setBlocked({ ...previousBlocked, generation, error });
+              setBlocked({ ...previousBlocked, generation, error, payload });
             }
             return;
           }
         }
         if (!mountedRef.current || generation !== generationRef.current) return;
         setBlocked(null);
-        onAcceptedPersistedFileChange(path, readFileChangeAffectedCompositions(payload));
+        const owed = previousBlocked
+          ? mergeFileChangeAffectedCompositions(previousBlocked.payload, payload)
+          : payload;
+        onAcceptedPersistedFileChange(path, readFileChangeAffectedCompositions(owed));
         reloadAcceptedGeneration(path, readFileChangeAffectsPreview(payload));
         return;
       }
