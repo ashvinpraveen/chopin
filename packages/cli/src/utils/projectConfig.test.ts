@@ -65,6 +65,15 @@ describe("projectConfig", () => {
       expect(result.paths.assets).toBe(DEFAULT_PROJECT_CONFIG.paths.assets);
     });
 
+    it("keeps media.mounts across a round-trip and drops a malformed one", () => {
+      const mounts = { exports: "../../../Exports" };
+      expect(normalizeConfig({ media: { mounts } }).media).toEqual({ autoProxy: true, mounts });
+      expect(
+        normalizeConfig({ media: { mounts: { bad: 3 } as unknown as Record<string, string> } })
+          .media,
+      ).toEqual({ autoProxy: true });
+    });
+
     it("defaults media.autoProxy to true when media is absent", () => {
       const result = normalizeConfig({ registry: "https://alt.example.com" });
       expect(result.media).toEqual({ autoProxy: true });

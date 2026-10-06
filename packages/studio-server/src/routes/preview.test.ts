@@ -874,6 +874,35 @@ describe("hf-id surfacing in preview route", () => {
     expect(traversal.status).toBe(404);
   });
 
+  it("serves an asset through a hyperframes.json media mount, and 404s traversal out of the mount", async () => {
+    const parent = mkdtempSync(join(tmpdir(), "hf-preview-mount-"));
+    tempDirs.push(parent);
+    const projectDir = join(parent, "Edit", "proj");
+    mkdirSync(projectDir, { recursive: true });
+    writeFileSync(join(projectDir, "index.html"), "<html></html>");
+    mkdirSync(join(parent, "Exports"));
+    writeFileSync(join(parent, "Exports", "A #3.svg"), "<svg>mounted</svg>");
+    writeFileSync(join(parent, "secret.svg"), "<svg>secret</svg>");
+    writeFileSync(
+      join(projectDir, "hyperframes.json"),
+      JSON.stringify({ media: { mounts: { footage: "../../Exports" } } }),
+    );
+
+    const app = new Hono();
+    registerPreviewRoutes(app, createAdapter(projectDir));
+
+    const response = await app.request(
+      "http://localhost/projects/demo/preview/footage/A%20%233.svg",
+    );
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("<svg>mounted</svg>");
+
+    const escape = await app.request(
+      "http://localhost/projects/demo/preview/footage/..%2f..%2f..%2fsecret.svg",
+    );
+    expect(escape.status).toBe(404);
+  });
+
   it("a save does NOT stamp ids inside a plain <template> (runtime clone-source)", async () => {
     const projectDir = createProjectDir();
     const compPath = join(projectDir, "clones.html");
@@ -1175,6 +1204,41 @@ describe("hf-proxy negotiation and media codec map injection (U3)", () => {
       expect(ranged.status).toBe(206);
       expect(await ranged.text()).toBe("0123456789");
       expect(ranged.headers.get("Content-Range")).toBe("bytes 0-9/20");
+    });
+
+    it("proxies a video reached through a media mount", async () => {
+      const parent = mkdtempSync(join(tmpdir(), "hf-preview-mount-proxy-"));
+      tempDirs.push(parent);
+      const projectDir = join(parent, "proj");
+      mkdirSync(projectDir);
+      writeFileSync(join(projectDir, "index.html"), "<html></html>");
+      mkdirSync(join(parent, "Exports"));
+      writeFileSync(join(parent, "Exports", "a-cam.mp4"), "original-hevc-bytes");
+      writeFileSync(
+        join(projectDir, "hyperframes.json"),
+        JSON.stringify({ media: { mounts: { exports: "../Exports" } } }),
+      );
+      const resolveProxyMock = vi.fn(async () => {
+        const proxyPath = join(projectDir, "proxy.mp4");
+        writeFileSync(proxyPath, "proxybytes");
+        return proxyPath;
+      });
+      const { registerPreviewRoutes: register } = await loadPreviewModule({
+        resolveProxyImpl: resolveProxyMock,
+      });
+      const app = new Hono();
+      register(app, createAdapter(projectDir));
+
+      const res = await app.request(
+        "http://localhost/projects/demo/preview/exports/a-cam.mp4?hf-proxy=h264",
+      );
+      expect(res.status).toBe(200);
+      expect(await res.text()).toBe("proxybytes");
+      expect(resolveProxyMock).toHaveBeenCalledWith(
+        projectDir,
+        join(parent, "Exports", "a-cam.mp4"),
+        "h264",
+      );
     });
 
     it("honors If-None-Match on a repeat request with a 304, without re-invoking resolveProxy", async () => {

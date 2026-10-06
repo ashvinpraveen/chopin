@@ -32,6 +32,13 @@ export interface ProjectConfigMedia {
    * original file regardless of this setting. Default true.
    */
   autoProxy?: boolean;
+  /**
+   * Named media mounts: `{ "footage": "../../Exports" }` makes the URL
+   * `footage/clip.mov` resolve to `<projectDir>/../../Exports/clip.mov`. For
+   * projects on filesystems without symlinks (exFAT). Resolution lives in
+   * `@hyperframes/parsers/asset-resolution`.
+   */
+  mounts?: Record<string, string>;
 }
 
 /**
@@ -150,6 +157,8 @@ export function normalizeConfig(partial: Partial<ProjectConfig>): ProjectConfig 
         typeof partial.media?.autoProxy === "boolean"
           ? partial.media.autoProxy
           : DEFAULT_PROJECT_CONFIG.media?.autoProxy,
+      // Whitelist rebuild - without this a config round-trip drops the mounts.
+      ...(isStringRecord(partial.media?.mounts) && { mounts: { ...partial.media.mounts } }),
     },
     // Slug-gate on read so a hand-edited or corrupt value never reaches the
     // telemetry stream; an invalid slug simply drops the attribution.
@@ -159,6 +168,15 @@ export function normalizeConfig(partial: Partial<ProjectConfig>): ProjectConfig 
     // installed a catalog item".
     registryItems: normalizeRegistryItems(partial.registryItems),
   };
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((v) => typeof v === "string")
+  );
 }
 
 /**

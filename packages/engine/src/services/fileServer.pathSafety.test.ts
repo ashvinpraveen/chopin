@@ -61,3 +61,43 @@ describe("fileServer path containment", () => {
     expect(await response.text()).toContain("<html>");
   });
 });
+
+describe("fileServer media mounts", () => {
+  let root: string;
+  let server: FileServerHandle;
+
+  beforeEach(async () => {
+    root = fs.mkdtempSync(path.join(tmpdir(), "hf-fileserver-mounts-"));
+    const projectDir = path.join(root, "project");
+    fs.mkdirSync(projectDir);
+    fs.mkdirSync(path.join(root, "Exports"));
+    fs.writeFileSync(path.join(projectDir, "index.html"), "<html></html>");
+    fs.writeFileSync(path.join(root, "Exports", "A CAM.txt"), "MOUNTED");
+    fs.writeFileSync(path.join(root, "outside-secret.txt"), "OUTSIDE");
+    fs.writeFileSync(
+      path.join(projectDir, "hyperframes.json"),
+      JSON.stringify({ media: { mounts: { footage: "../Exports" } } }),
+    );
+    server = await createFileServer({ headScripts: [], bodyScripts: [], projectDir });
+  });
+
+  afterEach(async () => {
+    await server.close();
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it("serves a file through a mount", async () => {
+    const response = await fetch(`${server.url}/footage/A%20CAM.txt`);
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("MOUNTED");
+  });
+
+  it.each(["/footage/..%2f..%2foutside-secret.txt", "/footage/..%5c..%5coutside-secret.txt"])(
+    "rejects traversal out of the mount %s",
+    async (requestPath) => {
+      const response = await fetch(`${server.url}${requestPath}`);
+      expect(response.status).toBe(404);
+      expect(await response.text()).not.toContain("OUTSIDE");
+    },
+  );
+});

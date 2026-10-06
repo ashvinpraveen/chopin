@@ -1,4 +1,12 @@
-import { closeSync, constants, existsSync, fstatSync, openSync, readFileSync } from "node:fs";
+import {
+  closeSync,
+  constants,
+  existsSync,
+  fstatSync,
+  openSync,
+  readFileSync,
+  statSync,
+} from "node:fs";
 import { isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { decodeUrlPathVariants } from "./composition.js";
 
@@ -141,6 +149,144 @@ export function isWithinProjectRoot(
   );
 }
 
+/**
+ * Media mounts: `hyperframes.json` → `"media": { "mounts": { "footage": "../../Exports" } }`.
+ * A project-relative URL whose first segment names a mount (`footage/A CAM.mov`)
+ * resolves under `<projectDir>/<mountPath>/` instead of the project root. This is
+ * how a project on a filesystem without symlinks (exFAT) references footage that
+ * lives elsewhere on the drive. With no mounts configured every helper below
+ * behaves exactly like plain project-root resolution.
+ */
+export interface MediaMount {
+  name: string;
+  /** Absolute, resolved mount root. */
+  root: string;
+}
+
+const mountCache = new Map<string, { stamp: string; mounts: MediaMount[] }>();
+
+function isValidMountName(name: string): boolean {
+  return (
+    name !== "" && name !== "." && name !== ".." && !/[\\/]/.test(name) && !name.includes("\0")
+  );
+}
+
+function objectField(value: unknown, key: string): unknown {
+  return typeof value === "object" && value !== null ? Reflect.get(value, key) : undefined;
+}
+
+function parseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+}
+
+function parseMounts(projectRoot: string, text: string): MediaMount[] {
+  const raw = objectField(objectField(parseJson(text), "media"), "mounts");
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return [];
+  return Object.entries(raw)
+    .filter(
+      (entry): entry is [string, string] =>
+        isValidMountName(entry[0]) && typeof entry[1] === "string" && entry[1].trim() !== "",
+    )
+    .map(([name, target]) => ({ name, root: resolve(projectRoot, target) }));
+}
+
+/** The project's media mounts, re-read whenever hyperframes.json's mtime or size changes. */
+export function readMediaMounts(projectDir: string): MediaMount[] {
+  const projectRoot = resolve(projectDir);
+  const configPath = join(projectRoot, "hyperframes.json");
+  let stat: ReturnType<typeof statSync> | undefined;
+  try {
+    stat = statSync(configPath);
+  } catch {
+    stat = undefined;
+  }
+  if (!stat?.isFile()) {
+    mountCache.delete(projectRoot);
+    return [];
+  }
+  const stamp = `${stat.mtimeMs}:${stat.size}`;
+  const cached = mountCache.get(projectRoot);
+  if (cached?.stamp === stamp) return cached.mounts;
+  let mounts: MediaMount[] = [];
+  try {
+    mounts = parseMounts(projectRoot, readFileSync(configPath, "utf-8"));
+  } catch {
+    mounts = [];
+  }
+  mountCache.set(projectRoot, { stamp, mounts });
+  return mounts;
+}
+
+/** Test hook: forget every cached hyperframes.json read. */
+export function clearMediaMountCache(): void {
+  mountCache.clear();
+}
+
+/**
+ * Resolves a project-relative URL path through a media mount. Returns null when
+ * the first segment names no mount, or when the remainder would escape the
+ * mount root. The path is normalised first, so `footage/../index.html` is an
+ * ordinary project path, not a mount path.
+ */
+export function resolveMountedAssetPath(
+  projectDir: string,
+  relUrl: string,
+): { path: string; mount: MediaMount } | null {
+  const mounts = readMediaMounts(projectDir);
+  if (mounts.length === 0) return null;
+  const normalized = posix.normalize(relUrl.replace(/\\/g, "/").replace(/^\/+/, ""));
+  const slash = normalized.indexOf("/");
+  const first = slash === -1 ? normalized : normalized.slice(0, slash);
+  const mount = mounts.find((m) => m.name === first);
+  if (!mount) return null;
+  const rest = slash === -1 ? "" : normalized.slice(slash + 1);
+  const candidate = resolve(mount.root, rest);
+  if (!isWithinProjectRoot(mount.root, candidate)) return null;
+  return { path: candidate, mount };
+}
+
+/**
+ * The file a project-relative URL path names: through a media mount when its
+ * first segment is one, otherwise under the project root. Null when the path
+ * escapes both.
+ */
+export function resolveProjectAssetPath(projectDir: string, relUrl: string): string | null {
+  const mounted = resolveMountedAssetPath(projectDir, relUrl);
+  if (mounted) return mounted.path;
+  const projectRoot = resolve(projectDir);
+  const candidate = resolve(projectRoot, relUrl.replace(/^[\\/]+/, ""));
+  return isWithinProjectRoot(projectRoot, candidate) ? candidate : null;
+}
+
+/** `isWithinProjectRoot`, also accepting any path inside one of the project's media mounts. */
+export function isWithinProjectOrMount(projectDir: string, candidate: string): boolean {
+  if (isWithinProjectRoot(projectDir, candidate)) return true;
+  return readMediaMounts(projectDir).some((m) => isWithinProjectRoot(m.root, candidate));
+}
+
+/**
+ * The root-relative URL path (no leading slash, `/` separators) that serves an
+ * absolute file: its project-relative path, or `<mount>/<rest>` for mounted
+ * media. Null when the file is in neither.
+ */
+export function projectUrlPathForFile(projectDir: string, absPath: string): string | null {
+  const projectRoot = resolve(projectDir);
+  const candidate = resolve(absPath);
+  if (isWithinProjectRoot(projectRoot, candidate)) {
+    return relative(projectRoot, candidate).split(sep).join("/");
+  }
+  for (const mount of readMediaMounts(projectRoot)) {
+    if (!isWithinProjectRoot(mount.root, candidate)) continue;
+    const rest = relative(mount.root, candidate).split(sep).join("/");
+    return rest ? `${mount.name}/${rest}` : mount.name;
+  }
+  return null;
+}
+
 function addCandidate(candidates: string[], candidate: string): void {
   if (!candidates.includes(candidate)) candidates.push(candidate);
 }
@@ -152,6 +298,11 @@ export function resolveLocalAssetCandidates(projectDir: string, url: string): st
 
   for (const variant of decodeUrlPathVariants(cleanUrl)) {
     const projectRelative = variant.startsWith("/") ? variant.slice(1) : variant;
+    const mounted = resolveMountedAssetPath(projectRoot, projectRelative);
+    if (mounted) {
+      addCandidate(candidates, mounted.path);
+      continue;
+    }
     const resolved = resolve(projectRoot, projectRelative);
     if (isWithinProjectRoot(projectRoot, resolved)) {
       addCandidate(candidates, resolved);
@@ -175,7 +326,14 @@ export function resolveExistingLocalAsset(
   const projectRoot = resolve(projectDir);
   const resolved = resolveLocalAssetCandidates(projectRoot, url).find(existsSync);
   if (!resolved) return null;
-  return { resolved, rootRelativePath: relative(projectRoot, resolved) };
+  const urlPath = projectUrlPathForFile(projectRoot, resolved);
+  return {
+    resolved,
+    rootRelativePath:
+      urlPath !== null && !isWithinProjectRoot(projectRoot, resolved)
+        ? urlPath
+        : relative(projectRoot, resolved),
+  };
 }
 
 // Candidates for a variant whose join escaped the project root, re-anchored at the root.
@@ -204,6 +362,8 @@ export function resolveProjectRelativeSrc(
 
   const candidates = new Set<string>();
   for (const variant of decodeUrlPathVariants(cleanSrc)) {
+    const mounted = resolveMountedAssetPath(baseDir, variant);
+    if (mounted) candidates.add(mounted.path);
     for (const candidate of reanchoredCandidates(variant, baseDir, compiledDir)) {
       candidates.add(candidate);
     }

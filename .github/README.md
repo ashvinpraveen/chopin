@@ -1,65 +1,101 @@
 # Chopin
 
-**An AI-native video editor with a DaVinci Resolve-style layout, built on [HyperFrames](https://github.com/heygen-com/hyperframes).**
+**Cut footage like a native editor. Make graphics like the web.**
 
-You describe a video as HTML. Claude Code (or any coding agent) edits the files, and the preview updates
-instantly. You cut, trim and tweak in a timeline that feels like an NLE, then render.
+Chopin is a video editor that sits between two worlds. On one side are native editors such as
+DaVinci Resolve and CapCut: a timeline, a viewer, a media pool, real camera footage, proxies. On
+the other are HTML graphics tools: anything a browser can draw, animated with code and edited by
+you or an AI agent. Chopin keeps the feel of the first and the freedom of the second, and it is
+built on [HyperFrames](https://github.com/heygen-com/hyperframes).
 
-> **Status: early personal project.** Chopin is a fork of HyperFrames with a new look and a few
-> editor changes. It is not production software, and most of the roadmap below is not built yet.
+> **Status: early personal project.** Chopin is a fork of HyperFrames used for real episodes, but
+> it is not production software yet. Expect rough edges.
 
-## What Chopin is
+---
 
-HyperFrames turns HTML, CSS, media and seekable animations into deterministic video. It already ships
-a browser-based editor called Studio, with a live preview, a timeline, an inspector and a render
-queue. Chopin takes that editor and moves it toward the workflow of a traditional editor, for people
-who cut real camera footage and layer AI-generated motion graphics and animated subtitles on top.
+## The idea
 
-## What is different from HyperFrames today
+Native editors are fast and familiar, but their graphics live behind effect panels, templates and
+plug-ins. HTML graphics tools can make any title, chart, caption or layout you can imagine, but
+they don't know what an A-cam is, and they choke on a 25 GB ProRes file.
 
-- **Brand and theme.** A Chopin logo, favicon and title. A dark neutral gray theme with a muted
-  orange accent, a red playhead, blue video clips and green audio clips, flat panels with thin
-  dividers, compact tab strips, and smaller, grayer text.
-- **Resolve-style panel names.** Panels use Resolve terms, with the Media Pool first.
-- **File names on clips.** Video, audio and image clips in the timeline show their file name, as in
-  Resolve, unless you set an explicit label.
-- **PAL frame rates.** The render dialog offers 24, 25, 30, 50 and 60 fps (HyperFrames only offered
-  24, 30 and 60 there).
+Chopin takes a side on each question:
 
-| HyperFrames Studio             | Chopin       |
-| ------------------------------ | ------------ |
-| Preview                        | Viewer       |
-| Assets                         | Media Pool   |
-| Compositions                   | Timelines    |
-| Catalog                        | Effects      |
-| Code                           | Code         |
-| Design                         | Inspector    |
-| Layers                         | Edit Index   |
-| Renders                        | Render Queue |
-| Timeline, Variables, Slideshow | unchanged    |
+| Question                      | Native editor                | HTML graphics tool           | Chopin                                           |
+| ----------------------------- | ---------------------------- | ---------------------------- | ------------------------------------------------ |
+| How do you cut?               | Timeline, in/out, drag clips | Edit code                    | **Timeline, in/out, drag clips**                 |
+| What are graphics made of?    | Effect presets and plug-ins  | HTML, CSS and animation code | **HTML, CSS and animation code**                 |
+| Who can edit the project?     | You, in the app              | You or an agent, as text     | **Both: the project is plain files**             |
+| How is heavy footage handled? | Proxies, hardware decode     | Not at all                   | **Automatic proxies, footage stays where it is** |
+| Is the output repeatable?     | Mostly                       | Depends                      | **Same frames every render**                     |
 
-`Cmd+1` opens the Media Pool and `Cmd+2` opens Timelines.
+The rule of thumb: **footage is treated like an editor treats it, graphics like the web treats
+them.** Your camera files are never copied or rewritten. Everything layered on top is a text file
+you, Claude Code or any coding agent can read and change, and the viewer updates as soon as the
+file is saved.
 
-## Roadmap (planned, not built)
+## What you can do today
 
-- Play original footage directly by default. Add optional proxies for heavy multi-camera 4K, as in
-  Resolve: generate proxy media per clip or folder, a "use proxies" toggle, and a suggestion when
-  playback drops frames. Renders always use the originals, and color stays on the clip rather than
-  being baked into a proxy.
-- Better LUT handling, as in Resolve: pick a LUT per clip from a shared LUT folder with thumbnails
-  (Studio today loads a `.cube` file into the project), apply it as an input transform before the
-  grade, and support 65-point cubes (HyperFrames reads up to 64).
-- Handoff buttons: **Open in DaVinci Resolve** (an FCPXML plus an SRT) and **Open in CapCut**
-  (a flattened cut plus subtitles).
-- Import and export of timeline formats such as FCPXML, EDL and OTIO, and JSON.
-- A project folder tree, and more of the Resolve Edit-page layout (timecode ruler, viewer
-  header, collapsible inspector sections).
+**Edit like an editor**
+
+- A Resolve-style layout: Viewer, Media Pool, Timelines, Inspector, Edit Index, Render Queue.
+- A source viewer with in and out points. Mark a range on a clip and drag it onto the timeline.
+- Media storage: browse footage anywhere on your drives in a grid and drag it straight in.
+- Clips coloured by kind and labelled with their file names, and PAL frame rates (24, 25, 30,
+  50, 60).
+- A project switcher in the header.
+
+**Work with heavy footage**
+
+- Any source above 1080p gets a 720p proxy for preview automatically. Renders always use the
+  originals.
+- Long sources get segmented proxies, made on demand in short pieces, so you can start working
+  without waiting for a whole file to convert.
+- **Media mounts** let a project use footage stored elsewhere on the drive without copying it.
+  This works on exFAT drives, which can't hold symlinks:
+
+  ```jsonc
+  // hyperframes.json
+  { "media": { "mounts": { "exports": "../../../Exports" } } }
+  ```
+
+  ```html
+  <video src="exports/MAI%20Podcast%20%233%20A%20CAM.mov"></video>
+  ```
+
+  The mount path is relative to the project, so the drive still works when you plug it into
+  another Mac.
+
+**Make graphics like the web**
+
+- Titles, lower-thirds, captions, charts and transitions are HTML and CSS, animated with GSAP or
+  any of the other animation runtimes HyperFrames supports.
+- The whole HyperFrames catalog of blocks and effects, plus its agent skills, so an agent can build
+  scenes for you.
+- Frame-exact rendering to MP4 (or transparent video), deterministic from one render to the next.
+
+## How it works
+
+```
+ your drive                         Chopin
+ ──────────                         ──────
+ Exports/A CAM.mov ──(mount)──▶  footage layer ──▶ proxies for preview, originals for render
+                                       │
+ project/index.html ───────────▶ graphics layer (HTML · CSS · GSAP)
+                                       │
+                                       ▼
+                     Studio viewer + timeline  ──▶  render ──▶ MP4
+```
+
+A project is a folder: an `index.html` that describes the timeline, optional sub-compositions,
+and a `hyperframes.json` for settings such as media mounts. Studio reads and writes those files.
+Edits you make in the timeline and edits an agent makes in the code are the same edits.
 
 ## Quick start (macOS)
 
-Requirements: [Bun](https://bun.sh), Node.js 22 or newer, FFmpeg, and [Git LFS](https://git-lfs.com)
-(`brew install git-lfs`). The repo stores test media in LFS and a clone fails without it. You do not
-need those files to run the editor, so `GIT_LFS_SKIP_SMUDGE=1` skips downloading them.
+You need [Bun](https://bun.sh), Node.js 22 or newer, FFmpeg, and [Git LFS](https://git-lfs.com)
+(`brew install git-lfs`). The repository keeps test media in LFS; you don't need those files to
+run the editor, so `GIT_LFS_SKIP_SMUDGE=1` skips them.
 
 ```bash
 GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/ashvinpraveen/chopin.git
@@ -67,53 +103,52 @@ cd chopin
 bun install
 bun run --filter '@hyperframes/{parsers,lint,studio-server}' build
 bun run --filter @hyperframes/core build
-
-# Link a HyperFrames project into Studio's dev project folder
-mkdir -p packages/studio/data/projects
-ln -s /path/to/your/project packages/studio/data/projects/my-project
-
-cd packages/studio
-bun run dev
+bun run --filter @hyperframes/player build
 ```
 
-Then open `http://127.0.0.1:5190/#project/my-project`. If the panels are in an old order, use
-**Window > Reset layout**.
+Open a project in Studio:
 
-To create a project, use the HyperFrames CLI (`npx hyperframes init my-project`) and see the
-[HyperFrames documentation](https://hyperframes.heygen.com/introduction). The original HyperFrames
-README is still in the repository root as [`README.md`](../README.md).
+```bash
+bun packages/cli/src/cli.ts preview /path/to/your/project
+```
 
-### Frame rate
+To start a new project, run `npx hyperframes init my-project` and see the
+[HyperFrames documentation](https://hyperframes.heygen.com/introduction).
 
-Set `data-fps="25"` on the composition root to make 25 fps the default for command-line renders.
-Studio's render dialog lets you pick 24, 25, 30, 50 or 60.
+## Where it's going
 
-## Telemetry and feedback
+1. **Share it.** One command to install, under Chopin's own name.
+2. **A desktop app.** A double-click Mac app instead of a terminal and a browser tab.
+3. **Faster with 4K.** Hand footage decoding and encoding to the Mac's video hardware, and leave
+   the browser to draw only the graphics.
+4. **Hand-offs.** Open in DaVinci Resolve (FCPXML plus SRT) or CapCut, and import and export
+   FCPXML, EDL and OTIO timelines.
+5. **Better colour.** Per-clip LUTs from a shared folder, applied before the grade.
 
-This fork still contains HyperFrames' browser analytics and its "send feedback" card, both wired to
-HeyGen's services. Development builds (`bun run dev`) do not send analytics. If you build and ship
-Chopin, point these at your own services or remove them first. You can opt out of the CLI's
-telemetry with `HYPERFRAMES_NO_TELEMETRY=1` or `DO_NOT_TRACK=1`.
+## Privacy
+
+Analytics and the feedback card inherited from HyperFrames are switched off in Chopin, in Studio
+and in the CLI, until Chopin has its own analytics project.
 
 ## Relationship to HyperFrames
 
 Chopin is a fork of [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) and tracks
-it through the `upstream` remote, so improvements there can be merged here. Chopin's changes are
-visible in this repository's commit history. Package names such as `@hyperframes/studio` are
-unchanged for now.
+it through the `upstream` remote, so improvements there can be merged in. Package names such as
+`@hyperframes/studio` are unchanged for now. The original HyperFrames README is in the repository
+root as [`README.md`](../README.md).
 
 ## License and credits
 
-Licensed under the [Apache License 2.0](../LICENSE), the same as HyperFrames. Chopin is built on the
-work of HeyGen and the HyperFrames contributors, and on the prior art listed in
+Licensed under the [Apache License 2.0](../LICENSE), the same as HyperFrames. Chopin is built on
+the work of HeyGen and the HyperFrames contributors, and on the prior art listed in
 [`CREDITS.md`](../CREDITS.md).
 
-Chopin is an independent project. It is not affiliated with, endorsed by, or sponsored by HeyGen
-or Blackmagic Design. HyperFrames and HeyGen are trademarks of HeyGen. DaVinci Resolve is a
-trademark of Blackmagic Design, mentioned here only to describe the layout Chopin is inspired by.
+Chopin is an independent project. It is not affiliated with, endorsed by, or sponsored by HeyGen,
+Blackmagic Design or ByteDance. HyperFrames and HeyGen are trademarks of HeyGen. DaVinci Resolve
+is a trademark of Blackmagic Design and CapCut a trademark of ByteDance, named here only to
+describe the kind of editor Chopin is inspired by.
 
 ## Contributing
 
-Use Bun (not npm or pnpm) and Conventional Commits (`feat(studio): ...`). The repository installs
-Git hooks that lint, format and type-check on commit. Run the Studio tests with
-`cd packages/studio && bunx vitest run`.
+Use Bun (not npm or pnpm) and Conventional Commits (`feat(studio): ...`). Git hooks lint, format
+and type-check on commit. Run a package's tests with `bunx vitest run` inside it.

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { registerPeakRoutes } from "./peaks";
@@ -59,6 +59,35 @@ describe("GET /projects/:id/peaks/*", () => {
     expect((await app.request("http://localhost/projects/p/peaks/nope.mp4")).status).toBe(404);
     expect(
       (await app.request("http://localhost/projects/p/peaks/..%2F..%2Fetc%2Fpasswd")).status,
+    ).toBe(404);
+  });
+
+  it("decodes a file reached through a media mount, and 404s traversal out of it", async () => {
+    const decode = vi.fn(async (_path: string) => [0.3]);
+    const dir = mkdtempSync(join(tmpdir(), "hf-peaks-mount-"));
+    dirs.push(dir);
+    const projectDir = join(dir, "project");
+    mkdirSync(projectDir);
+    mkdirSync(join(dir, "Exports"));
+    writeFileSync(join(dir, "Exports", "A CAM.mov"), "video");
+    writeFileSync(
+      join(projectDir, "hyperframes.json"),
+      JSON.stringify({ media: { mounts: { footage: "../Exports" } } }),
+    );
+    const mounted = new Hono();
+    registerPeakRoutes(
+      mounted,
+      {
+        resolveProject: async (id: string) => ({ id, dir: projectDir }),
+      } as unknown as StudioApiAdapter,
+      decode,
+    );
+    const res = await mounted.request("http://localhost/projects/p/peaks/footage/A%20CAM.mov");
+    expect((await res.json()).bins).toEqual([0.3]);
+    expect(decode).toHaveBeenCalledWith(join(dir, "Exports", "A CAM.mov"));
+    expect(
+      (await mounted.request("http://localhost/projects/p/peaks/footage/..%2F..%2Ftalk.mp4"))
+        .status,
     ).toBe(404);
   });
 });
