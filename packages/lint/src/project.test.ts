@@ -902,3 +902,35 @@ describe("audio-aware project rules", () => {
     });
   });
 });
+
+describe("media mount assets", () => {
+  function mountedProject(src: string): string {
+    const parent = tmpProject("mounts");
+    dirs.push(parent);
+    const project = join(parent, "proj");
+    mkdirSync(project);
+    writeFileSync(
+      join(project, "index.html"),
+      validHtml().replace("</div>", `<img src="${src}" /></div>`),
+    );
+    mkdirSync(join(parent, "Exports"));
+    writeFileSync(join(parent, "Exports", "still #1.svg"), "<svg/>");
+    writeFileSync(
+      join(project, "hyperframes.json"),
+      JSON.stringify({ media: { mounts: { exports: "../Exports" } } }),
+    );
+    return project;
+  }
+
+  it("does not report a file that exists inside a mount", async () => {
+    const { results } = await lintProject(mountedProject("exports/still%20%231.svg"));
+    const findings = results.flatMap((result) => result.result.findings);
+    expect(findings.some((finding) => finding.code === "missing_local_asset")).toBe(false);
+  });
+
+  it("reports a mounted file that does not exist", async () => {
+    const { results } = await lintProject(mountedProject("exports/gone.svg"));
+    const findings = results.flatMap((result) => result.result.findings);
+    expect(findings.some((finding) => finding.code === "missing_local_asset")).toBe(true);
+  });
+});

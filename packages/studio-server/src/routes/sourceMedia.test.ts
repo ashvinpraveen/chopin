@@ -57,6 +57,15 @@ describe("resolveSourcePath", () => {
     expect(resolveSourcePath(projectDir, join(root, "dir.mp4")).ok).toBe(false);
     expect(resolveSourcePath(projectDir, "").ok).toBe(false);
   });
+  it("resolves a relative path through a media mount, but not out of it", () => {
+    writeFileSync(
+      join(projectDir, "hyperframes.json"),
+      JSON.stringify({ media: { mounts: { card: "../card" } } }),
+    );
+    expect(resolveSourcePath(projectDir, "card/C0001.MP4")).toEqual({ ok: true, file: clip });
+    expect(resolveSourcePath(projectDir, "card/../../outside.mp4")).toMatchObject({ ok: false });
+    expect(resolveSourcePath(projectDir, "card/C0001M01.XML")).toMatchObject({ ok: false });
+  });
   it("resolves a relative path inside the project only", () => {
     expect(resolveSourcePath(projectDir, "media/local.mov")).toEqual({
       ok: true,

@@ -2,6 +2,7 @@ import { createServer, type ServerResponse } from "node:http";
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
 import { getMimeType } from "@hyperframes/core/studio-api";
+import { resolveMountedAssetPath } from "@hyperframes/parsers/asset-resolution";
 import { resolveAutoProxy } from "./projectConfig.js";
 import { injectMediaCodecMap } from "./compositionServer.js";
 import {
@@ -187,8 +188,10 @@ export async function serveStaticProjectHtml(
       proxyParam !== null && isProxyVariantRequest(proxyParam) ? proxyParam : null;
 
     const requestPath = decodeURIComponent(pathOnly).replace(/^\//, "");
-    for (const root of roots) {
-      const filePath = resolve(root, requestPath);
+    // A media mount (hyperframes.json `media.mounts`) owns its first segment outright.
+    const mounted = resolveMountedAssetPath(projectDir, requestPath);
+    for (const root of mounted ? [mounted.mount.root] : roots) {
+      const filePath = mounted ? mounted.path : resolve(root, requestPath);
       const rel = relative(root, filePath);
       if (rel.startsWith("..") || isAbsolute(rel)) continue; // traversal guard; try next root
       if (existsSync(filePath)) {

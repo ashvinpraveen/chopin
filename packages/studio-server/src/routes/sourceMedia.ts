@@ -1,9 +1,9 @@
 import { createReadStream, realpathSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { isAbsolute, resolve } from "node:path";
+import { isAbsolute } from "node:path";
 import { Readable } from "node:stream";
 import type { Context, Hono } from "hono";
-import { isWithinProjectRoot } from "@hyperframes/parsers/asset-resolution";
+import { resolveProjectAssetPath } from "@hyperframes/parsers/asset-resolution";
 import type { StudioApiAdapter } from "../types.js";
 import { getMimeType } from "../helpers/mime.js";
 import { HLS_PROXY_VARIANT } from "../helpers/hlsProxy.js";
@@ -23,11 +23,11 @@ function isCrossSite(c: Context): boolean {
   return (c.req.header("sec-fetch-site") ?? "").toLowerCase() === "cross-site";
 }
 
-/** An absolute path goes through Media Storage's validation; a relative one must stay in the project. */
+/** An absolute path goes through Media Storage's validation; a relative one must stay in the project or a media mount. */
 export function resolveSourcePath(projectDir: string, raw: string): Resolved {
   if (raw && !raw.includes("\0") && !isAbsolute(raw)) {
-    const candidate = resolve(projectDir, raw);
-    if (!isWithinProjectRoot(projectDir, candidate) || kindOfFile(candidate) === "other") {
+    const candidate = resolveProjectAssetPath(projectDir, raw);
+    if (!candidate || kindOfFile(candidate) === "other") {
       return { ok: false, status: 404, error: "not found" };
     }
     try {

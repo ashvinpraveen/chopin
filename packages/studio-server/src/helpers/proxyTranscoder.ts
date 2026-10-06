@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { existsSync, renameSync, statSync, unlinkSync, utimesSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { hdrToSdrToneMapFilter } from "@hyperframes/core";
+import { isWithinProjectOrMount } from "@hyperframes/parsers/asset-resolution";
 import { findFfBinary } from "@hyperframes/parsers/ff-binaries";
 import { probeFirstFrameColour, probeMediaMetadata } from "./mediaMetadata.js";
 import { cleanupProxyCache } from "./proxyCache.js";
@@ -146,11 +147,8 @@ function canonicalizeProxySource(
   const requestedProjectDir = resolve(projectDir);
   const requestedSourcePath = resolve(absoluteSourcePath);
   const requestedRelativePath = relative(requestedProjectDir, requestedSourcePath);
-  if (
-    requestedRelativePath === ".." ||
-    requestedRelativePath.startsWith(`..${sep}`) ||
-    isAbsolute(requestedRelativePath)
-  ) {
+  // Mounted media (hyperframes.json `media.mounts`) lives outside the project root by design.
+  if (!isWithinProjectOrMount(requestedProjectDir, requestedSourcePath)) {
     throw new ProxySourceOutsideProjectError();
   }
 

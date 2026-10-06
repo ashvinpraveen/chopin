@@ -7,6 +7,7 @@ import {
   isRemoteOrInlineUrl,
   isUnresolvedAssetPlaceholder,
   maskNonScannableRanges,
+  projectUrlPathForFile,
   resolveLocalAssetCandidates,
 } from "@hyperframes/parsers/asset-resolution";
 import { pixelFormatHasAlpha, probeMediaMetadata, type FfprobeRunner } from "./mediaMetadata.js";
@@ -331,7 +332,9 @@ function resolveExistingLocalAsset(
     existsSync(candidate),
   );
   if (!resolvedPath) return null;
-  const rootRelative = relative(projectRoot, resolvedPath).split(sep).join("/");
+  const rootRelative =
+    projectUrlPathForFile(projectRoot, resolvedPath) ??
+    relative(projectRoot, resolvedPath).split(sep).join("/");
   return { resolvedPath, rootRelativePathname: `/${rootRelative}` };
 }
 

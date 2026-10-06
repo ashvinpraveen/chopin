@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
-import { isWithinProjectRoot } from "@hyperframes/parsers/asset-resolution";
+import { join } from "node:path";
+import { resolveProjectAssetPath } from "@hyperframes/parsers/asset-resolution";
 import type { Hono } from "hono";
 import type { StudioApiAdapter } from "../types.js";
 import { isWaveformCacheDirectory, writeWaveformCache } from "../helpers/waveform.js";
@@ -39,9 +39,8 @@ export function registerPeakRoutes(
     const project = await adapter.resolveProject(c.req.param("id"));
     if (!project) return c.json({ error: "not found" }, 404);
     const assetPath = requestSubPath(c.req.url, "projects/:id/peaks");
-    const mediaPath = resolve(project.dir, assetPath);
-    if (!isWithinProjectRoot(project.dir, mediaPath))
-      return c.json({ error: "file not found" }, 404);
+    const mediaPath = resolveProjectAssetPath(project.dir, assetPath);
+    if (!mediaPath) return c.json({ error: "file not found" }, 404);
     const stats = statSync(mediaPath, { throwIfNoEntry: false });
     if (!stats?.isFile()) return c.json({ error: "file not found" }, 404);
 

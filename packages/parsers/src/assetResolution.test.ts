@@ -1,14 +1,21 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, posix, win32 } from "node:path";
 import {
+  clearMediaMountCache,
   collectSubCompositionSrcs,
   isUnresolvedAssetPlaceholder,
+  isWithinProjectOrMount,
   isWithinProjectRoot,
   maskNonScannableRanges,
+  projectUrlPathForFile,
+  readMediaMounts,
   readProjectFile,
+  resolveExistingLocalAsset,
+  resolveLocalAssetCandidates,
+  resolveProjectAssetPath,
   resolveProjectRelativeSrc,
 } from "./assetResolution.js";
 
@@ -299,5 +306,96 @@ describe("readProjectFile", () => {
   it.skipIf(process.platform === "win32")("reports a named pipe without blocking on it", () => {
     execFileSync("mkfifo", [join(dir, "pipe.html")]);
     expect(readProjectFile(join(dir, "pipe.html"))).toEqual({ kind: "folder" });
+  });
+});
+
+describe("media mounts", () => {
+  let root: string;
+  let projectDir: string;
+  let exportsDir: string;
+
+  const writeConfig = (mounts: unknown) =>
+    writeFileSync(join(projectDir, "hyperframes.json"), JSON.stringify({ media: { mounts } }));
+
+  beforeAll(() => {
+    root = mkdtempSync(join(tmpdir(), "hf-media-mounts-"));
+  });
+  afterAll(() => rmSync(root, { recursive: true, force: true }));
+
+  beforeEach(() => {
+    clearMediaMountCache();
+    const id = Math.random().toString(36).slice(2);
+    exportsDir = join(root, id, "Exports");
+    projectDir = join(root, id, "Edit", "Chopin", "proj");
+    mkdirSync(exportsDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+    writeFileSync(join(exportsDir, "MAI Podcast #3 A CAM.mov"), "a");
+    writeFileSync(join(root, id, "secret.txt"), "secret");
+    writeFileSync(join(projectDir, "index.html"), "<html></html>");
+    writeConfig({ footage: "../../../Exports" });
+  });
+
+  it("resolves a URL whose first segment names a mount under the mount path", () => {
+    expect(resolveProjectAssetPath(projectDir, "footage/MAI Podcast #3 A CAM.mov")).toBe(
+      join(exportsDir, "MAI Podcast #3 A CAM.mov"),
+    );
+    expect(resolveProjectAssetPath(projectDir, "/footage/sub/clip.mov")).toBe(
+      join(exportsDir, "sub", "clip.mov"),
+    );
+    expect(
+      resolveExistingLocalAsset(projectDir, "footage/MAI%20Podcast%20%233%20A%20CAM.mov"),
+    ).toEqual({
+      resolved: join(exportsDir, "MAI Podcast #3 A CAM.mov"),
+      rootRelativePath: "footage/MAI Podcast #3 A CAM.mov",
+    });
+    expect(resolveProjectRelativeSrc("footage/MAI Podcast %233 A CAM.mov", projectDir)).toBe(
+      join(exportsDir, "MAI Podcast #3 A CAM.mov"),
+    );
+  });
+
+  it("rejects traversal out of the mount and treats normalised-away mounts as project paths", () => {
+    expect(resolveProjectAssetPath(projectDir, "footage/../../../../secret.txt")).toBeNull();
+    expect(resolveProjectAssetPath(projectDir, "footage/../index.html")).toBe(
+      join(projectDir, "index.html"),
+    );
+    expect(resolveProjectAssetPath(projectDir, "../secret.txt")).toBeNull();
+    expect(isWithinProjectOrMount(projectDir, join(exportsDir, "x.mov"))).toBe(true);
+    expect(isWithinProjectOrMount(projectDir, join(exportsDir, "..", "secret.txt"))).toBe(false);
+    for (const candidate of resolveLocalAssetCandidates(projectDir, "footage/%2e%2e/%2e%2e/x")) {
+      expect(isWithinProjectOrMount(projectDir, candidate)).toBe(true);
+    }
+  });
+
+  it("leaves an unknown first segment as a plain project path", () => {
+    expect(resolveProjectAssetPath(projectDir, "media/a.mov")).toBe(
+      join(projectDir, "media", "a.mov"),
+    );
+    expect(projectUrlPathForFile(projectDir, join(root, "elsewhere.mov"))).toBeNull();
+    expect(projectUrlPathForFile(projectDir, join(exportsDir, "a b.mov"))).toBe("footage/a b.mov");
+  });
+
+  it("ignores invalid mount names, non-string targets and corrupt config", () => {
+    writeConfig({ "a/b": "../x", "..": "../x", ok: 3 });
+    expect(readMediaMounts(projectDir)).toEqual([]);
+    writeFileSync(join(projectDir, "hyperframes.json"), "{not json");
+    expect(readMediaMounts(projectDir)).toEqual([]);
+    rmSync(join(projectDir, "hyperframes.json"));
+    expect(readMediaMounts(projectDir)).toEqual([]);
+    expect(resolveProjectAssetPath(projectDir, "footage/x.mov")).toBe(
+      join(projectDir, "footage", "x.mov"),
+    );
+  });
+
+  it("re-reads hyperframes.json when it changes", () => {
+    expect(readMediaMounts(projectDir).map((m) => m.name)).toEqual(["footage"]);
+    writeConfig({ exports: "../../../Exports" });
+    // Same-size rewrite within one mtime tick would hide the change; pin a new mtime.
+    const later = new Date(Date.now() + 5_000);
+    utimesSync(join(projectDir, "hyperframes.json"), later, later);
+    expect(readMediaMounts(projectDir).map((m) => m.name)).toEqual(["exports"]);
+    expect(resolveProjectAssetPath(projectDir, "footage/x.mov")).toBe(
+      join(projectDir, "footage", "x.mov"),
+    );
+    expect(resolveProjectAssetPath(projectDir, "exports/x.mov")).toBe(join(exportsDir, "x.mov"));
   });
 });

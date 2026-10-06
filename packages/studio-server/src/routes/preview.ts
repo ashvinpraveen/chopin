@@ -2,7 +2,7 @@ import type { Hono } from "hono";
 import { HLS_PROXY_VARIANT, serveHlsProxy } from "../helpers/hlsProxyRoute.js";
 import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { Readable } from "node:stream";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { createHash } from "node:crypto";
 import {
   addScenePartsManifest,
@@ -13,7 +13,7 @@ import {
 } from "@hyperframes/core/compiler";
 import { STUDIO_PREVIEW_MARK_META } from "@hyperframes/core/studio-preview-mark";
 import { injectTagsAtHeadStart } from "@hyperframes/core/compiler/html-document";
-import { isWithinProjectRoot } from "@hyperframes/parsers/asset-resolution";
+import { resolveProjectAssetPath } from "@hyperframes/parsers/asset-resolution";
 import type { ResolvedProject, StudioApiAdapter } from "../types.js";
 import { isProjectRootMissing, resolveWithinProject } from "../helpers/safePath.js";
 import { getMimeType } from "../helpers/mime.js";
@@ -582,8 +582,8 @@ export function registerPreviewRoutes(api: Hono, adapter: PreviewApiAdapter): vo
     // is lexically inside the project even if an explicit project symlink
     // targets a shared directory outside it. Composition source files still
     // use resolveWithinProject because saves write their data-hf-id values.
-    const candidate = resolve(project.dir, subPath);
-    const file = isWithinProjectRoot(project.dir, candidate) ? candidate : null;
+    // A media mount (hyperframes.json `media.mounts`) resolves outside the project root.
+    const file = resolveProjectAssetPath(project.dir, subPath);
     if (!file) {
       return c.text("not found", 404);
     }

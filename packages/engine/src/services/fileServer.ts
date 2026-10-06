@@ -11,7 +11,10 @@ import { serve } from "@hono/node-server";
 import { readFileSync, openSync, fstatSync, closeSync, statSync, constants } from "node:fs";
 import { join, extname } from "node:path";
 import { injectScriptsIntoHtml } from "@hyperframes/core/compiler";
-import { isWithinProjectRoot } from "@hyperframes/parsers/asset-resolution";
+import {
+  isWithinProjectRoot,
+  resolveProjectAssetPath,
+} from "@hyperframes/parsers/asset-resolution";
 
 const MIME_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -95,8 +98,9 @@ function resolveContainedPaths(
   compiledDir: string | undefined,
   relativePath: string,
 ): { projectPath: string; compiledPath: string | null } | null {
-  const projectPath = join(projectDir, relativePath);
-  if (!isWithinProjectRoot(projectDir, projectPath)) return null;
+  // A media mount (hyperframes.json `media.mounts`) maps its first segment outside the project.
+  const projectPath = resolveProjectAssetPath(projectDir, relativePath);
+  if (!projectPath) return null;
   if (!compiledDir) return { projectPath, compiledPath: null };
   const compiledPath = join(compiledDir, relativePath);
   if (!isWithinProjectRoot(compiledDir, compiledPath)) return null;

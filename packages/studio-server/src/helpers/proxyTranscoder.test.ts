@@ -11,7 +11,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { hdrToSdrToneMapFilter } from "@hyperframes/core";
 import { findFfBinary } from "@hyperframes/parsers/ff-binaries";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -744,6 +744,28 @@ describe("resolveProxy", () => {
       ProxySourceOutsideProjectError,
     );
     expect(calls).toHaveLength(0);
+  });
+
+  it("proxies a source inside a hyperframes.json media mount", async () => {
+    const { spawn, calls } = createSpawnSpy();
+    const { resolveProxy, getProxyCachePath } = await loadModule(spawn, FFMPEG_PATH);
+    const projectDir = tmpProject();
+    const mountDir = tmpProject();
+    const sourcePath = join(mountDir, "a-cam.mov");
+    writeFileSync(sourcePath, "source-bytes");
+    writeFileSync(
+      join(projectDir, "hyperframes.json"),
+      JSON.stringify({ media: { mounts: { exports: relative(projectDir, mountDir) } } }),
+    );
+
+    const cachePath = getProxyCachePath(projectDir, sourcePath);
+    const result = resolveProxy(projectDir, sourcePath);
+    await flush();
+
+    expect(calls).toHaveLength(1);
+    succeed(calls[0]!);
+    await expect(result).resolves.toBe(cachePath);
+    expect(cachePath.startsWith(join(realpathSync(projectDir), ".transcode-cache"))).toBe(true);
   });
 
   it("proxies an external target reached through an in-project symlink", async () => {
