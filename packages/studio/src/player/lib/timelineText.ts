@@ -1,11 +1,7 @@
 import { isHtmlElement } from "@hyperframes/core/runtime/dom-realm";
 import { parseCssColor } from "../../components/editor/colorValue";
 import type { TimelineText } from "../store/timelineElement";
-import {
-  getCuratedComputedStyles,
-  isEditableTextLeaf,
-  isTextBearingTag,
-} from "../../components/editor/domEditingDom";
+import { isEditableTextLeaf, isTextBearingTag } from "../../components/editor/domEditingDom";
 
 /** A layer that paints only text and a flat colour (a text tag whose children are all text leaves,
  *  no background image): its words and look. Anything painted beyond that keeps its picture. */
@@ -16,14 +12,18 @@ export function readTimelineText(el: Element): TimelineText | undefined {
     return undefined;
   const value = el.textContent?.replace(/\s+/g, " ").trim();
   if (!value) return undefined;
-  const style = getCuratedComputedStyles(el);
-  if ((style["background-image"] ?? "none") !== "none") return undefined;
-  const background = style["background-color"];
+  // Read only the five properties used. The full curated set is ~90 reads, and
+  // this runs for every text layer on every timeline sync (800 caption clips
+  // spent seconds here per load).
+  const computed = el.ownerDocument.defaultView?.getComputedStyle(el);
+  const read = (property: string) => computed?.getPropertyValue(property) || undefined;
+  if ((read("background-image") ?? "none") !== "none") return undefined;
+  const background = read("background-color");
   return {
     value,
-    fontFamily: style["font-family"],
-    fontWeight: style["font-weight"],
-    color: style.color,
+    fontFamily: read("font-family"),
+    fontWeight: read("font-weight"),
+    color: read("color"),
     background: background && parseCssColor(background)?.alpha === 1 ? background : undefined,
   };
 }

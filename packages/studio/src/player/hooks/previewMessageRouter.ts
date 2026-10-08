@@ -108,13 +108,43 @@ function handleTimelineMessage(
 export function createPreviewMessageHandler(
   deps: PreviewMessageRouterDeps,
 ): (e: MessageEvent) => void {
+  // The runtime posts the manifest from many paths (bind, media metadata,
+  // readiness, sizing), so one load sends a burst of near-identical copies, and
+  // each one rebuilt every timeline element from the DOM: 12-22 full rebuilds of
+  // a 900-clip episode while it opened. The first of a burst applies at once (an
+  // edit still lands immediately); later ones collapse into the newest, applied
+  // when the burst goes quiet. Each manifest is the whole timeline, so applying
+  // only the newest gives the same result.
+  let pending: { iframe: HTMLIFrameElement | null; data: ClipManifestMessage } | null = null;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const flush = () => {
+    timer = null;
+    const next = pending;
+    pending = null;
+    if (!next) return;
+    // A reload since it arrived means it describes a document that is gone.
+    if (next.iframe !== deps.iframeRef.current) return;
+    handleTimelineMessage(deps, next.iframe, next.data);
+    timer = setTimeout(flush, TIMELINE_MESSAGE_COALESCE_MS);
+  };
   return (e: MessageEvent) => {
     const iframe = deps.iframeRef.current;
     const data = acceptedPreviewMessage(e, iframe);
     if (!data) return;
     if (data.type === "state") return handleStateMessage(deps, iframe);
     if (data.type === "timeline" && Array.isArray(data.clips)) {
-      handleTimelineMessage(deps, iframe, data as unknown as ClipManifestMessage);
+      const manifest = data as unknown as ClipManifestMessage;
+      if (timer) {
+        // Mark it fresh so a state tick inside the window does not re-enrich.
+        deps.lastTimelineMessageRef.current = Date.now();
+        pending = { iframe, data: manifest };
+        return;
+      }
+      handleTimelineMessage(deps, iframe, manifest);
+      timer = setTimeout(flush, TIMELINE_MESSAGE_COALESCE_MS);
     }
   };
 }
+
+/** Quiet time after a manifest before the newest queued one applies. */
+export const TIMELINE_MESSAGE_COALESCE_MS = 150;

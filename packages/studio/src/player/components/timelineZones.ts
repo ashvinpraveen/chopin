@@ -63,19 +63,65 @@ function packTrackLanes(
   laneOf: Map<string, number>,
 ): number {
   const ordered = [...clips].sort(byStableId);
-  const lanes: TimelineElement[][] = [];
+  const indexed = ordered.every((el) => Number.isFinite(el.start) && Number.isFinite(el.duration));
+  const lanes: PackedLane[] = [];
   for (const el of ordered) {
-    let sub = lanes.findIndex((occ) =>
-      occ.every((o) => !overlaps(o, el) || isTransitionPair(o, el)),
+    let sub = lanes.findIndex((lane) =>
+      indexed ? laneAccepts(lane, el) : lane.byStart.every((o) => compatible(o, el)),
     );
     if (sub === -1) {
       sub = lanes.length;
-      lanes.push([]);
+      lanes.push({ byStart: [], maxDuration: 0 });
     }
-    lanes[sub].push(el);
+    addToLane(lanes[sub]!, el);
     laneOf.set(keyOf(el), base + sub);
   }
   return Math.max(1, lanes.length);
+}
+
+/** A sub-lane's occupants ordered by start, so a fit test scans only the clips near it. */
+interface PackedLane {
+  byStart: TimelineElement[];
+  maxDuration: number;
+}
+
+const compatible = (o: TimelineElement, el: TimelineElement) =>
+  !overlaps(o, el) || isTransitionPair(o, el);
+
+/** First index whose start is after `time`. */
+function upperBound(clips: readonly TimelineElement[], time: number): number {
+  let low = 0;
+  let high = clips.length;
+  while (low < high) {
+    const mid = (low + high) >> 1;
+    if (clips[mid]!.start <= time) low = mid + 1;
+    else high = mid;
+  }
+  return low;
+}
+
+/**
+ * Same answer as testing every occupant, without the quadratic scan: a caption
+ * track of 800 clips cost ~325k overlap checks per normalize. Only occupants
+ * starting before `el` ends can overlap it, and none starting more than the
+ * lane's longest clip before `el` starts can reach it. The slack keeps the
+ * window a superset of `overlaps`' instant tolerance; `overlaps` decides.
+ */
+function laneAccepts(lane: PackedLane, el: TimelineElement): boolean {
+  const end = el.start + el.duration;
+  const slack = 1e-6 * Math.max(1, Math.abs(end), Math.abs(el.start));
+  const earliest = el.start - lane.maxDuration - slack;
+  for (let index = upperBound(lane.byStart, end + slack) - 1; index >= 0; index--) {
+    const occupant = lane.byStart[index]!;
+    if (occupant.start < earliest) break;
+    if (!compatible(occupant, el)) return false;
+  }
+  return true;
+}
+
+function addToLane(lane: PackedLane, el: TimelineElement): void {
+  lane.byStart.splice(upperBound(lane.byStart, el.start), 0, el);
+  if (el.duration > lane.maxDuration) lane.maxDuration = el.duration;
 }
 
 /**

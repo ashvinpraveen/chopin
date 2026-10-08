@@ -3,7 +3,8 @@ import { fadeGain } from "@hyperframes/core/audio-fade";
 import { useMountEffect } from "../../hooks/useMountEffect";
 import { useThumbnailLease } from "../../hooks/useThumbnailLease";
 import { createThumbnailKey, type ThumbnailPriority } from "../lib/thumbnailScheduler";
-import { decimatePeaks, loudnessToOpacity } from "./audioWaveformPeaks";
+import { decimatePeaksFast, loudnessToOpacity } from "./audioWaveformPeaks";
+import { useVisibleClipSpan, type ClipSpan } from "./useVisibleClipSpan";
 import { ClipFadesContext, type ClipFadeShape } from "./TimelineClipFades";
 
 export interface AudioWaveformProps {
@@ -59,8 +60,16 @@ export function drawWaveformCanvas(
   trimStartFraction: number,
   trimEndFraction: number,
   fades: ClipFadeShape | null = null,
+  span: ClipSpan | null = null,
 ) {
   const width = Math.max(1, canvas.clientWidth);
+  // The canvas may cover only a window of the clip (a long clip zoomed in is
+  // wider than any canvas can be); map that window into the trimmed source.
+  const clipWidth = span ? Math.max(width, span.total) : width;
+  const offset = span ? Math.min(span.start, clipWidth - width) : 0;
+  const trimSpan = trimEndFraction - trimStartFraction;
+  const windowStart = trimStartFraction + (offset / clipWidth) * trimSpan;
+  const windowEnd = trimStartFraction + ((offset + width) / clipWidth) * trimSpan;
   const height = Math.max(1, canvas.clientHeight);
   const scale = window.devicePixelRatio || 1;
   canvas.width = Math.ceil(width * scale);
@@ -69,10 +78,10 @@ export function drawWaveformCanvas(
   if (!context) return;
   context.scale(scale, scale);
   context.clearRect(0, 0, width, height);
-  const amplitudes = decimatePeaks(
+  const amplitudes = decimatePeaksFast(
     peaks,
-    trimStartFraction,
-    trimEndFraction,
+    windowStart,
+    windowEnd,
     Math.max(1, Math.ceil(width / BAR_STEP)),
   );
   const bars = amplitudes.map((amplitude, index) => ({
@@ -80,7 +89,11 @@ export function drawWaveformCanvas(
     width: Math.max(1, width / amplitudes.length),
     height: Math.max(3, amplitude * height),
     gain: fades
-      ? fadeGain(((index + 0.5) / amplitudes.length) * fades.duration, fades.duration, fades)
+      ? fadeGain(
+          ((offset + ((index + 0.5) / amplitudes.length) * width) / clipWidth) * fades.duration,
+          fades.duration,
+          fades,
+        )
       : 1,
   }));
   const channelToken = muted ? "--timeline-waveform-muted-rgb" : "--timeline-waveform-bar-rgb";
@@ -195,11 +208,20 @@ export const AudioWaveform = memo(function AudioWaveform({
     snapshot.status === "ready" && snapshot.value.kind === "waveform" ? snapshot.value.peaks : null;
 
   const fades = useContext(ClipFadesContext);
+  const span = useVisibleClipSpan(rootRef);
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas || !peaks) return;
-    drawWaveformCanvas(canvas, peaks, muted, trimStartFraction ?? 0, trimEndFraction ?? 1, fades);
-  }, [fades, muted, peaks, trimEndFraction, trimStartFraction]);
+    drawWaveformCanvas(
+      canvas,
+      peaks,
+      muted,
+      trimStartFraction ?? 0,
+      trimEndFraction ?? 1,
+      fades,
+      span,
+    );
+  }, [fades, muted, peaks, span, trimEndFraction, trimStartFraction]);
 
   const setCanvasRef = useCallback(
     (canvas: HTMLCanvasElement | null) => {
@@ -238,8 +260,12 @@ export const AudioWaveform = memo(function AudioWaveform({
       <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 10 }}>
         <canvas
           ref={setCanvasRef}
-          className="absolute inset-x-0 bottom-0 w-full"
-          style={{ top: labelInset, height: `calc(100% - ${labelInset}px)` }}
+          className={span ? "absolute bottom-0" : "absolute inset-x-0 bottom-0 w-full"}
+          style={{
+            top: labelInset,
+            height: `calc(100% - ${labelInset}px)`,
+            ...(span ? { left: span.start, width: span.end - span.start } : null),
+          }}
         />
         {snapshot.status === "loading" && (
           <div

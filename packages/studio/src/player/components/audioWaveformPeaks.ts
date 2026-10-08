@@ -44,3 +44,48 @@ export function decimatePeaks(
   }
   return bars;
 }
+
+/** Halved max-pyramids per peak array, built once per array and dropped with it. */
+const pyramids = new WeakMap<readonly number[], readonly (readonly number[])[]>();
+
+function peakPyramid(peaks: readonly number[]): readonly (readonly number[])[] {
+  const cached = pyramids.get(peaks);
+  if (cached) return cached;
+  const levels: (readonly number[])[] = [peaks];
+  let level: readonly number[] = peaks;
+  while (level.length > 2048) {
+    const next: number[] = new Array(Math.ceil(level.length / 2));
+    for (let index = 0; index < next.length; index++) {
+      const a = level[index * 2] ?? 0;
+      const b = level[index * 2 + 1] ?? 0;
+      next[index] = a > b ? a : b;
+    }
+    levels.push(next);
+    level = next;
+  }
+  pyramids.set(peaks, levels);
+  return levels;
+}
+
+/**
+ * `decimatePeaks` over the coarsest pyramid level that still holds at least two
+ * peaks per bar. Long files carry ~100 peaks a second, so a zoomed-out 2-hour
+ * clip would otherwise scan 720k values on every redraw; the max of maxes is
+ * the same envelope.
+ */
+export function decimatePeaksFast(
+  peaks: readonly number[],
+  startFraction: number,
+  endFraction: number,
+  barCount: number,
+): number[] {
+  if (barCount <= 0 || peaks.length === 0) return [];
+  const spanFraction = Math.max(0, Math.min(1, endFraction) - Math.max(0, startFraction));
+  const levels = peakPyramid(peaks);
+  let chosen = levels[0] ?? peaks;
+  for (const level of levels) {
+    if (level.length * spanFraction < barCount * 2) break;
+    chosen = level;
+  }
+  return decimatePeaks(chosen, startFraction, endFraction, barCount);
+}

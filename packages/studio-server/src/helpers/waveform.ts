@@ -13,8 +13,17 @@ import { dirname, join } from "node:path";
 import { findFfBinary } from "@hyperframes/parsers/ff-binaries";
 
 const SAMPLE_RATE = 4000;
-const PEAK_COUNT = 4000;
-const WAVEFORM_CACHE_VERSION = "v2";
+/**
+ * Peaks are sized to the file, not fixed: a fixed 4000 spread a 2-hour episode
+ * at one bar per 1.8 s, too coarse to see a word, let alone cut on one. 100 per
+ * second (10 ms) resolves syllables at the deepest timeline zoom. Short files
+ * keep the old 4000 floor so a 5 s clip zoomed to frames still draws smoothly.
+ */
+const PEAKS_PER_SECOND = 100;
+const MIN_PEAK_COUNT = 4000;
+/** Streaming resolution: fine buckets collected while ffmpeg runs, reduced once at the end. */
+const FINE_SAMPLES_PER_PEAK = 10;
+const WAVEFORM_CACHE_VERSION = "v3";
 
 /**
  * Cache filename for one asset's peaks, keyed on its content as well as its name.
@@ -40,22 +49,80 @@ export function buildWaveformCacheKey(
   return `${WAVEFORM_CACHE_VERSION}_${name}_${stamp}.json`;
 }
 
-function computePeaks(floats: Float32Array, count: number): number[] {
-  const step = floats.length / count;
-  const peaks: number[] = [];
+/**
+ * Peak count for a file of `fineCount` fine buckets: 100/s, at least 4000. A
+ * file shorter than the floor repeats its fine buckets rather than drawing gaps.
+ */
+function targetPeakCount(fineCount: number): number {
+  const seconds = (fineCount * FINE_SAMPLES_PER_PEAK) / SAMPLE_RATE;
+  return Math.max(MIN_PEAK_COUNT, Math.ceil(seconds * PEAKS_PER_SECOND));
+}
+
+/** Max-reduce fine buckets to `count` peaks, normalized to the file's loudest, rounded for a compact payload. */
+function reducePeaks(fine: ArrayLike<number>, count: number): number[] {
+  const length = fine.length;
+  const peaks: number[] = new Array(count);
+  let maxPeak = 0.001;
   for (let i = 0; i < count; i++) {
-    const start = Math.floor(i * step);
-    const end = Math.min(Math.floor((i + 1) * step), floats.length);
+    const start = Math.floor((i * length) / count);
+    const end = Math.max(start + 1, Math.floor(((i + 1) * length) / count));
     let max = 0;
-    for (let j = start; j < end; j++) {
-      // fallow-ignore-next-line code-duplication
-      const abs = Math.abs(floats[j] ?? 0);
-      if (abs > max) max = abs;
+    for (let j = start; j < end && j < length; j++) {
+      const value = fine[j] ?? 0;
+      if (value > max) max = value;
     }
-    peaks.push(max);
+    peaks[i] = max;
+    if (max > maxPeak) maxPeak = max;
   }
-  const maxPeak = Math.max(...peaks, 0.001);
-  return peaks.map((p) => p / maxPeak);
+  // Three decimals is below a pixel at any clip height and keeps an hour of
+  // peaks near 2 MB of JSON instead of ~6.
+  for (let i = 0; i < count; i++) peaks[i] = Math.round(((peaks[i] ?? 0) / maxPeak) * 1000) / 1000;
+  return peaks;
+}
+
+/**
+ * Collects max-abs fine buckets from a little-endian f32 stream without
+ * buffering the PCM (a 2-hour file is ~115 MB of samples; its buckets ~11 MB).
+ */
+class FinePeakCollector {
+  private buckets = new Float32Array(1 << 16);
+  private count = 0;
+  private current = 0;
+  private inBucket = 0;
+  private carry: Buffer | null = null;
+  samples = 0;
+
+  push(chunk: Buffer): void {
+    let data = chunk;
+    if (this.carry) {
+      data = Buffer.concat([this.carry, chunk]);
+      this.carry = null;
+    }
+    const whole = data.length - (data.length % 4);
+    for (let offset = 0; offset < whole; offset += 4) {
+      const abs = Math.abs(data.readFloatLE(offset));
+      if (abs > this.current) this.current = abs;
+      if (++this.inBucket === FINE_SAMPLES_PER_PEAK) this.flush();
+    }
+    this.samples += whole / 4;
+    if (whole < data.length) this.carry = Buffer.from(data.subarray(whole));
+  }
+
+  finish(): Float32Array {
+    if (this.inBucket > 0) this.flush();
+    return this.buckets.subarray(0, this.count);
+  }
+
+  private flush(): void {
+    if (this.count === this.buckets.length) {
+      const grown = new Float32Array(this.buckets.length * 2);
+      grown.set(this.buckets);
+      this.buckets = grown;
+    }
+    this.buckets[this.count++] = this.current;
+    this.current = 0;
+    this.inBucket = 0;
+  }
 }
 
 export function decodeAudioPeaks(audioPath: string): Promise<number[]> {
@@ -79,21 +146,19 @@ export function decodeAudioPeaks(audioPath: string): Promise<number[]> {
       { stdio: ["ignore", "pipe", "ignore"], windowsHide: true },
     );
 
-    const chunks: Buffer[] = [];
-    proc.stdout?.on("data", (chunk: Buffer) => chunks.push(chunk));
+    const collector = new FinePeakCollector();
+    proc.stdout?.on("data", (chunk: Buffer) => collector.push(chunk));
     proc.on("close", (code) => {
-      if (code !== 0 && chunks.length === 0) {
+      if (code !== 0 && collector.samples === 0) {
         reject(new Error(`ffmpeg exited with code ${code}`));
         return;
       }
-      const buf = Buffer.concat(chunks);
-      const numSamples = Math.floor(buf.length / 4);
-      if (numSamples === 0) {
+      if (collector.samples === 0) {
         reject(new Error("ffmpeg produced no audio samples"));
         return;
       }
-      const ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + numSamples * 4);
-      resolvePromise(computePeaks(new Float32Array(ab), PEAK_COUNT));
+      const fine = collector.finish();
+      resolvePromise(reducePeaks(fine, targetPeakCount(fine.length)));
     });
     proc.on("error", reject);
   });

@@ -267,3 +267,40 @@ describe("normalizeToZones — legacy file with scattered z (requirement 6)", ()
     expectZoningIdempotent(legacy());
   });
 });
+
+describe("normalizeToZones lane packing at scale", () => {
+  /** The original quadratic first-fit, kept as the reference the indexed pack must match. */
+  function referenceLanes(clips: TimelineElement[]): Map<string, number> {
+    const lanes: TimelineElement[][] = [];
+    const laneOf = new Map<string, number>();
+    const overlap = (a: TimelineElement, b: TimelineElement) =>
+      a.start < b.start + b.duration && b.start < a.start + a.duration;
+    const pair = (a: TimelineElement, b: TimelineElement) =>
+      Boolean(a.transitionLabel && a.transitionLabel === b.transitionLabel);
+    for (const clip of [...clips].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
+      let sub = lanes.findIndex((occ) => occ.every((o) => !overlap(o, clip) || pair(o, clip)));
+      if (sub === -1) sub = lanes.push([]) - 1;
+      lanes[sub]!.push(clip);
+      laneOf.set(clip.id, sub);
+    }
+    return laneOf;
+  }
+
+  it("matches the reference first-fit on random overlapping tracks", () => {
+    let seed = 7;
+    const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let round = 0; round < 25; round++) {
+      const clips: TimelineElement[] = Array.from({ length: 120 }, (_, index) => ({
+        id: `c${String(Math.floor(random() * 1e6)).padStart(7, "0")}-${index}`,
+        tag: "div",
+        start: Math.round(random() * 200 * 4) / 4,
+        duration: random() < 0.1 ? random() * 60 : Math.round(random() * 8 * 4) / 4 + 0.25,
+        track: 0,
+        transitionLabel: random() < 0.15 ? "x" : undefined,
+      }));
+      const expected = referenceLanes(clips);
+      const packed = normalizeToZones(clips);
+      for (const clip of packed) expect(clip.track).toBe(expected.get(clip.id));
+    }
+  });
+});

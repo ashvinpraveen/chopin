@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decimatePeaks, loudnessToOpacity } from "./audioWaveformPeaks";
+import { decimatePeaks, decimatePeaksFast, loudnessToOpacity } from "./audioWaveformPeaks";
 
 describe("loudnessToOpacity", () => {
   it("maps silence to the floor and the file peak to fully opaque", () => {
@@ -28,5 +28,21 @@ describe("decimatePeaks", () => {
   it("returns no bars when there is nothing to draw", () => {
     expect(decimatePeaks([], 0, 1, 4)).toEqual([]);
     expect(decimatePeaks([0.5], 0, 1, 0)).toEqual([]);
+  });
+});
+
+describe("decimatePeaksFast", () => {
+  it("matches the exact envelope on a long file while scanning a coarser level", () => {
+    const peaks = Array.from({ length: 100_000 }, (_, index) => (index === 54_321 ? 1 : 0.1));
+    const fast = decimatePeaksFast(peaks, 0, 1, 100);
+    expect(fast).toEqual(decimatePeaks(peaks, 0, 1, 100));
+    expect(Math.max(...fast)).toBe(1);
+  });
+
+  it("keeps full resolution when zoomed into a short slice", () => {
+    const peaks = Array.from({ length: 100_000 }, (_, index) => index / 100_000);
+    expect(decimatePeaksFast(peaks, 0.5, 0.501, 100)).toEqual(
+      decimatePeaks(peaks, 0.5, 0.501, 100),
+    );
   });
 });
