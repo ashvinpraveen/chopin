@@ -9,10 +9,10 @@ import { c } from "../ui/colors.js";
 import { rewritePinnedHyperframesText, rewriteProjectPinnedScripts } from "../utils/projectPin.js";
 
 export const examples: Example[] = [
-  ["Check for updates interactively", "hyperframes upgrade"],
-  ["Check for updates without prompting", "hyperframes upgrade --check"],
-  ["Upgrade non-interactively", "hyperframes upgrade --yes"],
-  ["Bump a project's pinned CLI scripts", "hyperframes upgrade --project"],
+  ["Check for updates interactively", "chopin upgrade"],
+  ["Check for updates without prompting", "chopin upgrade --check"],
+  ["Upgrade non-interactively", "chopin upgrade --yes"],
+  ["Bump a project's pinned CLI scripts", "chopin upgrade --project"],
 ];
 import { VERSION } from "../version.js";
 import {

@@ -4,18 +4,18 @@ import type { Example } from "./_examples.js";
 import { existsSync, readFileSync } from "node:fs";
 
 export const examples: Example[] = [
-  ["Play the current project", "hyperframes play"],
-  ["Play a specific project directory", "hyperframes play ./my-video"],
-  ["Use a custom port", "hyperframes play --port 8080"],
-  ["Start without opening the browser", "hyperframes play --no-open"],
-  ["Open with a specific browser", "hyperframes play --browser-path /usr/bin/chromium"],
+  ["Play the current project", "chopin play"],
+  ["Play a specific project directory", "chopin play ./my-video"],
+  ["Use a custom port", "chopin play --port 8080"],
+  ["Start without opening the browser", "chopin play --no-open"],
+  ["Open with a specific browser", "chopin play --browser-path /usr/bin/chromium"],
   [
     "Open with CDP enabled (requires browser path + isolated profile)",
-    "hyperframes play --browser-path /usr/bin/chromium --user-data-dir /tmp/hf-profile --remote-debugging-port 9222",
+    "chopin play --browser-path /usr/bin/chromium --user-data-dir /tmp/hf-profile --remote-debugging-port 9222",
   ],
   [
     "Disable auto-proxying of browser-hostile video codecs (HEVC, ProRes, AV1)",
-    "hyperframes play --no-proxy",
+    "chopin play --no-proxy",
   ],
 ];
 import { resolve } from "node:path";
@@ -120,7 +120,7 @@ export default defineCommand({
     // Resolve runtime path — same logic as studioServer.ts
     const runtimePath = resolveRuntimePath();
     if (!runtimePath) {
-      clack.log.error("HyperFrames runtime not found. Run `bun run build` first.");
+      clack.log.error("Chopin runtime not found. Run `bun run build` first.");
       setCommandExitCode(1);
       return;
     }
@@ -301,7 +301,7 @@ function buildPlayerPage(projectName: string): string {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${projectName} — HyperFrames Player</title>
+    <title>${projectName} — Chopin Player</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {

@@ -2,12 +2,12 @@ import { defineCommand } from "citty";
 import type { Example } from "./_examples.js";
 
 export const examples: Example[] = [
-  ["List all blocks and components", "hyperframes catalog"],
-  ["List blocks only", "hyperframes catalog --type block"],
-  ["Filter by tag", "hyperframes catalog --type block --tag social"],
-  ["Machine-readable JSON", "hyperframes catalog --json"],
-  ["Interactive picker (install on select)", "hyperframes catalog --human-friendly"],
-  ["Search (positional, same as --query)", 'hyperframes catalog "crossfade"'],
+  ["List all blocks and components", "chopin catalog"],
+  ["List blocks only", "chopin catalog --type block"],
+  ["Filter by tag", "chopin catalog --type block --tag social"],
+  ["Machine-readable JSON", "chopin catalog --json"],
+  ["Interactive picker (install on select)", "chopin catalog --human-friendly"],
+  ["Search (positional, same as --query)", 'chopin catalog "crossfade"'],
 ];
 
 import * as clack from "@clack/prompts";

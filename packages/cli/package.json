@@ -1,7 +1,7 @@
 {
   "name": "@hyperframes/cli",
   "version": "0.8.114",
-  "description": "HyperFrames CLI — create, preview, and render HTML video compositions",
+  "description": "Chopin CLI (built on HyperFrames) — create, preview, and render HTML video compositions",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,6 +9,7 @@
     "directory": "packages/cli"
   },
   "bin": {
+    "chopin": "./bin/hyperframes.mjs",
     "hyperframes": "./bin/hyperframes.mjs",
     "hyperframes-localize-fonts": "./bin/hyperframes-localize-fonts.mjs"
   },

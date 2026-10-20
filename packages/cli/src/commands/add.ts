@@ -3,12 +3,12 @@ import { defineCommand } from "citty";
 import type { Example } from "./_examples.js";
 
 export const examples: Example[] = [
-  ["Add a block to the current project", "hyperframes add claude-code-window"],
-  ["Add a component effect", "hyperframes add shader-wipe"],
-  ["Add all HTML-in-Canvas blocks", "hyperframes add html-in-canvas"],
-  ["Add all caption blocks", "hyperframes add captions"],
-  ["Target a specific project directory", "hyperframes add shader-wipe --dir ./my-video"],
-  ["Skip the clipboard copy (CI/headless)", "hyperframes add shader-wipe --no-clipboard"],
+  ["Add a block to the current project", "chopin add claude-code-window"],
+  ["Add a component effect", "chopin add shader-wipe"],
+  ["Add all HTML-in-Canvas blocks", "chopin add html-in-canvas"],
+  ["Add all caption blocks", "chopin add captions"],
+  ["Target a specific project directory", "chopin add shader-wipe --dir ./my-video"],
+  ["Skip the clipboard copy (CI/headless)", "chopin add shader-wipe --no-clipboard"],
 ];
 
 import { existsSync, readFileSync } from "node:fs";

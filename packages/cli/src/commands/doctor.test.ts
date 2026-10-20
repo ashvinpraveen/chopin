@@ -109,7 +109,7 @@ describe("checkArchiveExtractor", () => {
     expect(result).toEqual({
       ok: false,
       detail: "Not found",
-      hint: "Install unzip so HyperFrames can extract its managed Chrome download.",
+      hint: "Install unzip so Chopin can extract its managed Chrome download.",
     });
   });
 

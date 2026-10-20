@@ -15,16 +15,16 @@ import {
 type CaptionExportFormat = "srt" | "vtt";
 
 export const examples: Example[] = [
-  ["Transcribe an audio file", "hyperframes transcribe audio.mp3"],
-  ["Transcribe a video file", "hyperframes transcribe video.mp4"],
-  ["Use a larger model for better accuracy", "hyperframes transcribe audio.mp3 --model medium.en"],
-  ["Set language to filter non-target speech", "hyperframes transcribe audio.mp3 --language en"],
-  ["Import an existing SRT file", "hyperframes transcribe subtitles.srt"],
-  ["Import an OpenAI Whisper JSON response", "hyperframes transcribe response.json"],
-  ["Export captions to SRT", "hyperframes transcribe transcript.json --to srt"],
+  ["Transcribe an audio file", "chopin transcribe audio.mp3"],
+  ["Transcribe a video file", "chopin transcribe video.mp4"],
+  ["Use a larger model for better accuracy", "chopin transcribe audio.mp3 --model medium.en"],
+  ["Set language to filter non-target speech", "chopin transcribe audio.mp3 --language en"],
+  ["Import an existing SRT file", "chopin transcribe subtitles.srt"],
+  ["Import an OpenAI Whisper JSON response", "chopin transcribe response.json"],
+  ["Export captions to SRT", "chopin transcribe transcript.json --to srt"],
   [
     "Export single-word/CJK captions without re-grouping",
-    "hyperframes transcribe transcript.json --to vtt --preserve-cues",
+    "chopin transcribe transcript.json --to vtt --preserve-cues",
   ],
 ];
 import { resolve, join, extname, dirname } from "node:path";

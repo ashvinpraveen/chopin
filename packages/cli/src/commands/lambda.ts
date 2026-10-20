@@ -18,41 +18,41 @@ import { c } from "../ui/colors.js";
 import { readAllowedCompositionFpsFromDir } from "../utils/compositionFps.js";
 
 export const examples: Example[] = [
-  ["Deploy the Lambda render stack to AWS", "hyperframes lambda deploy"],
+  ["Deploy the Lambda render stack to AWS", "chopin lambda deploy"],
   [
     "Render a composition on the deployed stack",
-    "hyperframes lambda render ./my-project --width 1920 --height 1080",
+    "chopin lambda render ./my-project --width 1920 --height 1080",
   ],
   [
     "Render and stream progress until done",
-    "hyperframes lambda render ./my-project --width 1920 --height 1080 --wait",
+    "chopin lambda render ./my-project --width 1920 --height 1080 --wait",
   ],
   [
     "Supersample a 1080p composition to 4K via Chrome deviceScaleFactor",
-    "hyperframes lambda render ./my-project --width 1920 --height 1080 --output-resolution 4k --wait",
+    "chopin lambda render ./my-project --width 1920 --height 1080 --output-resolution 4k --wait",
   ],
   [
     "Render with composition variables (personalised template)",
-    'hyperframes lambda render ./my-template --site-id abc1234deadbeef0 --width 1920 --height 1080 --variables \'{"title":"Hello Alice","accent":"#ff0000"}\'',
+    'chopin lambda render ./my-template --site-id abc1234deadbeef0 --width 1920 --height 1080 --variables \'{"title":"Hello Alice","accent":"#ff0000"}\'',
   ],
   [
     "Render with variables from a JSON file",
-    "hyperframes lambda render ./my-template --site-id abc1234deadbeef0 --width 1920 --height 1080 --variables-file ./alice.json",
+    "chopin lambda render ./my-template --site-id abc1234deadbeef0 --width 1920 --height 1080 --variables-file ./alice.json",
   ],
   [
     "Batch-render N personalised videos from a JSONL file (deploys the site once)",
-    "hyperframes lambda render-batch ./my-template --batch ./users.jsonl --width 1920 --height 1080 --max-concurrent 10",
+    "chopin lambda render-batch ./my-template --batch ./users.jsonl --width 1920 --height 1080 --max-concurrent 10",
   ],
-  ["Check progress for a started render", "hyperframes lambda progress hf-render-abcd1234"],
+  ["Check progress for a started render", "chopin lambda progress hf-render-abcd1234"],
   [
     "Pre-upload a project so multiple renders share the upload",
-    "hyperframes lambda sites create ./my-project",
+    "chopin lambda sites create ./my-project",
   ],
-  ["Tear the stack down", "hyperframes lambda destroy"],
-  ["Print the IAM policy the CLI needs", "hyperframes lambda policies user"],
+  ["Tear the stack down", "chopin lambda destroy"],
+  ["Print the IAM policy the CLI needs", "chopin lambda policies user"],
   [
     "Validate a checked-in IAM policy still covers the CLI",
-    "hyperframes lambda policies validate ./infra/iam/hyperframes.json",
+    "chopin lambda policies validate ./infra/iam/hyperframes.json",
   ],
 ];
 

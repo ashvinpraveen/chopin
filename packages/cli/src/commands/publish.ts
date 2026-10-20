@@ -28,14 +28,14 @@ import {
 } from "../utils/projectLink.js";
 
 export const examples: Example[] = [
-  ["Publish the current project privately to a stable URL", "hyperframes publish"],
-  ["Publish a specific directory", "hyperframes publish ./my-video"],
-  ["Make the claimed project public to anyone", "hyperframes publish --public"],
-  ["Update an existing published project in place", "hyperframes publish --update <url|id>"],
-  ["Publish to a shared team space", "hyperframes publish --space <space-id>"],
-  ["Skip the consent prompt (scripts)", "hyperframes publish --yes"],
-  ["Skip baking H.264 proxies for browser-hostile video codecs", "hyperframes publish --no-proxy"],
-  ["Show full lint findings instead of the summary line", "hyperframes publish --lint-verbose"],
+  ["Publish the current project privately to a stable URL", "chopin publish"],
+  ["Publish a specific directory", "chopin publish ./my-video"],
+  ["Make the claimed project public to anyone", "chopin publish --public"],
+  ["Update an existing published project in place", "chopin publish --update <url|id>"],
+  ["Publish to a shared team space", "chopin publish --space <space-id>"],
+  ["Skip the consent prompt (scripts)", "chopin publish --yes"],
+  ["Skip baking H.264 proxies for browser-hostile video codecs", "chopin publish --no-proxy"],
+  ["Show full lint findings instead of the summary line", "chopin publish --lint-verbose"],
 ];
 
 /** Extract a project id from a published URL (with or without scheme, query, or hash) or accept a bare id. */

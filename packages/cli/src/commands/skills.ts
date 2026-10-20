@@ -23,11 +23,11 @@ import { trackSkillsInstallSkipped } from "../telemetry/events.js";
 import type { Example } from "./_examples.js";
 
 export const examples: Example[] = [
-  ["Install all HyperFrames skills", "hyperframes skills"],
-  ["Check whether installed skills are up to date", "hyperframes skills check"],
-  ["Check, machine-readable (for agents / CI)", "hyperframes skills check --json"],
-  ["Update the core set + everything already installed", "hyperframes skills update"],
-  ["Also install one workflow (on-demand install)", "hyperframes skills update pr-to-video"],
+  ["Install all HyperFrames skills", "chopin skills"],
+  ["Check whether installed skills are up to date", "chopin skills check"],
+  ["Check, machine-readable (for agents / CI)", "chopin skills check --json"],
+  ["Update the core set + everything already installed", "chopin skills update"],
+  ["Also install one workflow (on-demand install)", "chopin skills update pr-to-video"],
 ];
 
 function hasNpx(): boolean {

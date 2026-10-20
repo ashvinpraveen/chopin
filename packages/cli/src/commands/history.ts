@@ -32,13 +32,10 @@ import { withMeta } from "../utils/updateCheck.js";
 export const examples: Example[] = [
   [
     "What changed since your last turn, and who changed it",
-    "hyperframes history --since mine --who claude",
+    "chopin history --since mine --who claude",
   ],
-  [
-    "Label your writes as one entry",
-    "hyperframes history begin --who claude --label 'Bigger title'",
-  ],
-  ["Undo your newest entry after a failed check", "hyperframes history undo --who claude"],
+  ["Label your writes as one entry", "chopin history begin --who claude --label 'Bigger title'"],
+  ["Undo your newest entry after a failed check", "chopin history undo --who claude"],
 ];
 
 const YOU: HistoryWho = { kind: "person", name: "You" };

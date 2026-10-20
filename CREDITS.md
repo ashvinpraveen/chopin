@@ -1,5 +1,14 @@
 # Credits
 
+## Built on HeyGen's HyperFrames
+
+Chopin is built on [HyperFrames](https://github.com/heygen-com/hyperframes),
+HeyGen's open-source framework for rendering HTML to video. The rendering
+engine, composition format, studio, CLI, and skills all come from HyperFrames
+and are distributed under its [Apache 2.0 License](LICENSE). Thanks to the
+HyperFrames team at HeyGen. The sections below are carried over from upstream
+and describe HyperFrames' own prior art.
+
 ## Prior art
 
 HyperFrames was inspired by prior work in the browser-based video rendering space.

@@ -83,22 +83,22 @@ const LARGEST_FILE_COUNT = 10;
 const FORMAT_EXT: Record<string, string> = { mp4: ".mp4", webm: ".webm", mov: ".mov" };
 
 export const examples: Example[] = [
-  ["Render the current directory in the cloud", "hyperframes cloud render"],
-  ["Inspect archive size without uploading", "hyperframes cloud render --dry-run"],
+  ["Render the current directory in the cloud", "chopin cloud render"],
+  ["Inspect archive size without uploading", "chopin cloud render --dry-run"],
   [
     "Pick a specific composition + output path",
-    "hyperframes cloud render . --composition compositions/intro.html -o ./renders/intro.mp4",
+    "chopin cloud render . --composition compositions/intro.html -o ./renders/intro.mp4",
   ],
-  ["Higher quality, 60fps", "hyperframes cloud render --quality high --fps 60"],
+  ["Higher quality, 60fps", "chopin cloud render --quality high --fps 60"],
   [
     "Submit and exit; webhook fires when the render terminates",
-    "hyperframes cloud render --callback-url https://example.com/hook --no-wait",
+    "chopin cloud render --callback-url https://example.com/hook --no-wait",
   ],
   [
     "Override variables (parametrized render)",
-    'hyperframes cloud render --variables \'{"title":"Q4 Recap","theme":"dark"}\'',
+    'chopin cloud render --variables \'{"title":"Q4 Recap","theme":"dark"}\'',
   ],
-  ["Re-render an already-uploaded zip", "hyperframes cloud render --asset-id asst_abc123"],
+  ["Re-render an already-uploaded zip", "chopin cloud render --asset-id asst_abc123"],
 ];
 
 export default defineCommand({

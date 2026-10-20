@@ -21,10 +21,10 @@ import type { CaptionZoneOptions, FrameCheckOptions, LayoutOptions } from "../ut
 import { resolveLocalBrowserGpuMode } from "../browser/gpuPolicy.js";
 
 export const examples: Example[] = [
-  ["Run the full verification gate", "hyperframes check"],
-  ["Output one agent-readable envelope", "hyperframes check --json"],
-  ["Persist the five audited contrast frames", "hyperframes check --snapshots"],
-  ["Also fail on warnings", "hyperframes check --strict"],
+  ["Run the full verification gate", "chopin check"],
+  ["Output one agent-readable envelope", "chopin check --json"],
+  ["Persist the five audited contrast frames", "chopin check --snapshots"],
+  ["Also fail on warnings", "chopin check --strict"],
 ];
 
 export interface CheckCommandDependencies {

@@ -220,15 +220,15 @@ function printHumanResult(result: NormalizeAudioResult): void {
 export const examples: Example[] = [
   [
     "Bring one clip (audio or a video with sound) to -16 LUFS",
-    "hyperframes normalize-audio --target voiceover --write",
+    "chopin normalize-audio --target voiceover --write",
   ],
   [
     "Measure two authored clips and preview the matching gain",
-    "hyperframes normalize-audio --reference target-audio --target user-audio",
+    "chopin normalize-audio --reference target-audio --target user-audio",
   ],
   [
     "Persist the measured gain into index.html",
-    "hyperframes normalize-audio --reference target-audio --target user-audio --write",
+    "chopin normalize-audio --reference target-audio --target user-audio --write",
   ],
 ];
 

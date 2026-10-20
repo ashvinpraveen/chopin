@@ -10,11 +10,11 @@ import { resolveProject } from "../utils/project.js";
 import { withMeta } from "../utils/updateCheck.js";
 
 export const examples: Example[] = [
-  ["Surface every keyframe + motion path in the project", "hyperframes keyframes"],
-  ["Inspect one composition file", "hyperframes keyframes compositions/scene.html"],
-  ["Machine-readable output for an agent", "hyperframes keyframes --json"],
-  ["Only one element's keyframes", "hyperframes keyframes --selector '#puck-a'"],
-  ["Runtime-aware hint for CSS/Anime compositions", "hyperframes keyframes --runtime all"],
+  ["Surface every keyframe + motion path in the project", "chopin keyframes"],
+  ["Inspect one composition file", "chopin keyframes compositions/scene.html"],
+  ["Machine-readable output for an agent", "chopin keyframes --json"],
+  ["Only one element's keyframes", "chopin keyframes --selector '#puck-a'"],
+  ["Runtime-aware hint for CSS/Anime compositions", "chopin keyframes --runtime all"],
 ];
 
 // ── Surfaced shapes ──────────────────────────────────────────────────────────

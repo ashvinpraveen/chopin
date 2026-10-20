@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/logo/dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="docs/logo/light.svg">
-    <img alt="HyperFrames" src="docs/logo/light.svg" width="300">
+    <img alt="Chopin (built on HyperFrames)" src="docs/logo/light.svg" width="300">
   </picture>
 </p>
 
@@ -29,7 +29,11 @@
   <img src="docs/public/images/hyperframes-logo-motion-1280-trimmed.webp" alt="HyperFrames demo: HTML code on the left transforms into a rendered video on the right" width="800">
 </p>
 
-HyperFrames is an open-source framework for turning HTML, CSS, media, and seekable animations into deterministic MP4 videos. Use it locally with the CLI, from AI coding agents with skills, or as the rendering core behind hosted authoring workflows.
+# Chopin
+
+**Chopin** is an agent-native video editor: write HTML, render video, and edit it alongside your AI agent. It is built on [HeyGen's open-source HyperFrames](https://github.com/heygen-com/hyperframes), which turns HTML, CSS, media, and seekable animations into deterministic MP4 videos. Use it locally with the CLI, from AI coding agents with skills, or as the rendering core behind hosted authoring workflows.
+
+The CLI is `chopin` (for example `chopin preview`, `chopin render -o out.mp4`). `hyperframes` still works as an alias, so existing scripts keep running. The skills, packages (`@hyperframes/*`), and composition format keep their HyperFrames names for now; see [plans/rename-to-chopin.md](plans/rename-to-chopin.md). The linked docs and the install commands below still point at upstream HyperFrames.
 
 ## Quick Start
 

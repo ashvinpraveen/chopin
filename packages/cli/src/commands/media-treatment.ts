@@ -301,29 +301,26 @@ export function getMediaTreatmentCapabilityDetail(id: string): unknown {
 export const examples: Example[] = [
   [
     "Discover the complete treatment surface without loading every control",
-    `hyperframes media-treatment --capabilities --json`,
+    `chopin media-treatment --capabilities --json`,
   ],
-  [
-    "Inspect one relevant effect in detail",
-    `hyperframes media-treatment --capability kuwahara --json`,
-  ],
+  ["Inspect one relevant effect in detail", `chopin media-treatment --capability kuwahara --json`],
   [
     "Inspect the exhaustive machine-readable catalog",
-    `hyperframes media-treatment --capabilities --all --json`,
+    `chopin media-treatment --capabilities --all --json`,
   ],
   [
     "Apply a resolved treatment to one media element",
-    `hyperframes media-treatment --selector '#hero' --grading '{"preset":"skin-soft","intensity":0.6}' --apply`,
+    `chopin media-treatment --selector '#hero' --grading '{"preset":"skin-soft","intensity":0.6}' --apply`,
   ],
   [
     "Preview the exact mutation without writing",
-    `hyperframes media-treatment --file compositions/scene.html --selector 'video' --grading '{"preset":"warm-daylight"}' --apply --dry-run --json`,
+    `chopin media-treatment --file compositions/scene.html --selector 'video' --grading '{"preset":"warm-daylight"}' --apply --dry-run --json`,
   ],
   [
     "Measure one local media source before choosing a correction",
-    `hyperframes media-treatment --selector '#hero' --analyze --json`,
+    `chopin media-treatment --selector '#hero' --analyze --json`,
   ],
-  ["Remove a treatment", `hyperframes media-treatment --selector '#hero' --clear`],
+  ["Remove a treatment", `chopin media-treatment --selector '#hero' --clear`],
 ];
 
 interface ApplyMediaTreatmentOptions {

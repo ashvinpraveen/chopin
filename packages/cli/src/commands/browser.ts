@@ -5,10 +5,10 @@ import * as clack from "@clack/prompts";
 import { c } from "../ui/colors.js";
 
 export const examples: Example[] = [
-  ["Find or download Chrome for rendering", "hyperframes browser ensure"],
-  ["Purge a stale/partial download and re-download", "hyperframes browser ensure --force"],
-  ["Print the Chrome executable path", "hyperframes browser path"],
-  ["Remove cached Chrome download", "hyperframes browser clear"],
+  ["Find or download Chrome for rendering", "chopin browser ensure"],
+  ["Purge a stale/partial download and re-download", "chopin browser ensure --force"],
+  ["Print the Chrome executable path", "chopin browser path"],
+  ["Remove cached Chrome download", "chopin browser clear"],
 ];
 import { formatBytes } from "../ui/format.js";
 import {

@@ -6,20 +6,20 @@ import type { Example } from "./_examples.js";
 import { readFileSync } from "node:fs";
 
 export const examples: Example[] = [
-  ["Generate speech from text", 'hyperframes tts "Welcome to HyperFrames"'],
-  ["Choose a voice", 'hyperframes tts "Hello world" --voice am_adam'],
-  ["Save to a specific file", 'hyperframes tts "Intro" --voice bf_emma --output narration.wav'],
-  ["Adjust speech speed", 'hyperframes tts "Slow and clear" --speed 0.8'],
+  ["Generate speech from text", 'chopin tts "Welcome to Chopin"'],
+  ["Choose a voice", 'chopin tts "Hello world" --voice am_adam'],
+  ["Save to a specific file", 'chopin tts "Intro" --voice bf_emma --output narration.wav'],
+  ["Adjust speech speed", 'chopin tts "Slow and clear" --speed 0.8'],
   [
     "Generate Spanish speech",
-    'hyperframes tts "La reunión empieza a las nueve" --voice ef_dora --output es.wav',
+    'chopin tts "La reunión empieza a las nueve" --voice ef_dora --output es.wav',
   ],
   [
     "Override phonemizer language",
-    'hyperframes tts "Ciao a tutti" --voice af_heart --lang it --output accented.wav',
+    'chopin tts "Ciao a tutti" --voice af_heart --lang it --output accented.wav',
   ],
-  ["Read text from a file", "hyperframes tts script.txt"],
-  ["List available voices", "hyperframes tts --list"],
+  ["Read text from a file", "chopin tts script.txt"],
+  ["List available voices", "chopin tts --list"],
 ];
 import { resolve } from "node:path";
 import * as clack from "@clack/prompts";

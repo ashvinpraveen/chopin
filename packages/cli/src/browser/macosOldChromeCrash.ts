@@ -58,7 +58,7 @@ export function macosOldChromeCrashRemediation(errorMessage: string): string | u
   if (!isMacosOldChromeCrashError(errorMessage)) return undefined;
   return [
     "chrome-headless-shell crashed at launch (macOS dyld: Symbol not found in VideoToolbox).",
-    "The pinned Chromium build requires macOS 13+. HyperFrames installs Chrome 150 on macOS 12 by",
+    "The pinned Chromium build requires macOS 13+. Chopin installs Chrome 150 on macOS 12 by",
     "itself, so this crash means a newer browser was supplied. Unset the override, or point it at",
     "an older chrome-headless-shell:",
     "",

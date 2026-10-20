@@ -4,11 +4,11 @@ import type { Example } from "./_examples.js";
 import { existsSync, readFileSync } from "node:fs";
 
 export const examples: Example[] = [
-  ["Present the current deck", "hyperframes present"],
-  ["Present a specific project directory", "hyperframes present ./my-deck"],
-  ["Use a custom port", "hyperframes present --port 8080"],
-  ["Start without opening the browser", "hyperframes present --no-open"],
-  ["Open with a specific browser", "hyperframes present --browser-path /usr/bin/chromium"],
+  ["Present the current deck", "chopin present"],
+  ["Present a specific project directory", "chopin present ./my-deck"],
+  ["Use a custom port", "chopin present --port 8080"],
+  ["Start without opening the browser", "chopin present --no-open"],
+  ["Open with a specific browser", "chopin present --browser-path /usr/bin/chromium"],
 ];
 import { resolve } from "node:path";
 import * as clack from "@clack/prompts";
