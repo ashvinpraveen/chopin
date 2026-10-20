@@ -24,10 +24,10 @@ import { redactHome } from "./doctor.js";
 import { withMeta } from "../utils/updateCheck.js";
 
 export const examples: Example[] = [
-  ["See what HyperFrames left on disk, remove nothing", "hyperframes clean --dry-run"],
-  ["Remove it", "hyperframes clean"],
-  ["Also remove snapshot folders", "hyperframes clean --snapshots"],
-  ["For agents", "hyperframes clean --json"],
+  ["See what Chopin left on disk, remove nothing", "chopin clean --dry-run"],
+  ["Remove it", "chopin clean"],
+  ["Also remove snapshot folders", "chopin clean --snapshots"],
+  ["For agents", "chopin clean --json"],
 ];
 
 /** A render dir with no owner record (made before owners were recorded) counts as abandoned after this long idle. */
@@ -221,7 +221,7 @@ const redactPaths = (rows: Leftover[]) =>
   rows.map((row) => ({ ...row, path: redactHome(row.path) }));
 
 export default defineCommand({
-  meta: { name: "clean", description: "Find and remove what HyperFrames left on disk" },
+  meta: { name: "clean", description: "Find and remove what Chopin left on disk" },
   args: {
     dir: {
       type: "positional",

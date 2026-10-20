@@ -29,8 +29,8 @@ import {
 } from "../telemetry/system.js";
 
 export const examples: Example[] = [
-  ["Check system dependencies", "hyperframes doctor"],
-  ["Output as JSON for CI / agents", "hyperframes doctor --json"],
+  ["Check system dependencies", "chopin doctor"],
+  ["Output as JSON for CI / agents", "chopin doctor --json"],
 ];
 
 interface Check {
@@ -236,7 +236,7 @@ export function checkArchiveExtractor(
   return {
     ok: false,
     detail: "Not found",
-    hint: "Install unzip so HyperFrames can extract its managed Chrome download.",
+    hint: "Install unzip so Chopin can extract its managed Chrome download.",
   };
 }
 

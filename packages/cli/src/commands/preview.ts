@@ -6,31 +6,31 @@ import { spawn, type ChildProcessByStdio } from "node:child_process";
 import type { Readable } from "node:stream";
 
 export const examples: Example[] = [
-  ["Preview the current project", "hyperframes preview"],
-  ["Print the current Studio selection as JSON", "hyperframes preview --selection --json"],
-  ["Print current Studio context as JSON", "hyperframes preview --context --json"],
-  ["Preview a specific project directory", "hyperframes preview ./my-video"],
-  ["Use a custom port", "hyperframes preview --port 8080"],
-  ["Force a new server even if one is already running", "hyperframes preview --force-new"],
-  ["Keep preview running after this command exits", "hyperframes preview --background"],
-  ["Force an attached preview in a non-interactive shell", "hyperframes preview --foreground"],
-  ["Show the background preview for this project", "hyperframes preview --status"],
-  ["Stop the background preview for this project", "hyperframes preview --stop"],
-  ["Start without opening the browser", "hyperframes preview --no-open"],
-  ["Open with a specific browser", "hyperframes preview --browser-path /usr/bin/chromium"],
+  ["Preview the current project", "chopin preview"],
+  ["Print the current Studio selection as JSON", "chopin preview --selection --json"],
+  ["Print current Studio context as JSON", "chopin preview --context --json"],
+  ["Preview a specific project directory", "chopin preview ./my-video"],
+  ["Use a custom port", "chopin preview --port 8080"],
+  ["Force a new server even if one is already running", "chopin preview --force-new"],
+  ["Keep preview running after this command exits", "chopin preview --background"],
+  ["Force an attached preview in a non-interactive shell", "chopin preview --foreground"],
+  ["Show the background preview for this project", "chopin preview --status"],
+  ["Stop the background preview for this project", "chopin preview --stop"],
+  ["Start without opening the browser", "chopin preview --no-open"],
+  ["Open with a specific browser", "chopin preview --browser-path /usr/bin/chromium"],
   [
     "Open with CDP enabled (requires browser path + isolated profile)",
-    "hyperframes preview --browser-path /usr/bin/chromium --user-data-dir /tmp/hf-profile --remote-debugging-port 9222",
+    "chopin preview --browser-path /usr/bin/chromium --user-data-dir /tmp/hf-profile --remote-debugging-port 9222",
   ],
-  ["List all active preview servers", "hyperframes preview --list"],
-  ["Kill all active preview servers", "hyperframes preview --kill-all"],
+  ["List all active preview servers", "chopin preview --list"],
+  ["Kill all active preview servers", "chopin preview --kill-all"],
   [
     "Disable auto-proxying of browser-hostile video codecs (HEVC, ProRes, AV1)",
-    "hyperframes preview --no-proxy",
+    "chopin preview --no-proxy",
   ],
   [
     "Show full lint findings on startup instead of the summary line",
-    "hyperframes preview --lint-verbose",
+    "chopin preview --lint-verbose",
   ],
 ];
 import { existsSync, lstatSync, mkdirSync, readlinkSync, symlinkSync, unlinkSync } from "node:fs";

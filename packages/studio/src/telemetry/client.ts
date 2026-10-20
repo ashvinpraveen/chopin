@@ -109,7 +109,7 @@ function showNoticeOnce(): void {
   // anonymous analytics are on and how to opt out. Kept behind a pragma.
   // eslint-disable-next-line no-console
   console.info(
-    "%c[HyperFrames]%c Anonymous studio usage analytics enabled. " +
+    "%c[Chopin]%c Anonymous studio usage analytics enabled. " +
       "Disable: localStorage.setItem('hyperframes-studio:telemetryDisabled','1') (then reload).",
     "color:#7c3aed;font-weight:bold",
     "color:inherit",

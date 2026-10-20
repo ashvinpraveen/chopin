@@ -11,9 +11,9 @@ import { failCommand } from "../utils/commandResult.js";
 import type { Example } from "./_examples.js";
 
 export const examples: Example[] = [
-  ["Check current telemetry status", "hyperframes telemetry status"],
-  ["Disable telemetry", "hyperframes telemetry disable"],
-  ["Enable telemetry", "hyperframes telemetry enable"],
+  ["Check current telemetry status", "chopin telemetry status"],
+  ["Disable telemetry", "chopin telemetry disable"],
+  ["Enable telemetry", "chopin telemetry enable"],
 ];
 
 function describeOverride(source: Exclude<TelemetryStatusSource, "config">): string {

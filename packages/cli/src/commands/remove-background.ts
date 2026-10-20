@@ -11,33 +11,33 @@ import type { Example } from "./_examples.js";
 export const examples: Example[] = [
   [
     "Remove background from a video, output transparent VP9 WebM (default)",
-    "hyperframes remove-background avatar.mp4 -o transparent.webm",
+    "chopin remove-background avatar.mp4 -o transparent.webm",
   ],
   [
     "Output ProRes 4444 .mov for editing round-trip",
-    "hyperframes remove-background avatar.mp4 -o transparent.mov",
+    "chopin remove-background avatar.mp4 -o transparent.mov",
   ],
   [
     "Remove background from a single image, output transparent PNG",
-    "hyperframes remove-background portrait.jpg -o cutout.png",
+    "chopin remove-background portrait.jpg -o cutout.png",
   ],
   [
     "Separate the layers — emit both the cutout and an inverse-alpha background plate (subject region transparent)",
-    "hyperframes remove-background avatar.mp4 -o subject.webm --background-output plate.webm",
+    "chopin remove-background avatar.mp4 -o subject.webm --background-output plate.webm",
   ],
   [
     "Force CPU (skip CoreML/CUDA)",
-    "hyperframes remove-background avatar.mp4 -o transparent.webm --device cpu",
+    "chopin remove-background avatar.mp4 -o transparent.webm --device cpu",
   ],
   [
     "Smaller file at the cost of color match (text-behind-subject won't blend as cleanly)",
-    "hyperframes remove-background avatar.mp4 -o transparent.webm --quality fast",
+    "chopin remove-background avatar.mp4 -o transparent.webm --quality fast",
   ],
   [
     "Visually-lossless WebM (master / re-encode source)",
-    "hyperframes remove-background avatar.mp4 -o transparent.webm --quality best",
+    "chopin remove-background avatar.mp4 -o transparent.webm --quality best",
   ],
-  ["Show detected providers without rendering", "hyperframes remove-background --info"],
+  ["Show detected providers without rendering", "chopin remove-background --info"],
 ];
 
 export default defineCommand({

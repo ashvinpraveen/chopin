@@ -10,17 +10,17 @@ import type { Example } from "./_examples.js";
 import { patchMediaPlaceholders, type InitMediaOptions } from "./initMedia.js";
 
 export const examples: Example[] = [
-  ["Create a project with the interactive wizard", "hyperframes init my-video"],
-  ["Pick a starter example", "hyperframes init my-video --example warm-grain"],
-  ["Scaffold a 4K project", "hyperframes init my-video --resolution 4k"],
-  ["Scaffold a portrait video", "hyperframes init my-video --resolution portrait"],
-  ["Start from an existing video file", "hyperframes init my-video --video clip.mp4"],
-  ["Start from an audio file", "hyperframes init my-video --audio track.mp3"],
-  ["Scaffold with Tailwind CSS", "hyperframes init my-video --tailwind"],
-  ["Non-interactive mode (for CI or AI agents)", "hyperframes init my-video --non-interactive"],
+  ["Create a project with the interactive wizard", "chopin init my-video"],
+  ["Pick a starter example", "chopin init my-video --example warm-grain"],
+  ["Scaffold a 4K project", "chopin init my-video --resolution 4k"],
+  ["Scaffold a portrait video", "chopin init my-video --resolution portrait"],
+  ["Start from an existing video file", "chopin init my-video --video clip.mp4"],
+  ["Start from an audio file", "chopin init my-video --audio track.mp3"],
+  ["Scaffold with Tailwind CSS", "chopin init my-video --tailwind"],
+  ["Non-interactive mode (for CI or AI agents)", "chopin init my-video --non-interactive"],
   [
     "Opt out of the GitHub skills check (CI/tests only)",
-    "HYPERFRAMES_SKIP_SKILLS=1 hyperframes init my-video --non-interactive",
+    "HYPERFRAMES_SKIP_SKILLS=1 chopin init my-video --non-interactive",
   ],
 ];
 import {
@@ -973,7 +973,7 @@ export default defineCommand({
     // Interactive mode
     // -----------------------------------------------------------------------
     printBanner();
-    clack.intro("Create a new HyperFrames project");
+    clack.intro("Create a new Chopin project");
 
     // 1. Project name
     let name: string;

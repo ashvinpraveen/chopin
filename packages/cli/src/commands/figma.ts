@@ -13,11 +13,11 @@ import { c } from "../ui/colors.js";
 export const examples: Example[] = [
   [
     "Import a frame as a frozen SVG asset",
-    "hyperframes figma asset 'https://www.figma.com/design/KEY/T?node-id=1-2'",
+    "chopin figma asset 'https://www.figma.com/design/KEY/T?node-id=1-2'",
   ],
-  ["Import as PNG at 2x", "hyperframes figma asset KEY:1-2 --format png --scale 2"],
-  ["Pull brand tokens into the composition", "hyperframes figma tokens KEY"],
-  ["Import a frame as an editable HTML component", "hyperframes figma component KEY:10-20"],
+  ["Import as PNG at 2x", "chopin figma asset KEY:1-2 --format png --scale 2"],
+  ["Pull brand tokens into the composition", "chopin figma tokens KEY"],
+  ["Import a frame as an editable HTML component", "chopin figma component KEY:10-20"],
 ];
 
 const HELP = `

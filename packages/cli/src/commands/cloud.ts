@@ -16,25 +16,22 @@ import type { Example } from "./_examples.js";
 import { c } from "../ui/colors.js";
 
 export const examples: Example[] = [
-  ["Render the current directory in the cloud", "hyperframes cloud render"],
-  ["Render a specific project", "hyperframes cloud render ./my-video"],
-  ["Inspect the project zip without uploading", "hyperframes cloud render --dry-run"],
+  ["Render the current directory in the cloud", "chopin cloud render"],
+  ["Render a specific project", "chopin cloud render ./my-video"],
+  ["Inspect the project zip without uploading", "chopin cloud render --dry-run"],
   [
     "Render at 60fps + high quality, save to a path",
-    "hyperframes cloud render ./my-video --fps 60 --quality high -o ./out.mp4",
+    "chopin cloud render ./my-video --fps 60 --quality high -o ./out.mp4",
   ],
   [
     "Fire-and-forget with a webhook",
-    "hyperframes cloud render ./my-video --callback-url https://example.com/hf-hook --no-wait",
+    "chopin cloud render ./my-video --callback-url https://example.com/hf-hook --no-wait",
   ],
-  ["Resubmit an already-uploaded zip", "hyperframes cloud render --asset-id asst_abc123"],
-  [
-    "Render from a public HTTPS zip",
-    "hyperframes cloud render --url https://cdn.example.com/site.zip",
-  ],
-  ["List recent cloud renders", "hyperframes cloud list"],
-  ["Fetch one render's status + signed URLs", "hyperframes cloud get hfr_abc123"],
-  ["Soft-delete a render", "hyperframes cloud delete hfr_abc123"],
+  ["Resubmit an already-uploaded zip", "chopin cloud render --asset-id asst_abc123"],
+  ["Render from a public HTTPS zip", "chopin cloud render --url https://cdn.example.com/site.zip"],
+  ["List recent cloud renders", "chopin cloud list"],
+  ["Fetch one render's status + signed URLs", "chopin cloud get hfr_abc123"],
+  ["Soft-delete a render", "chopin cloud delete hfr_abc123"],
 ];
 
 const HELP = `

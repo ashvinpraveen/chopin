@@ -18,15 +18,15 @@ import { parseFeedbackRating } from "../utils/feedbackRating.js";
 import { lintFeedbackComment, type FeedbackLintInput } from "../utils/feedbackLint.js";
 
 export const examples: Example[] = [
-  ["Submit render feedback", 'hyperframes feedback --rating 8 --comment "fast but font missing"'],
-  ["Quick rating only", "hyperframes feedback --rating 10"],
+  ["Submit render feedback", 'chopin feedback --rating 8 --comment "fast but font missing"'],
+  ["Quick rating only", "chopin feedback --rating 10"],
   [
     "Report a catalog gap after a fruitless search",
-    'hyperframes feedback --search-miss "typewriter that deletes" --wanted "text that types then backspaces"',
+    'chopin feedback --search-miss "typewriter that deletes" --wanted "text that types then backspaces"',
   ],
   [
     "Also file a GitHub issue with a published repro",
-    'hyperframes feedback --rating 3 --comment "GSAP timeline froze" --file-issue',
+    'chopin feedback --rating 3 --comment "GSAP timeline froze" --file-issue',
   ],
 ];
 

@@ -9,8 +9,8 @@ import { analyzeBeatsHeadless, type HeadlessBeatResult } from "../beats/headless
 import { c } from "../ui/colors.js";
 
 export const examples: Example[] = [
-  ["Generate the beat file for the current project", "hyperframes beats"],
-  ["Generate for a specific directory", "hyperframes beats ./my-video"],
+  ["Generate the beat file for the current project", "chopin beats"],
+  ["Generate for a specific directory", "chopin beats ./my-video"],
 ];
 
 function fail(message: string): never {

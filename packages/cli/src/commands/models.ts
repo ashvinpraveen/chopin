@@ -8,10 +8,7 @@ import { createRenderCancellationScope } from "../utils/renderCancellation.js";
 import { PARAKEET_MODEL_LABEL } from "../whisper/parakeet.js";
 
 export const examples: Example[] = [
-  [
-    "Download the Parakeet speech model that transcribe uses",
-    "hyperframes models install parakeet",
-  ],
+  ["Download the Parakeet speech model that transcribe uses", "chopin models install parakeet"],
 ];
 
 function fail(message: string, json: boolean): never {

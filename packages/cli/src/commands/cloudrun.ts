@@ -32,29 +32,26 @@ import { normalizeErrorMessage } from "../utils/errorMessage.js";
 import { readAllowedCompositionFpsFromDir } from "../utils/compositionFps.js";
 
 export const examples: Example[] = [
-  ["Deploy the Cloud Run render stack", "hyperframes cloudrun deploy --project my-gcp-project"],
+  ["Deploy the Cloud Run render stack", "chopin cloudrun deploy --project my-gcp-project"],
   [
     "Render a composition on the deployed stack",
-    "hyperframes cloudrun render ./my-project --width 1920 --height 1080 --wait",
+    "chopin cloudrun render ./my-project --width 1920 --height 1080 --wait",
   ],
   [
     "Render a personalised template with variables",
-    'hyperframes cloudrun render ./my-template --width 1920 --height 1080 --variables \'{"title":"Hello Alice"}\'',
+    'chopin cloudrun render ./my-template --width 1920 --height 1080 --variables \'{"title":"Hello Alice"}\'',
   ],
   [
     "Supersample a 1080p composition to 4K",
-    "hyperframes cloudrun render ./my-project --width 1920 --height 1080 --output-resolution 4k --wait",
+    "chopin cloudrun render ./my-project --width 1920 --height 1080 --output-resolution 4k --wait",
   ],
   [
     "Batch-render N personalised videos from a JSONL file",
-    "hyperframes cloudrun render-batch ./my-template --batch ./users.jsonl --width 1920 --height 1080 --max-concurrent 10",
+    "chopin cloudrun render-batch ./my-template --batch ./users.jsonl --width 1920 --height 1080 --max-concurrent 10",
   ],
-  ["Check progress for a started render", "hyperframes cloudrun progress <executionName>"],
-  [
-    "Pre-upload a project so renders share the upload",
-    "hyperframes cloudrun sites create ./my-project",
-  ],
-  ["Tear the stack down", "hyperframes cloudrun destroy --project my-gcp-project"],
+  ["Check progress for a started render", "chopin cloudrun progress <executionName>"],
+  ["Pre-upload a project so renders share the upload", "chopin cloudrun sites create ./my-project"],
+  ["Tear the stack down", "chopin cloudrun destroy --project my-gcp-project"],
 ];
 
 const HELP = `

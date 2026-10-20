@@ -199,7 +199,7 @@ const subCommands = Object.fromEntries(
 
 const main = defineCommand({
   meta: {
-    name: "hyperframes",
+    name: "chopin",
     version: VERSION,
     description: "Create and render HTML video compositions",
   },

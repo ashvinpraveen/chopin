@@ -243,7 +243,7 @@ describe("Studio bundle file reads", () => {
     fs.unlinkSync(path.join(hooks.studioDir, "index.html"));
     const response = await server.app.request("/");
     expect(response.status).toBe(500);
-    expect(await response.text()).toContain("HyperFrames Studio unavailable");
+    expect(await response.text()).toContain("Chopin Studio unavailable");
   });
 
   it("still injects runtime environment into the SPA fallback", async () => {

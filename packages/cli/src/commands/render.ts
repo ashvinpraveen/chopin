@@ -11,50 +11,47 @@ import { executeRenderPlan, renderLintContinuationHint, runRenderLint } from "./
 export { resolveBrowserGpuForCli, renderLintContinuationHint, runRenderLint };
 
 export const examples: Example[] = [
-  ["Render to MP4", "hyperframes render --output output.mp4"],
-  ["Render a specific composition", "hyperframes render -c compositions/intro.html -o intro.mp4"],
+  ["Render to MP4", "chopin render --output output.mp4"],
+  ["Render a specific composition", "chopin render -c compositions/intro.html -o intro.mp4"],
   [
     "Upsample any composition to 4K (supersamples via Chrome DPR)",
-    "hyperframes render --resolution 4k --output 4k.mp4",
+    "chopin render --resolution 4k --output 4k.mp4",
   ],
-  ["Render transparent overlay (ProRes)", "hyperframes render --format mov --output overlay.mov"],
-  ["Render transparent WebM overlay", "hyperframes render --format webm --output overlay.webm"],
+  ["Render transparent overlay (ProRes)", "chopin render --format mov --output overlay.mov"],
+  ["Render transparent WebM overlay", "chopin render --format webm --output overlay.webm"],
   [
     "Render animated GIF for PRs/docs",
-    "hyperframes render --format gif --fps 15 --gif-loop 0 --output demo.gif",
+    "chopin render --format gif --fps 15 --gif-loop 0 --output demo.gif",
   ],
   [
     "Render PNG sequence (RGBA frames for AE/Nuke/Fusion)",
-    "hyperframes render --format png-sequence --output frames/",
+    "chopin render --format png-sequence --output frames/",
   ],
   [
     "Render HLS VOD (master playlist + MPEG-TS segments in a directory)",
-    "hyperframes render --format hls --output stream/",
+    "chopin render --format hls --output stream/",
   ],
-  ["High quality at 60fps", "hyperframes render --fps 60 --quality high --output hd.mp4"],
-  ["Deterministic render via Docker", "hyperframes render --docker --output deterministic.mp4"],
-  ["Parallel rendering with 6 workers", "hyperframes render --workers 6 --output fast.mp4"],
-  ["Opt out of browser GPU render", "hyperframes render --no-browser-gpu --output cpu.mp4"],
+  ["High quality at 60fps", "chopin render --fps 60 --quality high --output hd.mp4"],
+  ["Deterministic render via Docker", "chopin render --docker --output deterministic.mp4"],
+  ["Parallel rendering with 6 workers", "chopin render --workers 6 --output fast.mp4"],
+  ["Opt out of browser GPU render", "chopin render --no-browser-gpu --output cpu.mp4"],
   [
     "Show full lint findings instead of the summary line",
-    "hyperframes render --lint-verbose --output out.mp4",
+    "chopin render --lint-verbose --output out.mp4",
   ],
   [
     "Relocate frame cache off C: (Windows) or another small partition",
-    "hyperframes render --frames-cache-dir D:/hf-cache --output out.mp4",
+    "chopin render --frames-cache-dir D:/hf-cache --output out.mp4",
   ],
-  ["HDR output (auto-detected)", "hyperframes render --output hdr-output.mp4"],
+  ["HDR output (auto-detected)", "chopin render --output hdr-output.mp4"],
   [
     "Override composition variables (parametrized render)",
-    'hyperframes render --variables \'{"title":"Q4 Report","theme":"dark"}\' --output q4.mp4',
+    'chopin render --variables \'{"title":"Q4 Report","theme":"dark"}\' --output q4.mp4',
   ],
-  [
-    "Variables from a JSON file",
-    "hyperframes render --variables-file ./vars.json --output out.mp4",
-  ],
+  ["Variables from a JSON file", "chopin render --variables-file ./vars.json --output out.mp4"],
   [
     "Batch render one output per variables row",
-    'hyperframes render --batch rows.json --output "renders/{name}.mp4"',
+    'chopin render --batch rows.json --output "renders/{name}.mp4"',
   ],
 ];
 import { freemem, tmpdir } from "node:os";

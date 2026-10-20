@@ -16,13 +16,13 @@ import type { Example } from "./_examples.js";
 import { c } from "../ui/colors.js";
 
 export const examples: Example[] = [
-  ["Sign in via browser (OAuth)", "hyperframes auth login"],
-  ["Sign in from SSH/headless terminal", "hyperframes auth login --device"],
-  ["Save an API key (interactive)", "hyperframes auth login --api-key"],
-  ["Save an API key from stdin", "echo $HEYGEN_API_KEY | hyperframes auth login --api-key"],
-  ["Check who you're signed in as", "hyperframes auth status"],
-  ["Force-refresh the OAuth access token", "hyperframes auth refresh"],
-  ["Sign out", "hyperframes auth logout"],
+  ["Sign in via browser (OAuth)", "chopin auth login"],
+  ["Sign in from SSH/headless terminal", "chopin auth login --device"],
+  ["Save an API key (interactive)", "chopin auth login --api-key"],
+  ["Save an API key from stdin", "echo $HEYGEN_API_KEY | chopin auth login --api-key"],
+  ["Check who you're signed in as", "chopin auth status"],
+  ["Force-refresh the OAuth access token", "chopin auth refresh"],
+  ["Sign out", "chopin auth logout"],
 ];
 
 const HELP = `

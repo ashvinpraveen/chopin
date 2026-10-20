@@ -46,17 +46,14 @@ const MOTION_FPS = 20;
 const MOTION_MAX_SAMPLES = 300;
 
 export const examples: Example[] = [
-  ["Inspect visual layout across the current composition", "hyperframes layout"],
-  ["Inspect a specific project", "hyperframes layout ./my-video"],
-  ["Output agent-readable JSON", "hyperframes layout --json"],
-  ["Use explicit hero-frame timestamps", "hyperframes layout --at 1.5,4.0,7.25"],
-  [
-    "Also sample at tween boundaries to catch transient overlaps",
-    "hyperframes layout --at-transitions",
-  ],
+  ["Inspect visual layout across the current composition", "chopin layout"],
+  ["Inspect a specific project", "chopin layout ./my-video"],
+  ["Output agent-readable JSON", "chopin layout --json"],
+  ["Use explicit hero-frame timestamps", "chopin layout --at 1.5,4.0,7.25"],
+  ["Also sample at tween boundaries to catch transient overlaps", "chopin layout --at-transitions"],
   [
     "Verify motion intent (add a *.motion.json sidecar next to the composition)",
-    "hyperframes layout --json",
+    "chopin layout --json",
   ],
 ];
 

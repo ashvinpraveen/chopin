@@ -24,16 +24,16 @@ function parseCaptureBudget(raw: string | undefined): number | undefined {
 }
 
 export const examples: Example[] = [
-  ["Capture a website into ./capture/", "hyperframes capture https://stripe.com"],
-  ["Capture to a different directory", "hyperframes capture https://linear.app -o linear-video"],
-  ["JSON output for AI agents", "hyperframes capture https://example.com --json"],
+  ["Capture a website into ./capture/", "chopin capture https://stripe.com"],
+  ["Capture to a different directory", "chopin capture https://linear.app -o linear-video"],
+  ["JSON output for AI agents", "chopin capture https://example.com --json"],
   [
     "Pull a video from the captured manifest by index",
-    "hyperframes capture --video ./linear-video --index 0",
+    "chopin capture --video ./linear-video --index 0",
   ],
   [
     "List videos referenced in the captured manifest",
-    "hyperframes capture --video ./linear-video --list",
+    "chopin capture --video ./linear-video --list",
   ],
 ];
 

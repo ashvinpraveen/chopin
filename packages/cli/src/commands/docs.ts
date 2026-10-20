@@ -4,10 +4,10 @@ import type { Example } from "./_examples.js";
 import { readFileSync, existsSync } from "node:fs";
 
 export const examples: Example[] = [
-  ["List all available topics", "hyperframes docs"],
-  ["Read about data attributes", "hyperframes docs data-attributes"],
-  ["Read about rendering", "hyperframes docs rendering"],
-  ["Read about GSAP integration", "hyperframes docs gsap"],
+  ["List all available topics", "chopin docs"],
+  ["Read about data attributes", "chopin docs data-attributes"],
+  ["Read about rendering", "chopin docs rendering"],
+  ["Read about GSAP integration", "chopin docs gsap"],
 ];
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
